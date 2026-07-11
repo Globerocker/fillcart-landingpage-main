@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Landing from '../../components/Landing.astro';
+import { en } from '../../i18n/en.ts';
+import { landingGraph } from '../../lib/schema.ts';
+---
+
+<BaseLayout
+  lang="en"
+  title={en.meta.title}
+  description={en.meta.description}
+  path="/en/"
+  altPath="/"
+  schema={landingGraph(en)}
+>
+  <Landing content={en} />
+</BaseLayout>

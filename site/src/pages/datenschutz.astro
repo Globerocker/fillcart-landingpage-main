@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Subpage from '../components/Subpage.astro';
+import { de } from '../i18n/de.ts';
+import { SITE } from '../config/site.ts';
+
+const c = SITE.company;
+---
+
+<BaseLayout
+  lang="de"
+  title="Datenschutzerklärung | FILLCART LLC"
+  description="Datenschutzerklärung der FILLCART LLC – Verantwortlicher, eingesetzte Dienste (GTM, Google Ads, HubSpot) und Betroffenenrechte."
+  path="/datenschutz"
+  altPath="/en/privacy"
+>
+  <Subpage content={de} eyebrow="Rechtliches" title="Datenschutzerklärung">
+    <div class="callout">
+      <strong>Hinweis:</strong> Dies ist kein fertiger Rechtstext, sondern die Struktur der
+      Pflicht-Bausteine für den eingesetzten Stack. Bitte mit einem Generator (z.&nbsp;B.
+      eRecht24 / Datenschutz-Generator.de) vervollständigen und anwaltlich prüfen lassen –
+      insbesondere der Drittlandtransfer in die USA (der Verantwortliche ist selbst eine US-LLC).
+    </div>
+
+    <h2>1. Verantwortlicher</h2>
+    <div class="addr">
+      {c.legalName}<br />
+      {c.street}<br />
+      {c.city}, {c.region} {c.postalCode}, {c.countryLabel}<br />
+      E-Mail: <a href={`mailto:${c.email}`}>{c.email}</a>
+    </div>
+
+    <h2>2. Hosting</h2>
+    <p>[Anbieter eintragen] – Serverstandort, Auftragsverarbeitungsvertrag und Zweck ergänzen.</p>
+
+    <h2>3. Cookie-Consent-Tool</h2>
+    <p>
+      [Anbieter eintragen] – Vor dem Start des Google Tag Managers ist eine Einwilligung erforderlich.
+      Alle nicht technisch notwendigen Tags werden erst nach aktiver Zustimmung geladen (Consent Mode).
+    </p>
+
+    <h2>4. Google Tag Manager, Google Ads Conversion-Tracking &amp; Remarketing</h2>
+    <p>
+      Wir nutzen den Google Tag Manager zur Verwaltung von Tags sowie Google Ads Conversion-Tracking
+      und Remarketing. Diese Dienste werden ausschließlich nach erteilter Einwilligung gemäß
+      Art. 6 Abs. 1 lit. a DSGVO ausgeführt. Anbieter: Google Ireland Limited.
+    </p>
+
+    <h2>5. HubSpot (Formulare, CRM, Tracking)</h2>
+    <p>
+      Für Kontaktformulare, Terminbuchung und unser CRM setzen wir HubSpot ein (HubSpot, Inc., USA).
+      Bei Nutzung der Formulare bzw. des Meetings-Kalenders werden die eingegebenen Daten an HubSpot
+      übermittelt und verarbeitet. Hinweis auf Drittlandtransfer in die USA (siehe Ziffer 7).
+    </p>
+
+    <h2>6. Brevo Meetings / Kalender-Einbindung</h2>
+    <p>[Sofern eingesetzt: Anbieter, Zweck und Rechtsgrundlage ergänzen.]</p>
+
+    <h2>7. Datenübermittlung in die USA</h2>
+    <p>
+      Einige der eingesetzten Dienste übermitteln Daten in die USA (Art. 44 ff. DSGVO). Die
+      Übermittlung erfolgt auf Grundlage von Standardvertragsklauseln (SCCs) bzw. dem EU-US Data
+      Privacy Framework. Da der Verantwortliche selbst eine US-LLC ist, ist hier besondere Sorgfalt
+      geboten – dieser Abschnitt ist anwaltlich zu klären.
+    </p>
+
+    <h2>8. Deine Rechte</h2>
+    <ul>
+      <li>Auskunft (Art. 15 DSGVO)</li>
+      <li>Berichtigung (Art. 16 DSGVO)</li>
+      <li>Löschung (Art. 17 DSGVO)</li>
+      <li>Einschränkung der Verarbeitung (Art. 18 DSGVO)</li>
+      <li>Datenübertragbarkeit (Art. 20 DSGVO)</li>
+      <li>Widerspruch (Art. 21 DSGVO) und Widerruf erteilter Einwilligungen</li>
+      <li>Beschwerde bei einer Aufsichtsbehörde (Art. 77 DSGVO)</li>
+    </ul>
+    <p>Speicherdauer: Daten werden gelöscht, sobald der Zweck der Verarbeitung entfällt und keine gesetzlichen Aufbewahrungsfristen entgegenstehen.</p>
+  </Subpage>
+</BaseLayout>

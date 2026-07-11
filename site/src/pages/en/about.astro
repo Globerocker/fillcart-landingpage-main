@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Subpage from '../../components/Subpage.astro';
+import { en } from '../../i18n/en.ts';
+import { organization } from '../../lib/schema.ts';
+import { SITE } from '../../config/site.ts';
+
+const c = SITE.company;
+const schema = { '@context': 'https://schema.org', ...organization() };
+---
+
+<BaseLayout
+  lang="en"
+  title="About Fillcart – Google Ads agency for B2B | FILLCART LLC"
+  description="FILLCART LLC is a specialized Google Ads agency for B2B companies in the DACH region and the US. Founded in 2023, led by Andre Schüler."
+  path="/en/about"
+  altPath="/ueber-fillcart"
+  schema={schema}
+>
+  <Subpage
+    content={en}
+    eyebrow="About us"
+    title="About Fillcart"
+    intro="A specialized Google Ads agency for B2B — in the German-speaking region and the US. Founded in 2023, led by Andre Schüler."
+  >
+    <p class="lead">
+      FILLCART LLC is a specialized Google Ads agency for B2B companies in the German-speaking
+      region and the US. Founded in 2023, led by Andre Schüler.
+    </p>
+    <p>
+      We do exactly one thing: paid search campaigns that measurably generate pipeline.
+      Campaign management, keyword optimization, conversion tracking and reporting — connected to
+      our clients' CRM, so we optimize for revenue instead of click prices.
+    </p>
+
+    <h2>Who's behind it</h2>
+    <p>
+      Fillcart is the agency of <strong>Andre Schüler</strong> — previously Head of Marketing at
+      Europe's leading legal-tech SaaS holding, Head of SEO at Matrix42, HubSpot Consultant for
+      B2B enterprise clients. No junior learns on your budget: the person who runs the audit also
+      builds your campaigns and sits in every call.
+    </p>
+    <ul>
+      <li>$80,000/month ad budget managed across three countries, with ROAS improved</li>
+      <li>+23% SQLs in 6 months through cross-channel campaigns</li>
+      <li>+88% organic US traffic in four months</li>
+      <li>20+ certifications (Google Ads, HubSpot, Analytics)</li>
+    </ul>
+    <p><em>References: stp.one, Matrix42, CIXON.</em></p>
+
+    <h2>Company details</h2>
+    <ul class="facts">
+      <li><b>Company</b><span>{c.legalName}</span></li>
+      <li><b>Registration</b><span>{c.registeredIn} · Entity ID {c.entityId}</span></li>
+      <li><b>Business address</b><span>{c.street}, {c.city}, {c.region} {c.postalCode}, {c.countryLabel}</span></li>
+      <li><b>Industry</b><span>Advertising Agency (NAICS {c.naics})</span></li>
+      <li><b>Contact</b><span><a href={`mailto:${c.email}`}>{c.email}</a></span></li>
+    </ul>
+
+    <div class="callout">
+      Want to know what your Google Ads account can really do? The audit takes 30 minutes and
+      zero euros. <a href="/en/#audit">Request an audit →</a>
+    </div>
+  </Subpage>
+</BaseLayout>

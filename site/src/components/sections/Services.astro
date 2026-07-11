@@ -1,0 +1,61 @@
+---
+import type { LandingContent } from '../../i18n/types.ts';
+interface Props { content: LandingContent; }
+const { content } = Astro.props;
+const s = content.services;
+---
+
+<section id="leistungen" class="section services">
+  <div class="svc-glow"></div>
+  <div class="svc-inner">
+    <div class="svc-head" data-reveal>
+      <div class="eyebrow">{s.eyebrow}</div>
+      <h2 class="h2 on-dark">{s.headline}</h2>
+    </div>
+
+    <div class="svc-grid">
+      {s.cards.map((card, i) => (
+        <div class="svc-card" data-reveal style={`--accent:${card.color}`}>
+          <div class="svc-icon">
+            <div class="svc-arc" style={`border-color:${card.color};border-right-color:transparent;transform:rotate(${i * 40}deg)`}></div>
+          </div>
+          <h3 class="svc-title">{card.title}</h3>
+          <p class="svc-desc" set:html={card.desc} />
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .services { background: #0b1b33; padding: 100px 32px; }
+  .svc-glow {
+    position: absolute; top: -100px; right: -80px; width: 480px; height: 480px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.1), transparent 65%); pointer-events: none;
+  }
+  .svc-inner { max-width: 1120px; margin: 0 auto; position: relative; }
+  .svc-head { max-width: 640px; }
+  .h2.on-dark { color: #fff; }
+
+  .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 44px; }
+  .svc-card {
+    background: #12233f; border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px; padding: 28px 26px;
+    transition: transform 0.3s var(--ease-spring), border-color 0.3s, box-shadow 0.3s;
+  }
+  .svc-card:hover { transform: translateY(-6px); border-color: color-mix(in srgb, var(--accent) 60%, transparent); }
+  .svc-icon {
+    width: 46px; height: 46px; border-radius: 12px; background: rgba(255, 255, 255, 0.05);
+    display: flex; align-items: center; justify-content: center; margin-bottom: 18px;
+  }
+  .svc-arc { width: 18px; height: 18px; border-radius: 5px; border-width: 2.5px; border-style: solid; }
+  .svc-title { font-family: var(--font-head); font-weight: 600; font-size: 18px; color: #fff; margin: 0; line-height: 1.25; }
+  .svc-desc { color: #94a3b8; font-size: 14.5px; line-height: 1.55; margin: 11px 0 0; }
+
+  @media (max-width: 900px) {
+    .svc-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    .svc-grid { grid-template-columns: 1fr; }
+  }
+</style>

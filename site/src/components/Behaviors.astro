@@ -1,0 +1,55 @@
+---
+// Shared client behaviors: reveal-on-scroll + count-up stats.
+// Emitted once per page via BaseLayout. Respects prefers-reduced-motion.
+---
+
+<script>
+  type CountEl = HTMLElement & { dataset: DOMStringMap };
+
+  const locale = document.documentElement.lang === 'en' ? 'en-US' : 'de-DE';
+  const nf = new Intl.NumberFormat(locale);
+
+  const paintCount = (el: CountEl, val: number) => {
+    el.textContent =
+      (el.dataset.prefix || '') + nf.format(val) + (el.dataset.suffix || '');
+  };
+
+  const runCount = (el: CountEl) => {
+    const target = Number(el.dataset.count);
+    const dur = 1400;
+    const t0 = performance.now();
+    const step = (t: number) => {
+      const p = Math.min(1, (t - t0) / dur);
+      paintCount(el, Math.round(target * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+
+  const reveals = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
+  const counters = Array.from(document.querySelectorAll<CountEl>('[data-count]'));
+  const reduced =
+    window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reduced || !('IntersectionObserver' in window)) {
+    reveals.forEach((e) => e.classList.add('fc-in'));
+    counters.forEach((e) => paintCount(e, Number(e.dataset.count)));
+  } else {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((en) => {
+          if (!en.isIntersecting) return;
+          const el = en.target as CountEl;
+          el.classList.add('fc-in');
+          if (el.dataset.count) runCount(el);
+          io.unobserve(el);
+        });
+      },
+      { threshold: 0.16 }
+    );
+    reveals.forEach((e) => io.observe(e));
+    counters.forEach((e) => {
+      if (!e.hasAttribute('data-reveal')) io.observe(e);
+    });
+  }
+</script>

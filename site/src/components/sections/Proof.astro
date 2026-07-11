@@ -1,0 +1,117 @@
+---
+import type { LandingContent } from '../../i18n/types.ts';
+interface Props { content: LandingContent; }
+const { content } = Astro.props;
+const p = content.proof;
+---
+
+<section class="section proof">
+  <div class="proof-glow"></div>
+  <div class="proof-inner">
+    <div class="proof-main">
+      <div class="proof-portrait" data-reveal>
+        <div class="proof-portrait-bg"></div>
+        <img src="/assets/andre.png" alt="Andre Schüler" width="360" height="512" loading="lazy" />
+      </div>
+
+      <div class="proof-body" data-reveal>
+        <div class="eyebrow">{p.eyebrow}</div>
+        <h2 class="h2 on-dark" set:html={p.headline} />
+        <p class="proof-lead" set:html={p.body} />
+
+        <ul class="proof-chips">
+          {p.chips.map((chip) => <li>{chip}</li>)}
+        </ul>
+
+        <div class="proof-stats">
+          {p.stats.map((st) => (
+            <div class="proof-stat" style={`--c:${st.color}`}>
+              <div
+                class="proof-stat-num"
+                data-count={st.count}
+                data-prefix={st.prefix ?? ''}
+                data-suffix={st.suffix ?? ''}
+              >0</div>
+              <div class="proof-stat-label">{st.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div class="proof-refs" data-reveal>
+      <span class="proof-refs-label">{p.refsLabel}</span>
+      {p.refs.map((ref) => <span class="proof-ref">{ref}</span>)}
+      <span class="proof-google"><img src="/assets/google-partner.png" alt="Google Partner" width="110" height="34" loading="lazy" /></span>
+      <span class="proof-hs">{p.hubspotBadge}</span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .proof { background: #08152a; padding: 100px 32px; }
+  .proof-glow {
+    position: absolute; bottom: -120px; right: -100px; width: 520px; height: 520px;
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.12), transparent 65%); pointer-events: none;
+  }
+  .proof-inner { max-width: 1120px; margin: 0 auto; position: relative; }
+  .proof-main { display: grid; grid-template-columns: 0.82fr 1.18fr; gap: 56px; align-items: center; }
+
+  .proof-portrait { position: relative; }
+  .proof-portrait-bg {
+    position: absolute; inset: auto 0 0 0; height: 80%;
+    background: linear-gradient(180deg, rgba(249, 115, 22, 0.2), rgba(249, 115, 22, 0.02));
+    border-radius: 24px;
+  }
+  .proof-portrait img {
+    position: relative; width: 100%; max-width: 360px; display: block; margin: 0 auto;
+    height: auto; filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.5));
+  }
+
+  .h2.on-dark { color: #fff; font-size: 38px; }
+  .proof-lead { color: #94a3b8; font-size: 16.5px; line-height: 1.6; margin: 18px 0 0; max-width: 540px; }
+  .proof-lead :global(.hl) { color: #e2e8f0; font-weight: 600; }
+
+  .proof-chips {
+    margin: 18px 0 0; padding: 0; list-style: none;
+    display: flex; flex-wrap: wrap; gap: 8px 10px; max-width: 560px;
+  }
+  .proof-chips li {
+    color: #cbd5e1; font-size: 13.5px;
+    background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 6px 12px; border-radius: 999px;
+  }
+
+  .proof-stats {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 30px; max-width: 560px;
+  }
+  .proof-stat { border-top: 2px solid color-mix(in srgb, var(--c) 50%, transparent); padding-top: 14px; }
+  .proof-stat-num { font-family: var(--font-head); font-weight: 700; font-size: 34px; color: var(--c); }
+  .proof-stat-label { color: #94a3b8; font-size: 14px; margin-top: 4px; }
+
+  .proof-refs {
+    margin-top: 56px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 32px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 18px 40px;
+  }
+  .proof-refs-label {
+    color: #64748b; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .proof-ref { font-family: var(--font-head); font-weight: 700; font-size: 22px; color: #cbd5e1; }
+  .proof-google {
+    background: #fff; border-radius: 10px; padding: 8px 14px; display: inline-flex; align-items: center;
+  }
+  .proof-google img { height: 34px; width: auto; display: block; }
+  .proof-hs {
+    border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 10px; padding: 10px 16px;
+    color: #e2e8f0; font-weight: 600; font-size: 14px;
+  }
+
+  @media (max-width: 900px) {
+    .proof-main { grid-template-columns: 1fr; gap: 32px; }
+    .proof-portrait { max-width: 320px; margin: 0 auto; }
+    .h2.on-dark { font-size: 30px; }
+  }
+  @media (max-width: 480px) {
+    .proof-stats { grid-template-columns: 1fr; }
+  }
+</style>

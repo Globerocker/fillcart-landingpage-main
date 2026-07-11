@@ -1,0 +1,133 @@
+---
+import type { LandingContent } from '../../i18n/types.ts';
+interface Props { content: LandingContent; }
+const { content } = Astro.props;
+const t = content.timeline;
+
+// ----- ROAS area chart geometry (ported from the prototype, computed at build) -----
+const W = 1000, H = 210, pad = 8;
+const roas = [0.4, 0.8, 1.4, 2.1, 2.9, 3.6, 4.2, 4.7, 5.0, 5.3, 5.5, 5.7];
+const maxR = 6;
+const n = roas.length;
+const x = (i: number) => pad + (i * (W - pad * 2)) / (n - 1);
+const y = (v: number) => H - pad - (v / maxR) * (H - pad * 2 - 14);
+const linePts = roas.map((v, i) => `${x(i)},${y(v)}`).join(' ');
+const areaPath =
+  `M${x(0)},${H - pad} L` +
+  roas.map((v, i) => `${x(i)},${y(v)}`).join(' L ') +
+  ` L${x(n - 1)},${H - pad} Z`;
+const gridLines = [1, 2, 3, 4].map((g) => y(g * 1.5));
+const dots = roas
+  .map((v, i) => ({ i, v, show: i % 3 === 0 || i === n - 1 }))
+  .filter((d) => d.show);
+---
+
+<section id="timeline" class="section timeline">
+  <div class="tl-inner">
+    <div class="tl-head" data-reveal>
+      <div class="eyebrow">{t.eyebrow}</div>
+      <h2 class="h2">{t.headline}</h2>
+      <p class="tl-sub">{t.sub}</p>
+    </div>
+
+    <div class="tl-chartcard" data-reveal>
+      <div class="tl-chartglow"></div>
+      <div class="tl-chart-top">
+        <div>
+          <div class="tl-chart-label">{t.chartLabel}</div>
+          <div class="tl-chart-title">{t.chartTitle}</div>
+        </div>
+        <div class="tl-legend">
+          <span><span class="lg-line"></span>{t.legendRoas}</span>
+          <span><span class="lg-sq"></span>{t.legendPipeline}</span>
+        </div>
+      </div>
+      <div class="tl-chart-svg">
+        <svg viewBox={`0 0 ${W} ${H}`} width="100%" height="210" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="fcArea" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#22C55E" stop-opacity="0.35"></stop>
+              <stop offset="100%" stop-color="#22C55E" stop-opacity="0"></stop>
+            </linearGradient>
+          </defs>
+          {gridLines.map((gy) => (
+            <line x1={pad} x2={W - pad} y1={gy} y2={gy} stroke="rgba(255,255,255,.06)" stroke-width="1"></line>
+          ))}
+          <path d={areaPath} fill="url(#fcArea)"></path>
+          <polyline points={linePts} fill="none" stroke="#F97316" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"></polyline>
+          {dots.map((d) => (
+            <circle cx={x(d.i)} cy={y(d.v)} r="5" fill="#0B1B33" stroke="#F97316" stroke-width="3"></circle>
+          ))}
+          <circle cx={x(n - 1)} cy={y(roas[n - 1])} r="7" fill="#22C55E"></circle>
+        </svg>
+      </div>
+    </div>
+
+    <div class="tl-milestones">
+      {t.milestones.map((m) => (
+        <div class={`tl-ms fc-lift ${m.highlight ? 'hl' : ''}`} data-reveal>
+          <div class="tl-ms-period">{m.period}</div>
+          <h4 class="tl-ms-title" set:html={m.title} />
+          <p class="tl-ms-text">{m.text}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .timeline { padding: 100px 32px; }
+  .tl-inner { max-width: 1120px; margin: 0 auto; position: relative; }
+  .tl-head { max-width: 720px; margin: 0 auto; text-align: center; }
+  .tl-sub { color: #475569; font-size: 18px; line-height: 1.6; margin: 18px 0 0; }
+
+  .tl-chartcard {
+    margin-top: 48px; background: #0b1b33; border-radius: 24px;
+    padding: 38px 40px 30px; position: relative; overflow: hidden;
+  }
+  .tl-chartglow {
+    position: absolute; top: -60px; right: -40px; width: 340px; height: 340px;
+    background: radial-gradient(circle, rgba(34, 197, 94, 0.14), transparent 65%);
+    pointer-events: none;
+  }
+  .tl-chart-top {
+    display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+    gap: 12px; position: relative;
+  }
+  .tl-chart-label {
+    color: #94a3b8; font-size: 13px; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .tl-chart-title { font-family: var(--font-head); font-weight: 700; font-size: 22px; color: #fff; margin-top: 4px; }
+  .tl-legend { display: flex; gap: 18px; }
+  .tl-legend span { display: flex; align-items: center; gap: 7px; color: #94a3b8; font-size: 13px; }
+  .lg-line { width: 14px; height: 3px; background: #f97316; border-radius: 2px; }
+  .lg-sq { width: 10px; height: 10px; background: rgba(34, 197, 94, 0.4); border-radius: 2px; }
+  .tl-chart-svg { margin-top: 20px; }
+  .tl-chart-svg svg { display: block; }
+
+  .tl-milestones {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-top: 22px;
+  }
+  .tl-ms { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 22px 20px; }
+  .tl-ms:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -22px rgba(11, 27, 51, 0.3); }
+  .tl-ms.hl {
+    background: linear-gradient(135deg, #0b1b33, #12233f);
+    border: 1px solid rgba(34, 197, 94, 0.4);
+  }
+  .tl-ms.hl:hover { box-shadow: 0 20px 40px -22px rgba(11, 27, 51, 0.4); }
+  .tl-ms-period { font-family: var(--font-head); font-weight: 700; font-size: 14px; color: #f97316; letter-spacing: 0.04em; }
+  .tl-ms.hl .tl-ms-period { color: #22c55e; }
+  .tl-ms-title { font-family: var(--font-head); font-weight: 600; font-size: 16px; color: #0b1b33; margin: 10px 0 8px; }
+  .tl-ms.hl .tl-ms-title { color: #fff; }
+  .tl-ms-text { color: #64748b; font-size: 13.5px; line-height: 1.5; margin: 0; }
+  .tl-ms.hl .tl-ms-text { color: #94a3b8; }
+
+  @media (max-width: 960px) {
+    .tl-milestones { grid-template-columns: repeat(2, 1fr); }
+    .tl-chartcard { padding: 28px 22px 22px; }
+  }
+  @media (max-width: 480px) {
+    .tl-milestones { grid-template-columns: 1fr; }
+  }
+</style>

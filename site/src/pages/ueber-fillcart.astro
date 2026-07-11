@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Subpage from '../components/Subpage.astro';
+import { de } from '../i18n/de.ts';
+import { organization } from '../lib/schema.ts';
+import { SITE } from '../config/site.ts';
+
+const c = SITE.company;
+const schema = { '@context': 'https://schema.org', ...organization() };
+---
+
+<BaseLayout
+  lang="de"
+  title="Über Fillcart – Google Ads Agentur für B2B | FILLCART LLC"
+  description="FILLCART LLC ist eine spezialisierte Google-Ads-Agentur für B2B-Unternehmen im DACH-Raum und den USA. Gegründet 2023, geführt von Andre Schüler."
+  path="/ueber-fillcart"
+  altPath="/en/about"
+  schema={schema}
+>
+  <Subpage
+    content={de}
+    eyebrow="Über uns"
+    title="Über Fillcart"
+    intro="Eine spezialisierte Google-Ads-Agentur für B2B – im deutschsprachigen Raum und den USA. Gegründet 2023, geführt von Andre Schüler."
+  >
+    <p class="lead">
+      FILLCART LLC ist eine spezialisierte Google-Ads-Agentur für B2B-Unternehmen im
+      deutschsprachigen Raum und den USA. Gegründet 2023, geführt von Andre Schüler.
+    </p>
+    <p>
+      Wir machen genau eine Sache: bezahlte Suchkampagnen, die messbar Pipeline erzeugen.
+      Kampagnen-Management, Keyword-Optimierung, Conversion-Tracking und Reporting –
+      verbunden mit dem CRM unserer Kunden, damit auf Umsatz statt auf Klickpreise optimiert wird.
+    </p>
+
+    <h2>Wer dahinter steht</h2>
+    <p>
+      Fillcart ist die Agentur von <strong>Andre Schüler</strong> – vorher Head of Marketing bei
+      Europas führender Legal-Tech-SaaS-Holding, Head of SEO bei Matrix42, HubSpot Consultant
+      für B2B-Enterprise-Kunden. Kein Junior lernt an deinem Budget: Die Person, die den Audit
+      macht, baut auch deine Kampagnen und sitzt in jedem Call.
+    </p>
+    <ul>
+      <li>80.000&nbsp;$/Monat Ads-Budget über drei Länder gemanagt und ROAS gesteigert</li>
+      <li>+23&nbsp;% SQLs in 6 Monaten durch Cross-Channel-Kampagnen</li>
+      <li>+88&nbsp;% organischer US-Traffic in vier Monaten</li>
+      <li>20+ Zertifizierungen (Google Ads, HubSpot, Analytics)</li>
+    </ul>
+    <p><em>Referenzen: stp.one, Matrix42, CIXON.</em></p>
+
+    <h2>Firmendaten</h2>
+    <ul class="facts">
+      <li><b>Firma</b><span>{c.legalName}</span></li>
+      <li><b>Registrierung</b><span>{c.registeredIn} · Entity ID {c.entityId}</span></li>
+      <li><b>Geschäftsadresse</b><span>{c.street}, {c.city}, {c.region} {c.postalCode}, {c.countryLabel}</span></li>
+      <li><b>Branche</b><span>Advertising Agency (NAICS {c.naics})</span></li>
+      <li><b>Kontakt</b><span><a href={`mailto:${c.email}`}>{c.email}</a></span></li>
+    </ul>
+
+    <div class="callout">
+      Du willst wissen, was dein Google-Ads-Konto wirklich kann? Der Audit kostet 30 Minuten
+      und null Euro. <a href="/#audit">Audit anfragen →</a>
+    </div>
+  </Subpage>
+</BaseLayout>

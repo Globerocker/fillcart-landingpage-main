@@ -1,0 +1,296 @@
+---
+import type { LandingContent } from '../../i18n/types.ts';
+import { INTEGRATIONS, HUBSPOT_FORM_READY, HUBSPOT_MEETING_READY } from '../../config/site.ts';
+
+interface Props { content: LandingContent; }
+const { content } = Astro.props;
+const cta = content.cta;
+const form = cta.form;
+const hs = INTEGRATIONS.hubspot;
+const isEn = content.lang === 'en';
+
+// Placeholder-calendar labels (only shown until the real HubSpot Meetings embed is wired).
+const cal = {
+  days: isEn ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'] : ['Mo', 'Di', 'Mi', 'Do', 'Fr'],
+  pick: isEn ? 'Pick a time' : 'Termin wählen',
+  week: isEn ? 'Week 28 · July' : 'KW 28 · Juli',
+  free: isEn ? 'Free slots · Wed, Jul 10' : 'Freie Slots · Mi, 10. Juli',
+  slots: ['09:00', '10:30', '13:00', '14:30', '16:00'],
+  min: isEn ? '30 min' : '30 Min',
+  oclock: isEn ? '' : ' Uhr',
+};
+---
+
+<section id="audit" class="section finalcta">
+  <div class="fcta-glow-a"></div>
+  <div class="fcta-glow-b"></div>
+  <div class="fcta-inner">
+    <div class="fcta-head" data-reveal>
+      <div class="eyebrow">{cta.eyebrow}</div>
+      <h2 class="h2 on-dark">{cta.headline}</h2>
+      <p class="fcta-sub">{cta.sub}</p>
+    </div>
+
+    <div class="fcta-grid">
+      <!-- FORM -->
+      <div class="fcta-formcard" data-reveal>
+        {HUBSPOT_FORM_READY ? (
+          <div id="hs-audit-form" data-hs-form data-portal={hs.portalId} data-form={hs.formId} data-region={hs.region}></div>
+        ) : (
+          <form class="fc-form" data-audit-form novalidate>
+            <h3 class="fc-form-title">{form.title}</h3>
+
+            <label class="fc-label">
+              <span>{form.name}</span>
+              <input type="text" name="name" required placeholder={form.namePh} />
+            </label>
+            <label class="fc-label">
+              <span>{form.email}</span>
+              <input type="email" name="email" required placeholder={form.emailPh} />
+            </label>
+            <label class="fc-label">
+              <span>{form.website}</span>
+              <input type="text" name="website" required placeholder={form.websitePh} />
+            </label>
+            <label class="fc-label">
+              <span>{form.budget}</span>
+              <div class="fc-select-wrap">
+                <select name="budget" required data-budget>
+                  <option value="" disabled selected>{form.budgetPlaceholder}</option>
+                  {form.budgetOptions.map((o) => <option value={o.value}>{o.label}</option>)}
+                </select>
+              </div>
+            </label>
+
+            <div class="fc-lowbudget" data-lowbudget hidden>{form.lowBudgetNotice}</div>
+
+            <label class="fc-label">
+              <span>{form.message}</span>
+              <textarea name="message" rows="3" placeholder={form.messagePh}></textarea>
+            </label>
+
+            <button type="submit" class="fc-submit" data-submit>{form.submit}</button>
+            <p class="fc-privacy">{form.privacyNote}</p>
+          </form>
+        )}
+
+        <div class="fc-success" data-success hidden>
+          <div class="fc-success-icon">✓</div>
+          <h3>{form.successTitle}</h3>
+          <p>{form.successText}</p>
+        </div>
+      </div>
+
+      <!-- CALENDAR -->
+      <div class="fcta-calcard" data-reveal>
+        <div class="fcta-cal-top">
+          <div>
+            <div class="fcta-cal-title">{cta.calendar.title}</div>
+            <div class="fcta-cal-sub">{cta.calendar.sub}</div>
+          </div>
+          <span class="fcta-cal-badge">{cta.calendar.badge}</span>
+        </div>
+
+        <div class="fcta-cal-embed">
+          {HUBSPOT_MEETING_READY ? (
+            <div class="meetings-iframe-container" data-src={hs.meetingUrl}></div>
+          ) : (
+            <div class="cal-mock">
+              <div class="cal-mock-top">
+                <div class="cal-mock-title">{cal.pick}</div>
+                <div class="cal-mock-week">{cal.week}</div>
+              </div>
+              <div class="cal-mock-days">
+                {cal.days.map((d) => <div class="cal-mock-dayname">{d}</div>)}
+              </div>
+              <div class="cal-mock-dates">
+                {[8, 9, 10, 11, 12].map((n, i) => (
+                  <div class={`cal-mock-date ${i === 2 ? 'active' : ''}`}>{n}</div>
+                ))}
+              </div>
+              <div class="cal-mock-freelabel">{cal.free}</div>
+              <div class="cal-mock-slots">
+                {cal.slots.map((sl, i) => (
+                  <div class={`cal-mock-slot ${i === 1 ? 'active' : ''}`}>
+                    <span>{sl}{cal.oclock}</span>
+                    <span class="cal-mock-min">{cal.min}</span>
+                  </div>
+                ))}
+              </div>
+              <div class="cal-mock-note">{cta.calendar.placeholderNote}</div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .finalcta { background: #0b1b33; padding: 100px 32px; }
+  .fcta-glow-a {
+    position: absolute; top: -120px; right: -100px; width: 560px; height: 560px;
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.18), transparent 62%); pointer-events: none;
+  }
+  .fcta-glow-b {
+    position: absolute; bottom: -120px; left: -100px; width: 480px; height: 480px;
+    background: radial-gradient(circle, rgba(34, 197, 94, 0.1), transparent 65%); pointer-events: none;
+  }
+  .fcta-inner { max-width: 1120px; margin: 0 auto; position: relative; }
+  .fcta-head { max-width: 720px; text-align: center; margin: 0 auto; }
+  .h2.on-dark { color: #fff; font-size: 42px; }
+  .fcta-sub { color: #94a3b8; font-size: 18px; line-height: 1.6; margin: 18px 0 0; }
+
+  .fcta-grid { margin-top: 44px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+
+  /* Form card */
+  .fcta-formcard { background: #fff; border-radius: 22px; padding: 34px; box-shadow: 0 40px 80px -24px rgba(0, 0, 0, 0.5); }
+  .fc-form-title { font-family: var(--font-head); font-weight: 700; font-size: 22px; color: #0b1b33; margin: 0 0 22px; }
+  .fc-label { display: block; margin-bottom: 16px; }
+  .fc-label > span { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 7px; }
+  .fc-label input, .fc-label textarea, .fc-label select {
+    width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid #cbd5e1;
+    font-size: 15px; font-family: var(--font-body); color: #0f172a; background: #f8fafc;
+    outline: none; box-sizing: border-box;
+  }
+  .fc-label input:focus, .fc-label textarea:focus, .fc-label select:focus { border-color: #f97316; }
+  .fc-label textarea { resize: vertical; }
+  .fc-select-wrap { position: relative; }
+  .fc-select-wrap::after {
+    content: ''; position: absolute; right: 15px; top: 50%; width: 8px; height: 8px;
+    border-right: 2px solid #94a3b8; border-bottom: 2px solid #94a3b8;
+    transform: translateY(-70%) rotate(45deg); pointer-events: none;
+  }
+  .fc-label select { appearance: none; -webkit-appearance: none; cursor: pointer; }
+
+  .fc-lowbudget {
+    background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 12px 14px;
+    margin-bottom: 16px; font-size: 13.5px; line-height: 1.55; color: #9a3412;
+  }
+
+  .fc-submit {
+    width: 100%; padding: 15px; border-radius: 12px; border: none; background: #f97316;
+    color: #fff; font-size: 16px; font-weight: 600; font-family: var(--font-body);
+    cursor: pointer; margin-top: 4px; box-shadow: 0 12px 26px -8px rgba(249, 115, 22, 0.6);
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+  .fc-submit:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; }
+  .fc-privacy { font-size: 12px; color: #94a3b8; text-align: center; margin: 14px 0 0; line-height: 1.5; }
+
+  .fc-success { text-align: center; padding: 40px 10px; }
+  .fc-success-icon {
+    width: 56px; height: 56px; border-radius: 50%; background: #22c55e; color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 30px;
+    margin: 0 auto 18px; font-family: var(--font-head);
+  }
+  .fc-success h3 { font-family: var(--font-head); font-size: 22px; color: #0b1b33; margin: 0; }
+  .fc-success p { color: #475569; font-size: 15px; line-height: 1.6; margin-top: 12px; }
+
+  /* Calendar card */
+  .fcta-calcard {
+    background: #12233f; border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 22px;
+    padding: 12px; display: flex; flex-direction: column;
+  }
+  .fcta-cal-top { padding: 18px 22px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .fcta-cal-title { font-family: var(--font-head); font-weight: 600; font-size: 18px; color: #fff; }
+  .fcta-cal-sub { color: #94a3b8; font-size: 14px; margin-top: 2px; }
+  .fcta-cal-badge {
+    font-size: 12px; font-weight: 700; color: #22c55e; background: rgba(34, 197, 94, 0.14);
+    padding: 6px 12px; border-radius: 999px; white-space: nowrap;
+  }
+  .fcta-cal-embed {
+    flex: 1; min-height: 520px; border-radius: 14px; overflow: hidden; background: #fff;
+  }
+  .meetings-iframe-container { width: 100%; min-height: 520px; }
+
+  /* Calendar mock */
+  .cal-mock { padding: 22px; font-family: var(--font-body); height: 100%; display: flex; flex-direction: column; }
+  .cal-mock-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .cal-mock-title { font-family: var(--font-head); font-weight: 700; font-size: 17px; color: #0b1b33; }
+  .cal-mock-week { font-size: 13px; color: #64748b; }
+  .cal-mock-days, .cal-mock-dates { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .cal-mock-days { margin-bottom: 8px; }
+  .cal-mock-dates { margin-bottom: 20px; }
+  .cal-mock-dayname { text-align: center; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+  .cal-mock-date {
+    padding: 9px 0; text-align: center; border-radius: 8px; font-size: 13px; font-weight: 600;
+    background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0;
+  }
+  .cal-mock-date.active { background: #0b1b33; color: #fff; border-color: #0b1b33; }
+  .cal-mock-freelabel { font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 10px; }
+  .cal-mock-slots { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .cal-mock-slot {
+    padding: 13px 16px; border-radius: 10px; border: 1px solid #e2e8f0; background: #fff;
+    color: #334155; font-weight: 600; font-size: 14px;
+    display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+  }
+  .cal-mock-slot.active { border-color: #f97316; background: rgba(249, 115, 22, 0.06); color: #f97316; }
+  .cal-mock-min { font-size: 12px; color: #94a3b8; }
+  .cal-mock-slot.active .cal-mock-min { color: #f97316; }
+  .cal-mock-note {
+    margin-top: 16px; padding: 11px 14px; border-radius: 10px; background: #f1f5f9;
+    color: #64748b; font-size: 11.5px; line-height: 1.5; text-align: center;
+  }
+
+  @media (max-width: 900px) {
+    .fcta-grid { grid-template-columns: 1fr; }
+    .h2.on-dark { font-size: 32px; }
+  }
+</style>
+
+<script>
+  // --- Custom form: budget qualifier + success state (placeholder path) ---
+  document.querySelectorAll<HTMLFormElement>('[data-audit-form]').forEach((formEl) => {
+    const card = formEl.closest('.fcta-formcard');
+    const budget = formEl.querySelector<HTMLSelectElement>('[data-budget]');
+    const notice = formEl.querySelector<HTMLElement>('[data-lowbudget]');
+    const submit = formEl.querySelector<HTMLButtonElement>('[data-submit]');
+    const success = card?.querySelector<HTMLElement>('[data-success]');
+
+    const sync = () => {
+      const low = budget?.value === 'u5';
+      if (notice) notice.hidden = !low;
+      if (submit) submit.disabled = !!low;
+    };
+    budget?.addEventListener('change', sync);
+
+    formEl.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (budget?.value === 'u5') return;
+      if (!formEl.checkValidity()) {
+        formEl.reportValidity();
+        return;
+      }
+      // NOTE: wire this to the HubSpot Forms API / a backend endpoint.
+      formEl.hidden = true;
+      if (success) success.hidden = false;
+    });
+  });
+
+  // --- Real HubSpot form embed (when portal + form ids are configured) ---
+  const hsForm = document.querySelector<HTMLElement>('[data-hs-form]');
+  if (hsForm) {
+    const s = document.createElement('script');
+    s.src = 'https://js.hsforms.net/forms/embed/v2.js';
+    s.async = true;
+    s.onload = () => {
+      // @ts-expect-error - hbspt is injected by the embed script
+      window.hbspt?.forms.create({
+        portalId: hsForm.dataset.portal,
+        formId: hsForm.dataset.form,
+        region: hsForm.dataset.region,
+        target: '#' + hsForm.id,
+      });
+    };
+    document.body.appendChild(s);
+  }
+
+  // --- Real HubSpot meetings embed (when a meeting link is configured) ---
+  const meeting = document.querySelector<HTMLElement>('.meetings-iframe-container[data-src]');
+  if (meeting) {
+    const s = document.createElement('script');
+    s.src = 'https://static.hsappstatic.net/MeetingsEmbedCode/static-1.72/MeetingsEmbedCode.js';
+    s.async = true;
+    document.body.appendChild(s);
+  }
+</script>

@@ -1,0 +1,284 @@
+---
+import type { LandingContent } from '../../i18n/types.ts';
+interface Props { content: LandingContent; }
+const { content } = Astro.props;
+const r = content.roi;
+
+const defaults = { industry: 'saas', budget: 8000, deal: 14000, close: 25 };
+const cfg = {
+  industries: r.industries,
+  labels: {
+    cvrCpcTpl: r.cvrCpcTpl,
+    revenue: r.revenueLabel,
+    roas: r.roasLabel,
+    sql: r.sqlLabel,
+    roi: r.roiLabel,
+  },
+  locale: content.lang === 'en' ? 'en-US' : 'de-DE',
+  defaults,
+};
+const funnelRows = [
+  { key: 'clicks', label: r.funnel.clicks, color: '#38BDF8' },
+  { key: 'leads', label: r.funnel.leads, color: '#818CF8' },
+  { key: 'sqls', label: r.funnel.sqls, color: '#F97316' },
+  { key: 'deals', label: r.funnel.deals, color: '#22C55E' },
+];
+---
+
+<section id="rechner" class="section roi">
+  <div class="roi-glow"></div>
+  <div class="roi-inner">
+    <div class="roi-head" data-reveal>
+      <div class="eyebrow">{r.eyebrow}</div>
+      <h2 class="h2">{r.headline}</h2>
+      <p class="roi-sub">{r.sub}</p>
+    </div>
+
+    <div class="roi-panel" data-reveal id="roi-panel" data-cfg={JSON.stringify(cfg)}>
+      <!-- Controls -->
+      <div class="roi-controls">
+        <h3 class="roi-ctitle">{r.assumptionsTitle}</h3>
+
+        <div class="roi-field">
+          <div class="roi-label">
+            <span>{r.labelIndustry}</span>
+            <span class="roi-hint" data-roi="cvrcpc"></span>
+          </div>
+          <div class="roi-select-wrap">
+            <select id="roi-industry" class="roi-select">
+              {r.industries.map((ind) => (
+                <option value={ind.key} selected={ind.key === defaults.industry}>{ind.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div class="roi-field">
+          <div class="roi-label"><span>{r.labelBudget}</span><b data-roi="budgetVal"></b></div>
+          <input type="range" id="roi-budget" min="1500" max="50000" step="500" value={defaults.budget} />
+        </div>
+
+        <div class="roi-field">
+          <div class="roi-label"><span>{r.labelDeal}</span><b data-roi="dealVal"></b></div>
+          <input type="range" id="roi-deal" min="2000" max="120000" step="1000" value={defaults.deal} />
+        </div>
+
+        <div class="roi-field roi-field-last">
+          <div class="roi-label"><span>{r.labelClose}</span><b data-roi="closeVal"></b></div>
+          <input type="range" id="roi-close" min="5" max="60" step="1" value={defaults.close} />
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div class="roi-results">
+        <div class="roi-results-glow"></div>
+        <div class="roi-results-body">
+          <div class="roi-top">
+            <div>
+              <div class="roi-top-label">{r.revenueLabel}</div>
+              <div class="roi-revenue" data-roi="revenue"></div>
+            </div>
+            <div class="roi-roas-wrap">
+              <div class="roi-roas" data-roi="roas"></div>
+              <div class="roi-roas-label">{r.roasLabel}</div>
+            </div>
+          </div>
+
+          <div class="roi-stats">
+            <div class="roi-stat">
+              <div class="roi-stat-val sky" data-roi="sqls"></div>
+              <div class="roi-stat-label">{r.sqlLabel}</div>
+            </div>
+            <div class="roi-stat">
+              <div class="roi-stat-val green" data-roi="roi"></div>
+              <div class="roi-stat-label">{r.roiLabel}</div>
+            </div>
+          </div>
+
+          <div class="roi-funnel">
+            {funnelRows.map((f) => (
+              <div class="roi-funnel-row" data-funnel={f.key}>
+                <div class="roi-funnel-top">
+                  <span>{f.label}</span>
+                  <b data-funnel-val></b>
+                </div>
+                <div class="roi-funnel-track">
+                  <div class="roi-funnel-bar" style={`background:${f.color}`}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p class="roi-disclaimer">{r.disclaimer}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .roi { background: #f1f5f9; padding: 100px 32px; }
+  .roi-glow {
+    position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
+    width: 900px; height: 400px;
+    background: radial-gradient(ellipse, rgba(249, 115, 22, 0.08), transparent 70%);
+    pointer-events: none;
+  }
+  .roi-inner { max-width: 1120px; margin: 0 auto; position: relative; }
+  .roi-head { max-width: 720px; margin: 0 auto; text-align: center; }
+  .roi-sub { color: #475569; font-size: 18px; line-height: 1.6; margin: 18px 0 0; }
+
+  .roi-panel {
+    margin-top: 44px;
+    display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 22px; align-items: start;
+  }
+
+  /* Controls */
+  .roi-controls { background: #fff; border-radius: 20px; padding: 30px; border: 1px solid #e2e8f0; }
+  .roi-ctitle { font-family: var(--font-head); font-weight: 700; font-size: 20px; color: #0b1b33; margin: 0 0 22px; }
+  .roi-field { margin-bottom: 20px; }
+  .roi-field-last { margin-bottom: 0; }
+  .roi-label {
+    font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 9px;
+    display: flex; justify-content: space-between;
+  }
+  .roi-label b { color: #f97316; }
+  .roi-hint { color: #94a3b8; font-weight: 500; }
+  .roi-select-wrap { position: relative; }
+  .roi-select-wrap::after {
+    content: ''; position: absolute; right: 15px; top: 50%; width: 8px; height: 8px;
+    border-right: 2px solid #94a3b8; border-bottom: 2px solid #94a3b8;
+    transform: translateY(-70%) rotate(45deg); pointer-events: none;
+  }
+  .roi-select {
+    width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid #cbd5e1;
+    font-size: 15px; font-family: var(--font-body); color: #0f172a; background: #fff;
+    outline: none; box-sizing: border-box; appearance: none; -webkit-appearance: none; cursor: pointer;
+  }
+  .roi-field input[type='range'] { width: 100%; accent-color: #f97316; cursor: pointer; }
+
+  /* Results */
+  .roi-results {
+    background: linear-gradient(160deg, #0b1b33, #12233f);
+    border-radius: 20px; padding: 30px; border: 1px solid rgba(255, 255, 255, 0.09);
+    position: relative; overflow: hidden;
+  }
+  .roi-results-glow {
+    position: absolute; top: -40px; right: -30px; width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(34, 197, 94, 0.16), transparent 65%); pointer-events: none;
+  }
+  .roi-results-body { position: relative; }
+  .roi-top { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .roi-top-label { color: #94a3b8; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+  .roi-revenue { font-family: var(--font-head); font-weight: 700; font-size: 44px; color: #22c55e; letter-spacing: -0.02em; line-height: 1.05; }
+  .roi-roas-wrap { text-align: right; }
+  .roi-roas { font-family: var(--font-head); font-weight: 700; font-size: 34px; color: #f97316; line-height: 1; }
+  .roi-roas-label { color: #94a3b8; font-size: 12.5px; margin-top: 4px; }
+
+  .roi-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 22px 0; }
+  .roi-stat {
+    background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 14px; padding: 16px 18px;
+  }
+  .roi-stat-val { font-family: var(--font-head); font-weight: 700; font-size: 26px; line-height: 1; }
+  .roi-stat-val.sky { color: #38bdf8; }
+  .roi-stat-val.green { color: #22c55e; }
+  .roi-stat-label { color: #94a3b8; font-size: 12.5px; margin-top: 6px; }
+
+  .roi-funnel { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+  .roi-funnel-top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; color: #cbd5e1; }
+  .roi-funnel-top b { color: #fff; font-family: var(--font-head); }
+  .roi-funnel-track { height: 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.07); overflow: hidden; }
+  .roi-funnel-bar { height: 100%; border-radius: 999px; width: 6px; transition: width 0.4s ease-out; }
+  .roi-disclaimer { color: #64748b; font-size: 12px; line-height: 1.5; margin: 20px 0 0; }
+
+  @media (max-width: 900px) {
+    .roi-panel { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  interface Industry { key: string; label: string; cpc: number; cvr: number; l2s: number; }
+  interface Cfg {
+    industries: Industry[];
+    labels: { cvrCpcTpl: string; revenue: string; roas: string; sql: string; roi: string };
+    locale: string;
+    defaults: { industry: string; budget: number; deal: number; close: number };
+  }
+
+  const panel = document.getElementById('roi-panel');
+  if (panel) {
+    const cfg = JSON.parse(panel.dataset.cfg || '{}') as Cfg;
+    const nf = new Intl.NumberFormat(cfg.locale);
+    const eur = (v: number) => '€ ' + nf.format(Math.round(v));
+    const industries = Object.fromEntries(cfg.industries.map((i) => [i.key, i]));
+
+    const $ = (sel: string) => panel.querySelector(sel) as HTMLElement;
+    const set = (name: string, val: string) => {
+      const el = panel.querySelector(`[data-roi="${name}"]`);
+      if (el) el.textContent = val;
+    };
+
+    const industrySel = $('#roi-industry') as HTMLSelectElement;
+    const budgetIn = $('#roi-budget') as HTMLInputElement;
+    const dealIn = $('#roi-deal') as HTMLInputElement;
+    const closeIn = $('#roi-close') as HTMLInputElement;
+
+    const funnelEls = ['clicks', 'leads', 'sqls', 'deals'].map((k) => {
+      const row = panel.querySelector(`[data-funnel="${k}"]`) as HTMLElement;
+      return {
+        key: k,
+        val: row.querySelector('[data-funnel-val]') as HTMLElement,
+        bar: row.querySelector('.roi-funnel-bar') as HTMLElement,
+      };
+    });
+
+    const recalc = () => {
+      const ind = industries[industrySel.value];
+      const budget = +budgetIn.value;
+      const avgDeal = +dealIn.value;
+      const closeR = +closeIn.value / 100;
+
+      const clicks = budget / ind.cpc;
+      const leads = clicks * ind.cvr;
+      const sqls = leads * ind.l2s;
+      const dealsW = sqls * closeR;
+      const revenue = dealsW * avgDeal;
+      const roas = budget > 0 ? revenue / budget : 0;
+      const roi = budget > 0 ? ((revenue - budget) / budget) * 100 : 0;
+
+      // control readouts
+      set('cvrcpc',
+        cfg.labels.cvrCpcTpl
+          .replace('{cvr}', (ind.cvr * 100).toFixed(1))
+          .replace('{cpc}', ind.cpc.toFixed(2).replace('.', cfg.locale === 'de-DE' ? ',' : '.')));
+      set('budgetVal', eur(budget));
+      set('dealVal', eur(avgDeal));
+      set('closeVal', closeIn.value + (cfg.locale === 'de-DE' ? ' %' : '%'));
+
+      // results
+      set('revenue', eur(revenue));
+      set('roas', roas.toFixed(1).replace('.', cfg.locale === 'de-DE' ? ',' : '.') + '×');
+      set('sqls', '≈ ' + Math.round(sqls));
+      set('roi', '+' + Math.round(roi) + (cfg.locale === 'de-DE' ? ' %' : '%'));
+
+      // funnel
+      const vals: Record<string, number> = {
+        clicks: Math.round(clicks),
+        leads: Math.round(leads),
+        sqls: Math.round(sqls * 10) / 10,
+        deals: Math.round(dealsW * 10) / 10,
+      };
+      const maxV = vals.clicks || 1;
+      funnelEls.forEach((f) => {
+        f.val.textContent = nf.format(vals[f.key]);
+        f.bar.style.width = Math.max(6, (vals[f.key] / maxV) * 100) + '%';
+      });
+    };
+
+    [industrySel, budgetIn, dealIn, closeIn].forEach((el) =>
+      el.addEventListener('input', recalc)
+    );
+    recalc();
+  }
+</script>

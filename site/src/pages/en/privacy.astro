@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Subpage from '../../components/Subpage.astro';
+import { en } from '../../i18n/en.ts';
+import { SITE } from '../../config/site.ts';
+
+const c = SITE.company;
+---
+
+<BaseLayout
+  lang="en"
+  title="Privacy Policy | FILLCART LLC"
+  description="Privacy policy for FILLCART LLC — controller, services used (GTM, Google Ads, HubSpot) and data-subject rights."
+  path="/en/privacy"
+  altPath="/datenschutz"
+>
+  <Subpage content={en} eyebrow="Legal" title="Privacy Policy">
+    <div class="callout">
+      <strong>Note:</strong> This is not a finished legal text but the structure of the mandatory
+      building blocks for the stack in use. Please complete it with a generator (e.g. eRecht24)
+      and have it reviewed by a lawyer — in particular the third-country transfer to the US
+      (the controller is itself a US LLC).
+    </div>
+
+    <h2>1. Controller</h2>
+    <div class="addr">
+      {c.legalName}<br />
+      {c.street}<br />
+      {c.city}, {c.region} {c.postalCode}, {c.countryLabel}<br />
+      Email: <a href={`mailto:${c.email}`}>{c.email}</a>
+    </div>
+
+    <h2>2. Hosting</h2>
+    <p>[Add provider] — add server location, data-processing agreement and purpose.</p>
+
+    <h2>3. Cookie consent tool</h2>
+    <p>
+      [Add provider] — consent is required before Google Tag Manager starts. All non-essential tags
+      load only after active consent (Consent Mode).
+    </p>
+
+    <h2>4. Google Tag Manager, Google Ads conversion tracking &amp; remarketing</h2>
+    <p>
+      We use Google Tag Manager to manage tags, as well as Google Ads conversion tracking and
+      remarketing. These services run only after consent has been given pursuant to Art. 6(1)(a)
+      GDPR. Provider: Google Ireland Limited.
+    </p>
+
+    <h2>5. HubSpot (forms, CRM, tracking)</h2>
+    <p>
+      For contact forms, meeting booking and our CRM we use HubSpot (HubSpot, Inc., USA). When you
+      use the forms or the meetings calendar, the data entered is transmitted to and processed by
+      HubSpot. Note on third-country transfer to the US (see section 7).
+    </p>
+
+    <h2>6. Brevo Meetings / calendar embed</h2>
+    <p>[If used: add provider, purpose and legal basis.]</p>
+
+    <h2>7. Data transfer to the US</h2>
+    <p>
+      Some of the services used transfer data to the US (Art. 44 ff. GDPR). Transfers are based on
+      Standard Contractual Clauses (SCCs) and/or the EU–US Data Privacy Framework. As the controller
+      is itself a US LLC, particular care is required here — this section must be clarified with a lawyer.
+    </p>
+
+    <h2>8. Your rights</h2>
+    <ul>
+      <li>Access (Art. 15 GDPR)</li>
+      <li>Rectification (Art. 16 GDPR)</li>
+      <li>Erasure (Art. 17 GDPR)</li>
+      <li>Restriction of processing (Art. 18 GDPR)</li>
+      <li>Data portability (Art. 20 GDPR)</li>
+      <li>Objection (Art. 21 GDPR) and withdrawal of consent given</li>
+      <li>Complaint to a supervisory authority (Art. 77 GDPR)</li>
+    </ul>
+    <p>Retention: data is deleted as soon as the purpose of processing no longer applies and no statutory retention periods prevent it.</p>
+  </Subpage>
+</BaseLayout>
