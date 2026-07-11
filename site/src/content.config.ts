@@ -20,21 +20,9 @@ const blog = defineCollection({
   }),
 });
 
-/** Downloadable lead magnets / checklists / whitepapers. */
-const resources = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/resources' }),
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    kind: z.enum(['checklist', 'whitepaper', 'template', 'guide']),
-    category: z.enum(['google-ads', 'seo-aeo', 'hubspot', 'general']).default('general'),
-    publishDate: z.coerce.date(),
-    /** Number of items / pages, shown on the card. */
-    metaLabel: z.string().optional(),
-    accent: z.enum(['orange', 'green', 'sky']).default('orange'),
-    featured: z.boolean().default(false),
-  }),
-});
+// NOTE: the /ressourcen pages are served from src/data/resources.ts, not a
+// content collection — so there is no `resources` collection here (defining one
+// for a non-existent folder only produces a build warning).
 
 /** Case studies / references for real, named clients. */
 const cases = defineCollection({
@@ -65,4 +53,4 @@ const cases = defineCollection({
   }),
 });
 
-export const collections = { blog, resources, cases };
+export const collections = { blog, cases };

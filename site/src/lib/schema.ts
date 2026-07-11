@@ -2,6 +2,7 @@ import { SITE } from '../config/site.ts';
 import type { LandingContent } from '../i18n/types.ts';
 
 const c = SITE.company;
+const ct = SITE.contact;
 
 const postalAddress = {
   '@type': 'PostalAddress',
@@ -12,18 +13,28 @@ const postalAddress = {
   addressCountry: c.country,
 };
 
+const contactPoint = {
+  '@type': 'ContactPoint',
+  contactType: 'sales',
+  email: c.email,
+  telephone: ct.phone,
+  availableLanguage: ['de', 'en'],
+};
+
 /** ProfessionalService node — reused on every page. */
 export function professionalService(lang: 'de' | 'en') {
   return {
     '@type': 'ProfessionalService',
     name: c.legalName,
-    image: new URL('/assets/logo-black.png', SITE.baseUrl).href,
+    image: new URL('/assets/brand/logo-black.png', SITE.baseUrl).href,
     url: SITE.baseUrl + (lang === 'en' ? '/en/' : '/'),
     email: c.email,
-    priceRange: lang === 'de' ? 'ab 5.000 € Adspend/Monat' : 'from €5,000 ad spend/month',
+    telephone: ct.phone,
+    priceRange: '€€€',
     address: postalAddress,
-    naics: c.naics,
+    areaServed: ['DE', 'AT', 'CH', 'US'],
     foundingDate: c.founded,
+    contactPoint,
     description:
       lang === 'de'
         ? 'Google Ads Management für B2B, das auf Pipeline-Value statt Cost-per-Lead optimiert. HubSpot Solutions Partner.'
@@ -38,10 +49,12 @@ export function organization() {
     name: c.legalName,
     legalName: c.legalName,
     email: c.email,
+    telephone: ct.phone,
     url: SITE.baseUrl,
-    logo: new URL('/assets/logo-black.png', SITE.baseUrl).href,
+    logo: new URL('/assets/brand/logo-black.png', SITE.baseUrl).href,
     address: postalAddress,
     foundingDate: c.founded,
+    contactPoint,
   };
 }
 

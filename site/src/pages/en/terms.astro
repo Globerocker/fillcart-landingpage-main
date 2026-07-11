@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Subpage from '../../components/Subpage.astro';
+import { en } from '../../i18n/en.ts';
+import { SITE } from '../../config/site.ts';
+
+const c = SITE.company;
+---
+
+<BaseLayout
+  lang="en"
+  title="Terms of Service | FILLCART LLC"
+  description="Terms of Service for FILLCART LLC — scope of Google Ads management services, engagement, fees, client responsibilities, and liability."
+  path="/en/terms"
+  altPath="/agb"
+>
+  <Subpage content={en} eyebrow="Legal" title="Terms of Service">
+    <div class="callout">
+      <strong>Last updated:</strong> July 2026. These terms govern the Google Ads management
+      services provided by {c.legalName}. They form the framework for our engagements; the specific
+      scope, fees and duration of each engagement are agreed individually in writing.
+    </div>
+
+    <h2>1. Provider</h2>
+    <div class="addr">
+      {c.legalName}<br />
+      {c.street}<br />
+      {c.city}, {c.region} {c.postalCode}, {c.countryLabel}<br />
+      Email: <a href={`mailto:${c.email}`}>{c.email}</a>
+    </div>
+
+    <h2>2. Services</h2>
+    <p>
+      {c.legalName} plans, builds, manages and optimizes Google Ads campaigns for business (B2B)
+      clients and provides related performance reporting. Work is carried out on the client's own
+      Google Ads account, which is linked to our Google Ads Manager Account (MCC) via the standard
+      Google account-linking process. To operate efficiently we use our own internal tooling
+      ("Fillcart Ads Manager") which connects to the Google Ads API for campaign management and
+      reporting. The exact deliverables of an engagement are defined in the individual agreement.
+    </p>
+
+    <h2>3. Engagement & fees</h2>
+    <p>
+      The free audit and the setup of a first test campaign are provided at no charge and without
+      obligation. Ongoing management is provided against a monthly fee agreed in writing, typically
+      from €5,000 in monthly ad spend. Fees are exclusive of any applicable taxes. Either party may
+      end an ongoing engagement in accordance with the individual agreement.
+    </p>
+
+    <h2>4. Advertising budget</h2>
+    <p>
+      The advertising budget (media spend) is billed by Google directly to the client and is not
+      part of our management fee. The client remains the account holder and payer for all media
+      spend. We do not resell advertising inventory.
+    </p>
+
+    <h2>5. Client responsibilities</h2>
+    <ul>
+      <li>Grant and maintain the necessary access to the Google Ads account (and, where agreed, the CRM).</li>
+      <li>Provide accurate information, brand assets and any legally required approvals for ad content.</li>
+      <li>Ensure the advertised offers and landing pages comply with applicable law and Google Ads policies.</li>
+    </ul>
+
+    <h2>6. Deliverables & intellectual property</h2>
+    <p>
+      Campaign structures, ad copy and reports created for the client within an engagement belong to
+      the client and remain accessible in the client's own Google Ads account. Our internal tooling,
+      methods and templates remain our property.
+    </p>
+
+    <h2>7. Third-party platforms</h2>
+    <p>
+      Our services rely on third-party platforms (in particular Google Ads and, where used, HubSpot).
+      Their availability, policies and pricing are outside our control, and the client's use of those
+      platforms is subject to the respective provider's terms.
+    </p>
+
+    <h2>8. No guarantee of results</h2>
+    <p>
+      Advertising performance depends on many factors outside our control (auction dynamics, market
+      demand, the client's offer and sales process). We apply professional care and industry best
+      practice but do not warrant any specific result, ranking, conversion volume or return.
+      Illustrative figures on this website are benchmarks, not promises.
+    </p>
+
+    <h2>9. Limitation of liability</h2>
+    <p>
+      To the extent permitted by law, {c.legalName} is liable only for damages caused intentionally
+      or by gross negligence. Liability for slight negligence is limited to the breach of essential
+      contractual obligations and to the foreseeable, typical damage. We are not liable for media
+      spend billed by Google or for the acts of third-party platforms.
+    </p>
+
+    <h2>10. Confidentiality & data</h2>
+    <p>
+      Each party keeps the other's confidential information secret. Client account data is used
+      solely to manage and report on that client's own account; it is never shared with other clients
+      or resold. Details on data processing are set out in our
+      <a href="/en/privacy">Privacy Policy</a>.
+    </p>
+
+    <h2>11. Changes</h2>
+    <p>
+      We may update these terms; the version in force is the one published here at the time an
+      engagement is agreed. Material changes to an ongoing engagement are agreed in writing.
+    </p>
+
+    <h2>12. Governing law</h2>
+    <p>
+      These terms are governed by the laws of the State of Wyoming, USA, without prejudice to any
+      mandatory consumer-protection provisions applicable at the client's place of business.
+      Mandatory statutory rights remain unaffected.
+    </p>
+
+    <h2>13. Contact</h2>
+    <p>Questions about these terms: <a href={`mailto:${c.email}`}>{c.email}</a>.</p>
+  </Subpage>
+</BaseLayout>

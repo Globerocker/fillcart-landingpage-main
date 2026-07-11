@@ -51,9 +51,9 @@ All in **`site/src/config/site.ts`** — one file, then redeploy:
 
 ## 5. Enable the visual editor (TinaCMS)
 
-See **`CMS-SETUP.md`**. Short version: create a free project at app.tina.io, add
-`PUBLIC_TINA_CLIENT_ID` + `TINA_TOKEN` to Vercel's env, switch the Vercel **Build Command** to
-`npm run build:cms`, redeploy → edit at `fillcart.de/admin`.
+See **`docs/CMS-ACCESS.md`** (full walkthrough) or `CMS-SETUP.md`. Short version: create a free
+project at app.tina.io, add `PUBLIC_TINA_CLIENT_ID` + `TINA_TOKEN` to Vercel's env, redeploy → edit
+at `fillcart.de/admin`. No build-command change needed — the build auto-detects the env vars.
 
 ---
 

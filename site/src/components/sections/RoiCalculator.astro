@@ -301,6 +301,16 @@ const funnelRows = [
     [industrySel, budgetIn, dealIn, closeIn].forEach((el) =>
       el.addEventListener('input', recalc)
     );
-    recalc();
+
+    // Run the first calc when the calculator scrolls into view, so the funnel
+    // bars animate their fill on screen instead of while the panel is hidden.
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries, obs) => {
+        if (entries.some((e) => e.isIntersecting)) { recalc(); obs.disconnect(); }
+      }, { threshold: 0.2 });
+      io.observe(panel);
+    } else {
+      recalc();
+    }
   }
 </script>

@@ -36,7 +36,7 @@ const schema = {
       publisher: {
         '@type': 'Organization',
         name: SITE.company.legalName,
-        logo: { '@type': 'ImageObject', url: new URL('/assets/logo-black.png', SITE.baseUrl).href },
+        logo: { '@type': 'ImageObject', url: new URL('/assets/brand/logo-black.png', SITE.baseUrl).href },
       },
       mainEntityOfPage: new URL(url, SITE.baseUrl).href,
       articleSection: cat.label,
@@ -54,7 +54,7 @@ const schema = {
 };
 ---
 
-<BaseLayout lang="de" title={`${data.title} | Fillcart`} description={data.description} path={url} altPath="/en/" schema={schema}>
+<BaseLayout lang="de" title={`${data.title} | Fillcart`} description={data.description} path={url} schema={schema}>
   <Header content={de} />
 
   <div class="reading-progress"><span id="reading-bar"></span></div>
@@ -74,7 +74,7 @@ const schema = {
         <h1 class="art-title">{data.title}</h1>
         <p class="art-desc">{data.description}</p>
         <div class="art-meta">
-          <span class="art-author"><img src="/assets/andre.png" alt="" width="34" height="34" />{data.author}</span>
+          <span class="art-author"><img src="/assets/team/andre.png" alt="" width="34" height="34" />{data.author}</span>
           <span class="art-dot">·</span>
           <time datetime={data.publishDate.toISOString()}>{fmtDate(data.publishDate)}</time>
           <span class="art-dot">·</span>
@@ -122,7 +122,7 @@ const schema = {
 
           <!-- Author box -->
           <div class="art-authorbox">
-            <img src="/assets/andre.png" alt="Andre Schüler" width="72" height="72" />
+            <img src="/assets/team/andre.png" alt="Andre Schüler" width="72" height="72" />
             <div>
               <div class="art-authorbox-name">{data.author}</div>
               <p>Operator hinter Fillcart. Vorher Head of Marketing bei einer Legal-Tech-SaaS-Holding, Head of SEO bei Matrix42, HubSpot Consultant. Baut Google-Ads-Kampagnen, die auf Pipeline optimieren — nicht auf den billigsten Klick.</p>

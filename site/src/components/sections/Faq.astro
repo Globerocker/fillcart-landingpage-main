@@ -49,17 +49,25 @@ const f = content.faq;
   }
   .faq-item.open .faq-icon { transform: rotate(45deg); }
 
+  /* grid-template-rows 0fr→1fr animates the true content height — no clipping,
+     no matter how long the answer is, and the easing stays even. */
   .faq-a {
-    overflow: hidden; max-height: 0; opacity: 0;
-    transition: max-height 0.35s ease, opacity 0.3s;
+    display: grid; grid-template-rows: 0fr; opacity: 0;
+    transition: grid-template-rows 0.35s ease, opacity 0.3s;
   }
-  .faq-item.open .faq-a { max-height: 320px; opacity: 1; }
-  .faq-a p { color: #475569; font-size: 16px; line-height: 1.65; margin: 0; padding: 0 26px 24px; }
+  .faq-item.open .faq-a { grid-template-rows: 1fr; opacity: 1; }
+  .faq-a p {
+    overflow: hidden; min-height: 0;
+    color: #475569; font-size: 16px; line-height: 1.65; margin: 0; padding: 0 26px 24px;
+  }
 
   @media (max-width: 480px) {
     .faq-q { padding: 18px 18px; }
     .faq-q > span:first-child { font-size: 16px; }
     .faq-a p { padding: 0 18px 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .faq-a { transition: opacity 0.3s; }
   }
 </style>
 

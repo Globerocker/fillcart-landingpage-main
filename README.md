@@ -1,25 +1,65 @@
-# CODING AGENTS: READ THIS FIRST
+# Fillcart — fillcart.de
 
-This is a **handoff bundle** from Claude Design (claude.ai/design).
+Marketing site for **FILLCART LLC**, a boutique Google Ads agency for B2B (DACH + USA) that
+optimizes on pipeline value, not cost-per-lead. German is the primary language (`/`), English lives
+under `/en/`. Built with **Astro**, content-managed with **TinaCMS**, deployed on **Vercel**.
 
-A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
+## Repo layout
 
-## What you should do — IMPORTANT
+```text
+.
+├── site/         ← the website (Astro). Vercel deploys ONLY this folder.
+├── docs/         ← how-to guides (deploy, CMS access, leads, Google Ads API)
+├── reference/    ← source material, not shipped: original design handoff, chats, research dossiers
+└── README.md
+```
 
-**Read the chat transcripts first.** There are 1 chat transcript(s) in `chats/`. The transcripts show the full back-and-forth between the user and the design assistant — they tell you **what the user actually wants** and **where they landed** after iterating. Don't skip them. The final HTML files are the output, but the chat is where the intent lives.
+Inside `site/`:
 
-**Read `project/Fillcart Landingpage.dc.html` in full.** The user had this file open when they triggered the handoff, so it's almost certainly the primary design they want built. Read it top to bottom — don't skim. Then **follow its imports**: open every file it pulls in (shared components, CSS, scripts) so you understand how the pieces fit together before you start implementing.
+```text
+src/
+├── pages/            routes — DE at /, EN under /en/; blog = /wissen, cases = /referenzen
+├── components/
+│   └── sections/     the landing-page blocks (Hero, Deal, Roi, Timeline, Proof, Faq, …)
+├── i18n/de.ts,en.ts  ALL landing-page copy (edit copy here, not in components)
+├── config/site.ts    the one control panel: company data + every integration toggle
+├── content/          Markdown the CMS edits: blog/ (articles) + cases/ (references)
+├── lib/schema.ts     JSON-LD structured data
+└── layouts/          BaseLayout (head/meta/OG/tracking) + ArticleLayout
+public/assets/        images — see public/assets/README.md for what goes where
+```
 
-**If anything is ambiguous, ask the user to confirm before you start implementing.** It's much cheaper to clarify scope up front than to build the wrong thing.
+## Develop
 
-## About the design files
+```bash
+cd site
+npm install
+npm run dev            # http://localhost:4321
+npm run dev:cms        # same, with the TinaCMS editor at /admin (local mode)
+npm run build          # production build (auto-includes /admin if Tina env vars are set)
+npm run preview        # serve the build locally
+```
 
-The design medium is **HTML/CSS/JS** — these are prototypes, not production code. Your job is to **recreate them pixel-perfectly** in whatever technology makes sense for the target codebase (React, Vue, native, whatever fits). Match the visual output; don't copy the prototype's internal structure unless it happens to fit.
+Requires Node ≥ 20 (Vercel uses 24.x).
 
-**Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
+## Deploy
 
-## Bundle contents
+Vercel, **Root Directory = `site`**, framework Astro. Every push to `main` auto-deploys.
+Full guide: [`docs/DEPLOY.md`](docs/DEPLOY.md).
 
-- `README.md` — this file
-- `chats/` — conversation transcripts (read these!)
-- `project/` — the `Fillcart Google Ads Landingpage` project files (HTML prototypes, assets, components)
+## Configure (one file)
+
+`site/src/config/site.ts` holds company details and every integration:
+- **Lead form** delivery — [`docs/LEADS.md`](docs/LEADS.md)
+- HubSpot form, GTM, Google Ads conversion, cookie-consent — all toggles, all here
+- WhatsApp + Google Calendar booking are already live
+
+## Guides
+
+| Topic | Doc |
+|-------|-----|
+| Log into the CMS (why /admin 404s, the fix) | [`docs/CMS-ACCESS.md`](docs/CMS-ACCESS.md) |
+| CMS overview (what's editable) | [`docs/CMS-SETUP.md`](docs/CMS-SETUP.md) |
+| Deploying | [`docs/DEPLOY.md`](docs/DEPLOY.md) |
+| Lead-form delivery | [`docs/LEADS.md`](docs/LEADS.md) |
+| Google Ads API token resubmission | [`docs/GOOGLE-ADS-API.md`](docs/GOOGLE-ADS-API.md) |

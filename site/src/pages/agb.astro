@@ -1,0 +1,120 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Subpage from '../components/Subpage.astro';
+import { de } from '../i18n/de.ts';
+import { SITE } from '../config/site.ts';
+
+const c = SITE.company;
+---
+
+<BaseLayout
+  lang="de"
+  title="AGB / Nutzungsbedingungen | FILLCART LLC"
+  description="Allgemeine Geschäftsbedingungen der FILLCART LLC – Leistungsumfang des Google-Ads-Managements, Zusammenarbeit, Vergütung, Mitwirkung und Haftung."
+  path="/agb"
+  altPath="/en/terms"
+>
+  <Subpage content={de} eyebrow="Rechtliches" title="Allgemeine Geschäftsbedingungen">
+    <div class="callout">
+      <strong>Stand:</strong> Juli 2026. Diese Bedingungen bilden den Rahmen für das
+      Google-Ads-Management der {c.legalName}. Der konkrete Leistungsumfang, die Vergütung und die
+      Laufzeit werden je Zusammenarbeit individuell schriftlich vereinbart.
+    </div>
+
+    <h2>1. Anbieter</h2>
+    <div class="addr">
+      {c.legalName}<br />
+      {c.street}<br />
+      {c.city}, {c.region} {c.postalCode}, {c.countryLabel}<br />
+      E-Mail: <a href={`mailto:${c.email}`}>{c.email}</a>
+    </div>
+
+    <h2>2. Leistungen</h2>
+    <p>
+      Die {c.legalName} plant, baut, steuert und optimiert Google-Ads-Kampagnen für
+      B2B-Unternehmen und liefert das zugehörige Performance-Reporting. Gearbeitet wird im eigenen
+      Google-Ads-Konto des Kunden, das über die Standard-Verknüpfung mit unserem
+      Google-Ads-Manager-Konto (MCC) verbunden wird. Zur effizienten Steuerung setzen wir ein
+      internes Werkzeug ein („Fillcart Ads Manager"), das für Kampagnen-Management und Reporting mit
+      der Google Ads API verbunden ist. Der genaue Leistungsumfang ergibt sich aus der
+      Einzelvereinbarung.
+    </p>
+
+    <h2>3. Zusammenarbeit & Vergütung</h2>
+    <p>
+      Der Audit und der Aufbau einer ersten Testkampagne sind kostenlos und unverbindlich. Die
+      laufende Betreuung erfolgt gegen eine schriftlich vereinbarte monatliche Vergütung, in der
+      Regel ab 5.000 € monatlichem Ad-Budget. Alle Preise verstehen sich zzgl. etwaiger Steuern.
+      Eine laufende Zusammenarbeit kann gemäß der Einzelvereinbarung beendet werden.
+    </p>
+
+    <h2>4. Werbebudget</h2>
+    <p>
+      Das Werbebudget (Media-Spend) rechnet Google direkt mit dem Kunden ab; es ist nicht Teil
+      unserer Vergütung. Kontoinhaber und Zahlungspflichtiger des Media-Spends bleibt der Kunde. Wir
+      handeln nicht mit Werbeplätzen.
+    </p>
+
+    <h2>5. Mitwirkung des Kunden</h2>
+    <ul>
+      <li>Erteilung und Aufrechterhaltung der erforderlichen Zugriffe auf das Google-Ads-Konto (und, sofern vereinbart, das CRM).</li>
+      <li>Bereitstellung korrekter Informationen, Marken-Assets und ggf. rechtlich erforderlicher Freigaben für Werbeinhalte.</li>
+      <li>Sicherstellung, dass beworbene Angebote und Landingpages geltendem Recht und den Google-Ads-Richtlinien entsprechen.</li>
+    </ul>
+
+    <h2>6. Arbeitsergebnisse & Rechte</h2>
+    <p>
+      Im Rahmen der Zusammenarbeit erstellte Kampagnenstrukturen, Anzeigentexte und Reports gehören
+      dem Kunden und bleiben in dessen eigenem Google-Ads-Konto zugänglich. Unser internes Werkzeug,
+      unsere Methoden und Vorlagen bleiben unser Eigentum.
+    </p>
+
+    <h2>7. Drittplattformen</h2>
+    <p>
+      Unsere Leistungen beruhen auf Drittplattformen (insbesondere Google Ads und, sofern eingesetzt,
+      HubSpot). Deren Verfügbarkeit, Richtlinien und Preise liegen außerhalb unseres Einflusses; die
+      Nutzung unterliegt den Bedingungen des jeweiligen Anbieters.
+    </p>
+
+    <h2>8. Keine Erfolgsgarantie</h2>
+    <p>
+      Die Werbeleistung hängt von zahlreichen Faktoren außerhalb unseres Einflusses ab
+      (Auktionsdynamik, Marktnachfrage, Angebot und Vertriebsprozess des Kunden). Wir arbeiten mit
+      fachlicher Sorgfalt nach Branchenstandard, schulden aber kein bestimmtes Ergebnis, keine
+      Platzierung, kein Conversion-Volumen und keinen bestimmten Return. Illustrative Zahlen auf
+      dieser Website sind Benchmarks, keine Zusagen.
+    </p>
+
+    <h2>9. Haftung</h2>
+    <p>
+      Wir haften unbeschränkt für Vorsatz und grobe Fahrlässigkeit sowie nach zwingendem Recht. Bei
+      einfacher Fahrlässigkeit haften wir nur bei Verletzung wesentlicher Vertragspflichten
+      (Kardinalpflichten) und der Höhe nach begrenzt auf den vorhersehbaren, vertragstypischen
+      Schaden. Für den von Google abgerechneten Media-Spend sowie für das Handeln von Drittplattformen
+      haften wir nicht.
+    </p>
+
+    <h2>10. Vertraulichkeit & Daten</h2>
+    <p>
+      Beide Seiten behandeln vertrauliche Informationen der anderen Seite geheim. Kontodaten eines
+      Kunden werden ausschließlich zur Steuerung und zum Reporting seines eigenen Kontos verwendet –
+      niemals mit anderen Kunden geteilt oder weiterverkauft. Einzelheiten zur Datenverarbeitung
+      stehen in unserer <a href="/datenschutz">Datenschutzerklärung</a>.
+    </p>
+
+    <h2>11. Änderungen</h2>
+    <p>
+      Wir können diese Bedingungen anpassen; maßgeblich ist die bei Vertragsschluss veröffentlichte
+      Fassung. Wesentliche Änderungen einer laufenden Zusammenarbeit werden schriftlich vereinbart.
+    </p>
+
+    <h2>12. Anwendbares Recht</h2>
+    <p>
+      Es gilt das Recht des US-Bundesstaates Wyoming, unbeschadet zwingender Verbraucherschutzvorschriften
+      am Sitz des Kunden. Zwingende gesetzliche Rechte bleiben unberührt.
+    </p>
+
+    <h2>13. Kontakt</h2>
+    <p>Fragen zu diesen Bedingungen: <a href={`mailto:${c.email}`}>{c.email}</a>.</p>
+  </Subpage>
+</BaseLayout>

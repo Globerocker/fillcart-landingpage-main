@@ -16,17 +16,26 @@ interface Props {
   description: string;
   /** Path of this page (e.g. "/" or "/en/") for canonical + og:url. */
   path: string;
-  /** Path to the equivalent page in the other language, for hreflang. */
-  altPath: string;
+  /**
+   * Path to the equivalent page in the OTHER language, for hreflang.
+   * Omit for pages that have no counterpart (DE-only blog/cases/resources) —
+   * they then self-reference instead of falsely pointing at the EN homepage.
+   */
+  altPath?: string;
+  /** Optional social-share image path (defaults to the brand OG image). */
+  ogImage?: string;
   /** Optional JSON-LD graph to inline (Organization / FAQPage / etc.). */
   schema?: Record<string, unknown> | Record<string, unknown>[];
 }
 
-const { lang, title, description, path, altPath, schema } = Astro.props;
+const { lang, title, description, path, altPath, ogImage, schema } = Astro.props;
 
 const canonical = new URL(path, SITE.baseUrl).href;
+// Only build a hreflang cluster when a real counterpart exists.
+const hasAlt = !!altPath;
 const dePath = lang === 'de' ? path : altPath;
 const enPath = lang === 'en' ? path : altPath;
+const ogImageUrl = new URL(ogImage ?? '/assets/og/og-default.png', SITE.baseUrl).href;
 
 const gtmId = INTEGRATIONS.gtm.containerId;
 const consent = INTEGRATIONS.consent;
@@ -43,10 +52,15 @@ const consent = INTEGRATIONS.consent;
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
 
-    <!-- hreflang: DE main, EN under /en/, x-default → DE -->
-    <link rel="alternate" hreflang="de" href={new URL(dePath, SITE.baseUrl).href} />
-    <link rel="alternate" hreflang="en" href={new URL(enPath, SITE.baseUrl).href} />
-    <link rel="alternate" hreflang="x-default" href={new URL(dePath, SITE.baseUrl).href} />
+    {/* hreflang: only when a real counterpart exists (DE ↔ EN). DE-only pages
+        self-reference via the canonical above and emit no cluster. */}
+    {hasAlt && (
+      <>
+        <link rel="alternate" hreflang="de" href={new URL(dePath!, SITE.baseUrl).href} />
+        <link rel="alternate" hreflang="en" href={new URL(enPath!, SITE.baseUrl).href} />
+        <link rel="alternate" hreflang="x-default" href={new URL(dePath!, SITE.baseUrl).href} />
+      </>
+    )}
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -55,10 +69,25 @@ const consent = INTEGRATIONS.consent;
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={new URL('/assets/logo-black.png', SITE.baseUrl).href} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
 
-    <link rel="icon" type="image/png" href="/assets/icon-black.png" />
+    <!-- Twitter card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <link rel="icon" type="image/png" href="/assets/brand/icon-white.png" />
+    <link rel="apple-touch-icon" href="/assets/brand/icon-black.png" />
     <meta name="theme-color" content="#0B1B33" />
+
+    {/* Failsafe: if JS is disabled or errors, reveal-on-scroll content must not
+        stay invisible. */}
+    <noscript>
+      <style>[data-reveal]{opacity:1 !important;transform:none !important}</style>
+    </noscript>
 
     {schema && (
       <script type="application/ld+json" set:html={JSON.stringify(schema)} />

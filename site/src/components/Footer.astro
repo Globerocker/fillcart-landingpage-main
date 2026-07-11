@@ -1,5 +1,6 @@
 ---
 import { SITE } from '../config/site.ts';
+import { brandLogo } from '../lib/asset.ts';
 import type { LandingContent } from '../i18n/types.ts';
 
 interface Props {
@@ -15,11 +16,11 @@ const c = SITE.company;
   <div class="ft-inner">
     <div class="ft-grid">
       <div class="ft-brand">
-        <img src="/assets/logo-white.png" alt="Fillcart" width="112" height="28" />
+        <img src="/assets/brand/logo-white.png" alt="Fillcart" width="112" height="28" />
         <p>{f.tagline}</p>
         <div class="ft-badges">
-          <span class="ft-badge-google"><img src="/assets/google-partner.png" alt="Google Partner" width="86" height="26" /></span>
-          <span class="ft-badge-hs">{f.hubspotBadge}</span>
+          <span class="ft-badge-google"><img src="/assets/partners/google-partner.png" alt="Google Partner" width="86" height="26" /></span>
+          <span class="ft-badge-hs"><img src={brandLogo('partners', 'hubspot-partner')} alt={f.hubspotBadge} height="30" /></span>
         </div>
       </div>
 
@@ -36,6 +37,7 @@ const c = SITE.company;
       <div class="ft-col">
         <div class="ft-col-title">{f.colContactTitle}</div>
         <a href={`mailto:${c.email}`}>{c.email}</a>
+        <a href={SITE.contact.phoneHref}>{SITE.contact.phone}</a>
         <span class="ft-address">
           {c.legalName}<br />
           {c.street}<br />
@@ -84,13 +86,13 @@ const c = SITE.company;
   }
   .ft-badge-google img { height: 26px; width: auto; }
   .ft-badge-hs {
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: #fff;
     border-radius: 8px;
-    padding: 8px 12px;
-    color: #94a3b8;
-    font-size: 13px;
-    font-weight: 600;
+    padding: 6px 10px;
+    display: inline-flex;
+    align-items: center;
   }
+  .ft-badge-hs img { height: 30px; width: auto; display: block; }
 
   .ft-col { display: flex; flex-direction: column; gap: 10px; }
   .ft-col-title {

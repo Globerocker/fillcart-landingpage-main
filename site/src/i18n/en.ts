@@ -262,6 +262,7 @@ export const en: LandingContent = {
     colLegal: [
       { label: 'Legal Notice', href: '/en/legal-notice' },
       { label: 'Privacy', href: '/en/privacy' },
+      { label: 'Terms of Service', href: '/en/terms' },
       { label: 'Deutsche Version', href: '/' },
     ],
     colContactTitle: 'Contact',

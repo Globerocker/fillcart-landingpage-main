@@ -7,6 +7,7 @@ const { content } = Astro.props;
 const cta = content.cta;
 const form = cta.form;
 const hs = INTEGRATIONS.hubspot;
+const lf = INTEGRATIONS.leadForm;
 const gcal = INTEGRATIONS.googleCalendar;
 const ct = SITE.contact;
 const isEn = content.lang === 'en';
@@ -41,7 +42,15 @@ const cal = {
         {HUBSPOT_FORM_READY ? (
           <div id="hs-audit-form" data-hs-form data-portal={hs.portalId} data-form={hs.formId} data-region={hs.region}></div>
         ) : (
-          <form class="fc-form" data-audit-form novalidate>
+          <form
+            class="fc-form"
+            data-audit-form
+            data-w3f-key={lf.web3formsKey}
+            data-deliver-to={lf.deliverTo}
+            data-subject={isEn ? 'New Fillcart audit request' : 'Neue Fillcart Audit-Anfrage'}
+            data-sending={isEn ? 'Sending…' : 'Wird gesendet…'}
+            novalidate
+          >
             <h3 class="fc-form-title">{form.title}</h3>
 
             <label class="fc-label">
@@ -275,13 +284,21 @@ const cal = {
 </style>
 
 <script>
-  // --- Custom form: budget qualifier + success state (placeholder path) ---
+  // --- Custom form: budget qualifier + real lead delivery ---
+  // Delivery order: Web3Forms (server-side email, no backend) → mailto fallback.
+  // A lead is NEVER shown "success" unless it was actually sent or handed to a
+  // mail client. See src/config/site.ts → INTEGRATIONS.leadForm.
   document.querySelectorAll<HTMLFormElement>('[data-audit-form]').forEach((formEl) => {
     const card = formEl.closest('.fcta-formcard');
     const budget = formEl.querySelector<HTMLSelectElement>('[data-budget]');
     const notice = formEl.querySelector<HTMLElement>('[data-lowbudget]');
     const submit = formEl.querySelector<HTMLButtonElement>('[data-submit]');
     const success = card?.querySelector<HTMLElement>('[data-success]');
+
+    const w3fKey = formEl.dataset.w3fKey || '';
+    const deliverTo = formEl.dataset.deliverTo || 'info@fillcart.de';
+    const subject = formEl.dataset.subject || 'New audit request';
+    const submitLabel = submit?.textContent || '';
 
     const sync = () => {
       const low = budget?.value === 'u5';
@@ -290,16 +307,71 @@ const cal = {
     };
     budget?.addEventListener('change', sync);
 
-    formEl.addEventListener('submit', (e) => {
+    const fields = () => {
+      const fd = new FormData(formEl);
+      const budgetLabel =
+        formEl.querySelector<HTMLSelectElement>('[data-budget]')?.selectedOptions[0]?.text || '';
+      return {
+        name: String(fd.get('name') || ''),
+        email: String(fd.get('email') || ''),
+        website: String(fd.get('website') || ''),
+        budget: budgetLabel,
+        message: String(fd.get('message') || ''),
+      };
+    };
+
+    const showSuccess = () => {
+      formEl.hidden = true;
+      if (success) success.hidden = false;
+    };
+
+    // Last-resort: hand the lead to the visitor's mail client so it is never lost.
+    const mailtoFallback = (f: ReturnType<typeof fields>) => {
+      const body =
+        `Name: ${f.name}\nE-Mail: ${f.email}\nWebsite: ${f.website}\n` +
+        `Budget: ${f.budget}\n\n${f.message}`;
+      window.location.href =
+        `mailto:${deliverTo}?subject=${encodeURIComponent(subject)}` +
+        `&body=${encodeURIComponent(body)}`;
+      showSuccess();
+    };
+
+    formEl.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (budget?.value === 'u5') return;
       if (!formEl.checkValidity()) {
         formEl.reportValidity();
         return;
       }
-      // NOTE: wire this to the HubSpot Forms API / a backend endpoint.
-      formEl.hidden = true;
-      if (success) success.hidden = false;
+      const f = fields();
+
+      // No server-side key configured → mailto fallback (guaranteed delivery).
+      if (!w3fKey) { mailtoFallback(f); return; }
+
+      // Web3Forms: server-side email, no backend required.
+      if (submit) { submit.disabled = true; submit.textContent = formEl.dataset.sending || 'Sending…'; }
+      try {
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            access_key: w3fKey,
+            subject,
+            from_name: 'Fillcart Website',
+            name: f.name,
+            email: f.email,
+            website: f.website,
+            budget: f.budget,
+            message: f.message,
+          }),
+        });
+        if (res.ok) { showSuccess(); return; }
+        throw new Error('web3forms ' + res.status);
+      } catch {
+        // Network/service failure → don't drop the lead, fall back to mailto.
+        if (submit) { submit.disabled = false; submit.textContent = submitLabel; }
+        mailtoFallback(f);
+      }
     });
   });
 

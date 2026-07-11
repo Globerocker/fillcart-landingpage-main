@@ -1,18 +1,18 @@
 ---
 import type { LandingContent } from '../../i18n/types.ts';
+import { brandLogo } from '../../lib/asset.ts';
 interface Props { content: LandingContent; }
 const { content } = Astro.props;
 const p = content.proof;
 
-// Real PNGs live in /assets/logos/*.png. Until they're uploaded, we fall back
-// to the placeholder SVG so nothing breaks. Drop the official PNGs in with these
-// exact names and they replace the placeholders automatically.
+// Client logos live in public/assets/clients/, partner badges in .../partners/.
+// brandLogo() prefers a real PNG dropped in, else the placeholder SVG (build-time).
 const logos = [
-  { png: '/assets/logos/septeo.png', svg: '/assets/logos/septeo.svg', alt: 'Septeo', h: 26 },
-  { png: '/assets/logos/matrix42.png', svg: '/assets/logos/matrix42.svg', alt: 'Matrix42', h: 22 },
-  { png: '/assets/logos/cixon.png', svg: '/assets/logos/cixon.svg', alt: 'CIXON', h: 24 },
-  { png: '/assets/google-partner.png', svg: '/assets/google-partner.png', alt: 'Google Partner', h: 30 },
-  { png: '/assets/logos/hubspot-partner.png', svg: '/assets/logos/hubspot-partner.svg', alt: 'HubSpot Solutions Partner', h: 40 },
+  { src: brandLogo('clients', 'septeo'), alt: 'Septeo', h: 26 },
+  { src: brandLogo('clients', 'matrix42'), alt: 'Matrix42', h: 22 },
+  { src: brandLogo('clients', 'cixon'), alt: 'CIXON', h: 24 },
+  { src: '/assets/partners/google-partner.png', alt: 'Google Partner', h: 30 },
+  { src: brandLogo('partners', 'hubspot-partner'), alt: 'HubSpot Solutions Partner', h: 40 },
 ];
 ---
 
@@ -22,7 +22,7 @@ const logos = [
     <div class="proof-main">
       <div class="proof-portrait" data-reveal>
         <div class="proof-portrait-bg"></div>
-        <img src="/assets/andre.png" alt="Andre Schüler" width="360" height="512" loading="lazy" />
+        <img src="/assets/team/andre.png" alt="Andre Schüler" width="360" height="512" loading="lazy" />
       </div>
 
       <div class="proof-body" data-reveal>
@@ -53,7 +53,7 @@ const logos = [
     <div class="proof-refs" data-reveal>
       <span class="proof-refs-label">{p.refsLabel}</span>
       {logos.map((l) => (
-        <span class="proof-logo"><img src={l.png} onerror={`this.onerror=null;this.src='${l.svg}'`} alt={l.alt} style={`height:${l.h}px`} loading="lazy" /></span>
+        <span class="proof-logo"><img src={l.src} alt={l.alt} height={l.h} style={`height:${l.h}px`} loading="lazy" /></span>
       ))}
     </div>
   </div>

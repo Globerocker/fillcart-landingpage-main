@@ -22,7 +22,8 @@ export const SITE = {
     entityId: '2023-001346077',
     registeredIn: 'Wyoming, USA',
     naics: '541810',
-    founded: '2023',
+    founded: '2023-10-16', // formation date (Wyoming) — matches the Ads API design doc
+    formationState: 'Wyoming',
     managingMember: 'Andre Schüler',
   },
 
@@ -65,6 +66,21 @@ export const INTEGRATIONS = {
     meetingUrl: '', // TODO: real meeting embed url
   },
   /**
+   * Lead delivery for the built-in audit form (used until the HubSpot form
+   * above is wired). Order of preference at submit time:
+   *   1. Web3Forms  → server-side email to `deliverTo`, no backend needed.
+   *      Get a free access key in 60s at https://web3forms.com (enter
+   *      info@fillcart.de, confirm, paste the key here). Delivers straight to
+   *      the inbox; nothing is ever silently dropped.
+   *   2. mailto fallback → if no key is set, submit opens a pre-filled email to
+   *      `deliverTo`. Not pretty, but the lead always reaches you.
+   * See docs/LEADS.md for the self-hosted Vercel-function alternative.
+   */
+  leadForm: {
+    web3formsKey: '', // TODO: paste Web3Forms access key
+    deliverTo: 'info@fillcart.de',
+  },
+  /**
    * Google Calendar Appointment Scheduling. This is live — the booking
    * embed + share link the client provided.
    */
@@ -98,6 +114,8 @@ export const INTEGRATIONS = {
 /** True once all mandatory integration IDs are present. */
 export const HUBSPOT_FORM_READY =
   !!INTEGRATIONS.hubspot.portalId && !!INTEGRATIONS.hubspot.formId;
+/** True once the built-in form can deliver server-side (Web3Forms key set). */
+export const LEAD_FORM_READY = !!INTEGRATIONS.leadForm.web3formsKey;
 export const HUBSPOT_MEETING_READY = !!INTEGRATIONS.hubspot.meetingUrl;
 export const GOOGLE_CALENDAR_READY = !!INTEGRATIONS.googleCalendar.embedUrl;
 export const GTM_READY = !!INTEGRATIONS.gtm.containerId;

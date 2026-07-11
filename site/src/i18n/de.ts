@@ -263,6 +263,7 @@ export const de: LandingContent = {
     colLegal: [
       { label: 'Impressum', href: '/impressum' },
       { label: 'Datenschutz', href: '/datenschutz' },
+      { label: 'AGB', href: '/agb' },
       { label: 'English Version', href: '/en/' },
     ],
     colContactTitle: 'Kontakt',

@@ -49,12 +49,13 @@ const stageData = {
         data-stage={JSON.stringify(stageData)}
         aria-hidden="true"
       >
-        <!-- Static fallback (no-JS / pre-hydration): filled cart snapshot -->
+        <!-- Static fallback (no-JS / pre-hydration): START state, so JS hydration
+             continues seamlessly from here instead of flashing a full cart. -->
         <div class="cart-stage-fallback">
           <div class="fb-counter">
             <div class="fb-label">{h.cartLabel}</div>
-            <div class="fb-value">€ {new Intl.NumberFormat(content.lang === 'en' ? 'en-US' : 'de-DE').format(content.pipelineTotal)}</div>
-            <div class="fb-bar"><span></span></div>
+            <div class="fb-value">€ 0</div>
+            <div class="fb-bar"><span style="width:0"></span></div>
           </div>
         </div>
       </div>
@@ -198,6 +199,7 @@ const stageData = {
   .cart-stage-fallback {
     position: absolute; inset: 0;
     display: flex; align-items: flex-start; justify-content: center;
+    padding-top: 46px; /* match the live counter's top offset → no jump on hydration */
   }
   .fb-counter { text-align: center; width: 100%; }
   .fb-label {
@@ -310,20 +312,40 @@ const stageData = {
         <span class="cs-card-dot" style="background:${d.dot};box-shadow:0 0 0 4px ${d.dot}22"></span>
       </div>`);
 
-    let landed = [];
-    const paintLanded = () => {
-      cardsLayer.querySelectorAll('.cs-card.landed').forEach((n) => n.remove());
-      landed.forEach((d, p) => {
-        const depth = landed.length - 1 - p;
-        const c = makeCard(d); c.classList.add('landed');
-        c.style.left = SLOTX + 'px';
-        c.style.top = (LANDTOP - depth * 20) + 'px';
-        c.style.transform = `rotate(${(p % 2 ? 1 : -1) * 2.2}deg) scale(${1 - depth * 0.05})`;
-        c.style.opacity = String(1 - depth * 0.18);
-        c.style.zIndex = String(10 + p);
-        c.style.setProperty('--fd', (p * 0.2) + 's');
-        cardsLayer.appendChild(c);
+    // Persistent landed-card nodes so a restack animates via CSS transition
+    // instead of teleporting. Keep the last few visible; retire older ones with
+    // a fade-out rather than letting them pop out of existence.
+    const MAX_LANDED = 3;
+    let landedCards = []; // { d, el }
+
+    const restack = () => {
+      const n = landedCards.length;
+      landedCards.forEach(({ el }, p) => {
+        const depth = n - 1 - p;
+        el.style.left = SLOTX + 'px';
+        el.style.top = (LANDTOP - depth * 20) + 'px';
+        el.style.transform = `rotate(${(p % 2 ? 1 : -1) * 2.2}deg) scale(${1 - depth * 0.05})`;
+        el.style.opacity = String(1 - depth * 0.18);
+        el.style.zIndex = String(10 + p);
+        el.style.setProperty('--fd', (p * 0.2) + 's');
       });
+    };
+
+    const addLanded = (d) => {
+      const el = makeCard(d); el.classList.add('landed');
+      // Appear exactly where the flying card settled → no pop-in.
+      el.style.left = SLOTX + 'px';
+      el.style.top = LANDTOP + 'px';
+      el.style.zIndex = '30';
+      cardsLayer.appendChild(el);
+      landedCards.push({ d, el });
+      while (landedCards.length > MAX_LANDED) {
+        const gone = landedCards.shift();
+        gone.el.classList.add('leaving');
+        setTimeout(() => gone.el.remove(), 500);
+      }
+      // Next frame so the transition has a start value to animate from.
+      requestAnimationFrame(restack);
     };
 
     const burst = (x, y) => {
@@ -367,9 +389,9 @@ const stageData = {
 
     const flyCard = (d, cb) => {
       const card = makeCard(d); card.classList.add('flying');
-      card.style.left = '0px'; card.style.top = '0px'; card.style.zIndex = '40';
+      card.style.left = '0px'; card.style.top = '0px'; card.style.zIndex = '30';
       cardsLayer.appendChild(card);
-      const from = { x: SLOTX + 46, y: 64 }, ctrl = { x: SLOTX + 168, y: 176 }, to = { x: SLOTX, y: LANDTOP };
+      const from = { x: SLOTX, y: 18 }, ctrl = { x: SLOTX + 70, y: 150 }, to = { x: SLOTX, y: LANDTOP };
       const dur = 820, t0 = performance.now(), startRot = -16 + Math.random() * 8;
       const step = (t) => {
         const p = Math.min(1, (t - t0) / dur), mt = 1 - p;
@@ -385,27 +407,55 @@ const stageData = {
     };
 
     const timers = []; let cum = 0;
+    const clearTimers = () => { timers.forEach(clearTimeout); timers.length = 0; };
+
     const dropAt = (i) => {
-      if (i >= deals.length) { timers.push(setTimeout(start, 2000)); return; }
+      if (i >= deals.length) { timers.push(setTimeout(() => softReset(begin), 2200)); return; }
       const d = deals[i];
       flyCard(d, () => {
         const from = pipe; cum += d.value; tween(from, cum, 620);
-        landed = [...landed, d].slice(-3); paintLanded();
+        addLanded(d);
         springCart(); burst(SLOTX + 95, LANDTOP + 6); floatChip(d.value);
-        timers.push(setTimeout(() => dropAt(i + 1), 780));
+        timers.push(setTimeout(() => dropAt(i + 1), 820));
       });
     };
-    function start() {
-      timers.forEach(clearTimeout); timers.length = 0;
-      landed = []; cum = 0; pipe = 0; valueEl.textContent = eur(0); barEl.style.width = '0%'; setFill(0);
-      cardsLayer.innerHTML = ''; floats.innerHTML = '';
+
+    // Graceful loop restart: ease the value back to zero and fade the cards out,
+    // then refill — instead of snapping the full cart to empty in one frame.
+    const softReset = (cb) => {
+      clearTimers();
+      const retiring = landedCards; landedCards = [];
+      retiring.forEach(({ el }) => el.classList.add('leaving'));
+      tween(pipe, 0, 520);
+      timers.push(setTimeout(() => {
+        retiring.forEach(({ el }) => el.remove());
+        floats.innerHTML = ''; cum = 0; cb();
+      }, 560));
+    };
+
+    function begin() {
+      clearTimers();
+      cum = 0; pipe = 0;
+      valueEl.textContent = eur(0); barEl.style.width = '0%'; setFill(0);
       dropAt(0);
     }
 
     if (reduced) {
-      landed = deals.slice(-3); cum = total; pipe = total;
-      valueEl.textContent = eur(total); barEl.style.width = '100%'; setFill(100); paintLanded();
-    } else { start(); }
+      cum = total; pipe = total;
+      valueEl.textContent = eur(total); barEl.style.width = '100%'; setFill(100);
+      deals.slice(-MAX_LANDED).forEach((d) => addLanded(d));
+      requestAnimationFrame(restack);
+    } else if ('IntersectionObserver' in window) {
+      // Only run while the hero is on screen (saves CPU/battery when scrolled away).
+      let running = false;
+      new IntersectionObserver((entries) => {
+        const vis = entries[0].isIntersecting;
+        if (vis && !running) { running = true; begin(); }
+        else if (!vis && running) { running = false; clearTimers(); cancelAnimationFrame(raf); }
+      }, { threshold: 0.12 }).observe(stage);
+    } else {
+      begin();
+    }
   }
 </script>
 
@@ -424,7 +474,7 @@ const stageData = {
   .cs-clabel { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #64748B; }
   .cs-cvalue { font-family: var(--font-head); font-size: 46px; font-weight: 700; color: #F97316; letter-spacing: -.02em; line-height: 1.1; margin-top: 4px; text-shadow: 0 0 26px rgba(249,115,22,.35); }
   .cs-cbar { width: 230px; height: 7px; border-radius: 999px; background: rgba(255,255,255,.1); margin: 12px auto 0; overflow: hidden; }
-  .cs-cbar span { display: block; width: 0; height: 100%; border-radius: 999px; background: linear-gradient(90deg,#F97316,#FDBA74,#22C55E); background-size: 200% 100%; transition: width .5s ease-out; animation: cs-shine 2.4s linear infinite; }
+  .cs-cbar span { display: block; width: 0; height: 100%; border-radius: 999px; background: linear-gradient(90deg,#F97316,#FDBA74,#22C55E); background-size: 200% 100%; animation: cs-shine 2.4s linear infinite; }
   @keyframes cs-shine { 0%{background-position:0 0} 100%{background-position:-200% 0} }
 
   .cs-cart { position: absolute; bottom: 8px; left: 50%; width: 320px; height: 260px; transform: translateX(-50%); z-index: 20; }
@@ -434,6 +484,7 @@ const stageData = {
   .cs-cards { position: absolute; inset: 0; z-index: 25; }
   .cs-card { position: absolute; width: 190px; will-change: transform; }
   .cs-card.landed { transition: top .5s cubic-bezier(.34,1.4,.5,1), opacity .4s, transform .4s; animation: cs-idle 4.5s ease-in-out infinite; animation-delay: var(--fd,0s); }
+  .cs-card.leaving { opacity: 0 !important; transform: translateY(30px) scale(.9) !important; transition: opacity .45s ease, transform .45s ease; animation: none !important; pointer-events: none; }
   .cs-card-inner { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid #E9EEF5; border-radius: 14px; padding: 12px 15px; box-shadow: 0 24px 48px -16px rgba(0,0,0,.55); }
   .cs-card-bar { width: 5px; height: 42px; border-radius: 4px; background: linear-gradient(180deg,#F97316,#FDBA74); flex-shrink: 0; }
   .cs-card-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
@@ -450,6 +501,6 @@ const stageData = {
   @keyframes cs-floatup { 0%{opacity:0; transform:translate(-50%,0) scale(.8)} 20%{opacity:1} 100%{opacity:0; transform:translate(-50%,-72px) scale(1)} }
 
   @media (prefers-reduced-motion: reduce) {
-    .cs-card.landed, .cs-src-dot, .cs-cbar span, .cs-ambient span { animation: none !important; }
+    .cs-card.landed, .cs-src-dot, .cs-cbar span, .cs-ambient span, .hero-badge .dot { animation: none !important; }
   }
 </style>

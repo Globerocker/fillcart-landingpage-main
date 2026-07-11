@@ -30,18 +30,17 @@ small HTML snippets in the body. Edit the surrounding text freely; if you ever m
 those boxes, Git history has every version and it's a one-line fix. (Want them as click-in
 components instead of HTML? That's a follow-up upgrade.)
 
-## One-time setup (≈ 10 minutes)
+## One-time setup (≈ 5 minutes)
+
+> **Full step-by-step (tailored to your Vercel project): [`docs/CMS-ACCESS.md`](docs/CMS-ACCESS.md).**
 
 1. **Create a free Tina project** at <https://app.tina.io> and connect your GitHub `fillcart` repo.
 2. Tina gives you a **Client ID** and a **Token**. Add them to Vercel:
    - Vercel → Project → **Settings → Environment Variables**
    - `PUBLIC_TINA_CLIENT_ID` = your client id
    - `TINA_TOKEN` = your token
-3. Change the Vercel **Build Command** to:
-   ```
-   npm run build:cms
-   ```
-   (this builds the `/admin` app, then the site). Redeploy.
+3. **Redeploy.** No build-command change needed — the build script (`site/scripts/build.mjs`)
+   auto-detects the two env vars and builds the `/admin` app when they're present.
 4. Go to **`https://fillcart.de/admin`**, log in with GitHub, and edit. Saves commit to `main`
    and redeploy automatically.
 
