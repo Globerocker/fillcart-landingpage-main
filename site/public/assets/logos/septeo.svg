@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 84" role="img" aria-label="Septeo">
+  <!-- stylized S mark: stacked diagonal bars, navy -->
+  <g fill="#2B2E58">
+    <path d="M20 12 L58 12 L44 26 L6 26 Z"/>
+    <path d="M12 34 L50 34 L36 48 L-2 48 Z" transform="translate(8,0)"/>
+    <path d="M20 56 L58 56 L44 70 L6 70 Z"/>
+  </g>
+  <text x="80" y="62" font-family="'Segoe UI',Verdana,Arial,sans-serif" font-weight="700" font-size="52" letter-spacing="-1" fill="#FF5A36">septeo</text>
+</svg>

@@ -245,234 +245,211 @@ const stageData = {
 </style>
 
 <script>
-  interface Deal { tag: string; value: number; dot: string; }
-  interface StageData { deals: Deal[]; total: number; label: string; locale: string; }
-
   const stage = document.getElementById('cart-stage');
   if (stage) {
-    const data = JSON.parse(stage.dataset.stage || '{}') as StageData;
-    const { deals, total, label, locale } = data;
+    const data = JSON.parse(stage.dataset.stage || '{}');
+    const deals = data.deals || [];
+    const total = data.total || 1;
+    const label = data.label || '';
+    const locale = data.locale || 'de-DE';
     const nf = new Intl.NumberFormat(locale);
-    const fmt = (v: number) => nf.format(v);
-    const eur = (v: number) => '€ ' + nf.format(Math.round(v));
+    const dec = locale === 'de-DE' ? ',' : '.';
+    const eur = (v) => '€ ' + nf.format(Math.round(v));
+    const kchip = (v) => '+€' + (v >= 1000 ? (Math.round(v / 100) / 10).toString().replace('.', dec) + 'k' : v);
+    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const CARD_W = 188;
-    const SLOT_LEFT = 234 - CARD_W / 2; // 140
-    const reduced =
-      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const CARDW = 190, SLOTX = 154, LANDTOP = 286;
+    const el = (cls, html) => { const d = document.createElement('div'); d.className = cls; if (html != null) d.innerHTML = html; return d; };
 
-    // Clear the static fallback; we render the live stage.
     stage.innerHTML = '';
 
-    // Ambient glow (::before already provides the main one)
-    // Counter block
-    const counter = document.createElement('div');
-    counter.className = 'cs-counter';
-    counter.innerHTML =
-      `<div class="cs-clabel">${label}</div>` +
-      `<div class="cs-cvalue">${eur(0)}</div>` +
-      `<div class="cs-cbar"><span></span></div>`;
-    const valueEl = counter.querySelector('.cs-cvalue') as HTMLElement;
-    const barEl = counter.querySelector('.cs-cbar span') as HTMLElement;
+    const amb = el('cs-ambient');
+    for (let i = 0; i < 14; i++) {
+      const p = document.createElement('span');
+      p.style.cssText = `left:${Math.round(8 + Math.random() * 84)}%;top:${Math.round(12 + Math.random() * 78)}%;animation-delay:${(Math.random() * 4).toFixed(2)}s;animation-duration:${(3 + Math.random() * 3).toFixed(2)}s`;
+      amb.appendChild(p);
+    }
 
-    // Cart
-    const cartWrap = document.createElement('div');
-    cartWrap.className = 'cs-cart';
-    cartWrap.innerHTML = `
-      <svg viewBox="0 0 320 258" width="320" height="258" style="overflow:visible">
-        <g fill="none" stroke="#E2E8F0" stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M40 44 H70 L96 60"></path>
-          <path d="M86 76 H262"></path>
-          <path d="M86 76 L110 196 H234 L262 76"></path>
+    const source = el('cs-source', '<span class="cs-src-dot"></span>Neue Deals · live');
+    const counter = el('cs-counter', `<div class="cs-clabel">${label}</div><div class="cs-cvalue">${eur(0)}</div><div class="cs-cbar"><span></span></div>`);
+    const valueEl = counter.querySelector('.cs-cvalue');
+    const barEl = counter.querySelector('.cs-cbar span');
+
+    const cart = el('cs-cart');
+    cart.innerHTML = `
+      <svg viewBox="0 0 320 260" width="320" height="260" style="overflow:visible">
+        <defs>
+          <linearGradient id="cartFillG" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0" stop-color="#F97316" stop-opacity="0.55"/>
+            <stop offset="1" stop-color="#22C55E" stop-opacity="0.30"/>
+          </linearGradient>
+          <clipPath id="cartClip"><path d="M88 78 L112 196 H232 L256 78 Z"/></clipPath>
+        </defs>
+        <g clip-path="url(#cartClip)"><rect class="cart-fill" x="80" y="196" width="184" height="0" fill="url(#cartFillG)"/></g>
+        <g fill="none" stroke="#E2E8F0" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M40 44 H70 L96 60"/>
+          <path d="M86 76 H262"/>
+          <path d="M86 76 L110 196 H234 L262 76"/>
         </g>
-        <circle cx="124" cy="224" r="13" fill="#E2E8F0"></circle>
-        <circle cx="216" cy="224" r="13" fill="#E2E8F0"></circle>
+        <circle cx="124" cy="224" r="12" fill="#E2E8F0"/>
+        <circle cx="216" cy="224" r="12" fill="#E2E8F0"/>
       </svg>`;
+    const fillEl = cart.querySelector('.cart-fill');
 
-    const cardsLayer = document.createElement('div');
-    cardsLayer.className = 'cs-cards';
+    const cardsLayer = el('cs-cards');
+    const floats = el('cs-floats');
+    stage.append(amb, source, counter, cart, cardsLayer, floats);
 
-    stage.append(counter, cartWrap, cardsLayer);
+    const makeCard = (d) => el('cs-card', `
+      <div class="cs-card-inner">
+        <span class="cs-card-bar"></span>
+        <span class="cs-card-body">
+          <span class="cs-card-tag">${d.tag}</span>
+          <span class="cs-card-val">+ €${nf.format(d.value)}</span>
+        </span>
+        <span class="cs-card-dot" style="background:${d.dot};box-shadow:0 0 0 4px ${d.dot}22"></span>
+      </div>`);
 
-    const makeCard = (d: Deal): HTMLElement => {
-      const el = document.createElement('div');
-      el.className = 'cs-card';
-      el.innerHTML = `
-        <div class="cs-card-inner">
-          <div class="cs-card-bar"></div>
-          <div class="cs-card-body">
-            <div class="cs-card-tag">${d.tag}</div>
-            <div class="cs-card-val">+ €${fmt(d.value)}</div>
-          </div>
-          <div class="cs-card-dot" style="background:${d.dot};box-shadow:0 0 0 3px ${d.dot}22"></div>
-        </div>`;
-      return el;
-    };
-
-    // Paint the stack of landed cards (max 3).
-    const paintLanded = (landed: Deal[]) => {
+    let landed = [];
+    const paintLanded = () => {
       cardsLayer.querySelectorAll('.cs-card.landed').forEach((n) => n.remove());
       landed.forEach((d, p) => {
         const depth = landed.length - 1 - p;
-        const el = makeCard(d);
-        el.classList.add('landed');
-        el.style.left = SLOT_LEFT + 'px';
-        el.style.top = 306 - depth * 24 + 'px';
-        el.style.transform =
-          `rotate(${(p % 2 === 0 ? -1 : 1) * 2}deg) scale(${1 - depth * 0.045})`;
-        el.style.opacity = String(1 - depth * 0.16);
-        el.style.zIndex = String(10 + p);
-        cardsLayer.appendChild(el);
+        const c = makeCard(d); c.classList.add('landed');
+        c.style.left = SLOTX + 'px';
+        c.style.top = (LANDTOP - depth * 20) + 'px';
+        c.style.transform = `rotate(${(p % 2 ? 1 : -1) * 2.2}deg) scale(${1 - depth * 0.05})`;
+        c.style.opacity = String(1 - depth * 0.18);
+        c.style.zIndex = String(10 + p);
+        c.style.setProperty('--fd', (p * 0.2) + 's');
+        cardsLayer.appendChild(c);
       });
     };
 
-    const spark = () => {
+    const burst = (x, y) => {
       if (reduced) return;
-      const s = document.createElement('div');
-      s.className = 'cs-spark';
-      [0, 60, 120, 180, 240, 300].forEach((a, i) => {
-        const dot = document.createElement('div');
-        dot.style.background = i % 2 ? '#22C55E' : '#F97316';
-        dot.style.transform = `rotate(${a}deg) translateX(34px)`;
-        s.appendChild(dot);
-      });
-      stage.appendChild(s);
-      setTimeout(() => s.remove(), 600);
+      const b = el('cs-burst'); b.style.left = x + 'px'; b.style.top = y + 'px';
+      for (let i = 0; i < 9; i++) {
+        const s = document.createElement('i');
+        s.style.background = i % 2 ? '#22C55E' : '#F97316';
+        s.style.setProperty('--a', (i * 40) + 'deg');
+        b.appendChild(s);
+      }
+      floats.appendChild(b); setTimeout(() => b.remove(), 660);
     };
 
-    const springCart = () => {
+    const floatChip = (v) => {
       if (reduced) return;
-      cartWrap.style.animation = 'none';
-      // reflow to restart the animation
-      void cartWrap.offsetWidth;
-      cartWrap.style.animation = 'fc-spring .55s ease-out';
+      const c = el('cs-floatchip', kchip(v));
+      c.style.left = '50%'; c.style.top = (LANDTOP - 6) + 'px';
+      floats.appendChild(c); setTimeout(() => c.remove(), 1250);
     };
 
-    let pipe = 0;
-    let raf = 0;
-    const tweenPipe = (from: number, to: number, dur: number) => {
-      cancelAnimationFrame(raf);
-      const t0 = performance.now();
-      const step = (t: number) => {
-        const p = Math.min(1, (t - t0) / dur);
-        const e = 1 - Math.pow(1 - p, 3);
+    let pipe = 0, raf = 0;
+    const setFill = (pct) => { const h = pct / 100 * 118; fillEl.setAttribute('y', String(196 - h)); fillEl.setAttribute('height', String(h)); };
+    const tween = (from, to, dur) => {
+      cancelAnimationFrame(raf); const t0 = performance.now();
+      const step = (t) => {
+        const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
         pipe = Math.round(from + (to - from) * e);
         valueEl.textContent = eur(pipe);
-        barEl.style.width = Math.min(100, Math.round((pipe / total) * 100)) + '%';
+        const pct = Math.min(100, (pipe / total) * 100);
+        barEl.style.width = pct + '%'; setFill(pct);
         if (p < 1) raf = requestAnimationFrame(step);
       };
       raf = requestAnimationFrame(step);
     };
 
-    const timers: number[] = [];
-    let landed: Deal[] = [];
-    let cum = 0;
-
-    const dropAt = (i: number) => {
-      if (i >= deals.length) {
-        timers.push(window.setTimeout(startLoop, 2100));
-        return;
-      }
-      const d = deals[i];
-      const fly = makeCard(d);
-      fly.classList.add('flying');
-      fly.style.left = SLOT_LEFT + 'px';
-      fly.style.top = '306px';
-      fly.style.zIndex = '30';
-      fly.style.animation = 'fc-drop .76s cubic-bezier(.3,.7,.35,1) forwards';
-      cardsLayer.appendChild(fly);
-
-      timers.push(
-        window.setTimeout(() => {
-          fly.remove();
-          const from = pipe;
-          cum += d.value;
-          tweenPipe(from, cum, 640);
-          landed = [...landed, d].slice(-3);
-          paintLanded(landed);
-          springCart();
-          spark();
-          timers.push(window.setTimeout(() => dropAt(i + 1), 860));
-        }, 760)
-      );
+    const springCart = () => {
+      if (reduced) return;
+      cart.style.animation = 'none'; void cart.offsetWidth; cart.style.animation = 'cs-spring .5s cubic-bezier(.3,1.4,.5,1)';
     };
 
-    function startLoop() {
-      timers.forEach(clearTimeout);
-      timers.length = 0;
-      landed = [];
-      cum = 0;
-      pipe = 0;
-      valueEl.textContent = eur(0);
-      barEl.style.width = '0%';
-      cardsLayer.innerHTML = '';
+    const flyCard = (d, cb) => {
+      const card = makeCard(d); card.classList.add('flying');
+      card.style.left = '0px'; card.style.top = '0px'; card.style.zIndex = '40';
+      cardsLayer.appendChild(card);
+      const from = { x: SLOTX + 46, y: 64 }, ctrl = { x: SLOTX + 168, y: 176 }, to = { x: SLOTX, y: LANDTOP };
+      const dur = 820, t0 = performance.now(), startRot = -16 + Math.random() * 8;
+      const step = (t) => {
+        const p = Math.min(1, (t - t0) / dur), mt = 1 - p;
+        const x = mt * mt * from.x + 2 * mt * p * ctrl.x + p * p * to.x;
+        const y = mt * mt * from.y + 2 * mt * p * ctrl.y + p * p * to.y;
+        const rot = startRot * (1 - (p < 0.85 ? p / 0.85 : 1));
+        const sc = 0.72 + 0.28 * Math.min(1, p / 0.7);
+        card.style.transform = `translate(${x}px,${y}px) rotate(${rot}deg) scale(${sc})`;
+        card.style.opacity = String(Math.min(1, p * 5));
+        if (p < 1) requestAnimationFrame(step); else { card.remove(); cb(); }
+      };
+      requestAnimationFrame(step);
+    };
+
+    const timers = []; let cum = 0;
+    const dropAt = (i) => {
+      if (i >= deals.length) { timers.push(setTimeout(start, 2000)); return; }
+      const d = deals[i];
+      flyCard(d, () => {
+        const from = pipe; cum += d.value; tween(from, cum, 620);
+        landed = [...landed, d].slice(-3); paintLanded();
+        springCart(); burst(SLOTX + 95, LANDTOP + 6); floatChip(d.value);
+        timers.push(setTimeout(() => dropAt(i + 1), 780));
+      });
+    };
+    function start() {
+      timers.forEach(clearTimeout); timers.length = 0;
+      landed = []; cum = 0; pipe = 0; valueEl.textContent = eur(0); barEl.style.width = '0%'; setFill(0);
+      cardsLayer.innerHTML = ''; floats.innerHTML = '';
       dropAt(0);
     }
 
     if (reduced) {
-      landed = deals.slice(-3);
-      cum = total;
-      pipe = total;
-      valueEl.textContent = eur(total);
-      barEl.style.width = '100%';
-      paintLanded(landed);
-    } else {
-      startLoop();
-    }
+      landed = deals.slice(-3); cum = total; pipe = total;
+      valueEl.textContent = eur(total); barEl.style.width = '100%'; setFill(100); paintLanded();
+    } else { start(); }
   }
 </script>
 
 <style is:global>
-  /* Live-stage element styles (global because the script builds them). */
-  .cs-counter { position: absolute; top: 0; left: 0; right: 0; text-align: center; z-index: 40; }
-  .cs-clabel {
-    font-size: 12px; font-weight: 700; letter-spacing: 0.12em;
-    text-transform: uppercase; color: #64748b;
-  }
-  .cs-cvalue {
-    font-family: var(--font-head); font-size: 46px; font-weight: 700;
-    color: #f97316; letter-spacing: -0.02em; line-height: 1.1; margin-top: 4px;
-  }
-  .cs-cbar {
-    width: 220px; height: 6px; border-radius: 999px;
-    background: rgba(255, 255, 255, 0.1); margin: 12px auto 0; overflow: hidden;
-  }
-  .cs-cbar span {
-    display: block; width: 0%; height: 100%; border-radius: 999px;
-    background: linear-gradient(90deg, #f97316, #22c55e);
-    transition: width 0.5s ease-out;
-  }
-  .cs-cart {
-    position: absolute; bottom: 6px; left: 50%; width: 320px; height: 258px;
-    transform: translateX(-50%);
-  }
-  .cs-cart svg { display: block; }
+  .cs-ambient { position: absolute; inset: 0; pointer-events: none; z-index: 15; }
+  .cs-ambient span { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: rgba(148,163,184,.5); animation: cs-drift linear infinite; }
+  @keyframes cs-drift { 0%{transform:translateY(0);opacity:0} 20%{opacity:.7} 80%{opacity:.4} 100%{transform:translateY(-28px);opacity:0} }
 
-  .cs-cards { position: absolute; inset: 0; }
-  .cs-card { position: absolute; width: 188px; }
-  .cs-card.landed {
-    transition: top 0.5s cubic-bezier(0.34, 1.4, 0.5, 1), opacity 0.4s, transform 0.4s;
-  }
-  .cs-card-inner {
-    background: #fff; border-radius: 14px; padding: 11px 15px;
-    box-shadow: 0 22px 46px -14px rgba(0, 0, 0, 0.6);
-    border: 1px solid #e9eef5; display: flex; align-items: center; gap: 12px;
-  }
-  .cs-card-bar { width: 5px; height: 40px; border-radius: 4px; background: #f97316; flex-shrink: 0; }
-  .cs-card-body { flex: 1; min-width: 0; }
-  .cs-card-tag {
-    font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em;
-    text-transform: uppercase; color: #94a3b8;
-  }
-  .cs-card-val {
-    font-size: 17px; font-weight: 700; color: #0f172a;
-    font-family: var(--font-head); margin-top: 1px;
-  }
+  .cs-source { position: absolute; top: 4px; left: 50%; transform: translateX(-50%); z-index: 36;
+    display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: #CBD5E1;
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); padding: 6px 14px; border-radius: 999px; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+  .cs-src-dot { width: 7px; height: 7px; border-radius: 50%; background: #22C55E; animation: cs-ping 1.8s infinite; }
+  @keyframes cs-ping { 0%{box-shadow:0 0 0 0 rgba(34,197,94,.5)} 70%{box-shadow:0 0 0 8px rgba(34,197,94,0)} 100%{box-shadow:0 0 0 0 rgba(34,197,94,0)} }
+
+  .cs-counter { position: absolute; top: 46px; left: 0; right: 0; text-align: center; z-index: 38; }
+  .cs-clabel { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #64748B; }
+  .cs-cvalue { font-family: var(--font-head); font-size: 46px; font-weight: 700; color: #F97316; letter-spacing: -.02em; line-height: 1.1; margin-top: 4px; text-shadow: 0 0 26px rgba(249,115,22,.35); }
+  .cs-cbar { width: 230px; height: 7px; border-radius: 999px; background: rgba(255,255,255,.1); margin: 12px auto 0; overflow: hidden; }
+  .cs-cbar span { display: block; width: 0; height: 100%; border-radius: 999px; background: linear-gradient(90deg,#F97316,#FDBA74,#22C55E); background-size: 200% 100%; transition: width .5s ease-out; animation: cs-shine 2.4s linear infinite; }
+  @keyframes cs-shine { 0%{background-position:0 0} 100%{background-position:-200% 0} }
+
+  .cs-cart { position: absolute; bottom: 8px; left: 50%; width: 320px; height: 260px; transform: translateX(-50%); z-index: 20; }
+  .cs-cart svg { display: block; filter: drop-shadow(0 10px 26px rgba(0,0,0,.45)); }
+  @keyframes cs-spring { 0%{transform:translateX(-50%) scale(1,1)} 30%{transform:translateX(-50%) scale(1.05,.92)} 60%{transform:translateX(-50%) scale(.98,1.04)} 100%{transform:translateX(-50%) scale(1,1)} }
+
+  .cs-cards { position: absolute; inset: 0; z-index: 25; }
+  .cs-card { position: absolute; width: 190px; will-change: transform; }
+  .cs-card.landed { transition: top .5s cubic-bezier(.34,1.4,.5,1), opacity .4s, transform .4s; animation: cs-idle 4.5s ease-in-out infinite; animation-delay: var(--fd,0s); }
+  .cs-card-inner { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid #E9EEF5; border-radius: 14px; padding: 12px 15px; box-shadow: 0 24px 48px -16px rgba(0,0,0,.55); }
+  .cs-card-bar { width: 5px; height: 42px; border-radius: 4px; background: linear-gradient(180deg,#F97316,#FDBA74); flex-shrink: 0; }
+  .cs-card-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .cs-card-tag { font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #94A3B8; }
+  .cs-card-val { font-family: var(--font-head); font-size: 17px; font-weight: 700; color: #0F172A; margin-top: 1px; }
   .cs-card-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  @keyframes cs-idle { 0%,100%{margin-top:0} 50%{margin-top:-4px} }
 
-  .cs-spark { position: absolute; left: 234px; top: 330px; width: 0; height: 0; z-index: 25; }
-  .cs-spark > div {
-    position: absolute; width: 7px; height: 7px; border-radius: 50%;
-    transform-origin: 0 0; animation: fc-spark 0.55s ease-out forwards;
+  .cs-floats { position: absolute; inset: 0; z-index: 42; pointer-events: none; }
+  .cs-burst { position: absolute; width: 0; height: 0; }
+  .cs-burst i { position: absolute; width: 7px; height: 7px; border-radius: 50%; transform-origin: 0 0; animation: cs-spark .62s ease-out forwards; }
+  @keyframes cs-spark { 0%{opacity:0; transform:rotate(var(--a)) translateX(6px) scale(.4)} 25%{opacity:1} 100%{opacity:0; transform:rotate(var(--a)) translateX(44px) scale(1.1)} }
+  .cs-floatchip { position: absolute; font-family: var(--font-head); font-weight: 700; font-size: 15px; color: #22C55E; background: rgba(34,197,94,.14); border: 1px solid rgba(34,197,94,.4); padding: 3px 10px; border-radius: 999px; animation: cs-floatup 1.25s ease-out forwards; }
+  @keyframes cs-floatup { 0%{opacity:0; transform:translate(-50%,0) scale(.8)} 20%{opacity:1} 100%{opacity:0; transform:translate(-50%,-72px) scale(1)} }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cs-card.landed, .cs-src-dot, .cs-cbar span, .cs-ambient span { animation: none !important; }
   }
 </style>

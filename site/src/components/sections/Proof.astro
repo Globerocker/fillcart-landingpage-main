@@ -3,6 +3,14 @@ import type { LandingContent } from '../../i18n/types.ts';
 interface Props { content: LandingContent; }
 const { content } = Astro.props;
 const p = content.proof;
+
+const logos = [
+  { src: '/assets/logos/septeo.svg', alt: 'Septeo', h: 22 },
+  { src: '/assets/logos/matrix42.svg', alt: 'Matrix42', h: 20 },
+  { src: '/assets/logos/cixon.svg', alt: 'CIXON', h: 22 },
+  { src: '/assets/google-partner.png', alt: 'Google Partner', h: 30 },
+  { src: '/assets/logos/hubspot-partner.svg', alt: 'HubSpot Solutions Partner', h: 40 },
+];
 ---
 
 <section class="section proof">
@@ -41,9 +49,9 @@ const p = content.proof;
 
     <div class="proof-refs" data-reveal>
       <span class="proof-refs-label">{p.refsLabel}</span>
-      {p.refs.map((ref) => <span class="proof-ref">{ref}</span>)}
-      <span class="proof-google"><img src="/assets/google-partner.png" alt="Google Partner" width="110" height="34" loading="lazy" /></span>
-      <span class="proof-hs">{p.hubspotBadge}</span>
+      {logos.map((l) => (
+        <span class="proof-logo"><img src={l.src} alt={l.alt} style={`height:${l.h}px`} loading="lazy" /></span>
+      ))}
     </div>
   </div>
 </section>
@@ -96,15 +104,14 @@ const p = content.proof;
   .proof-refs-label {
     color: #64748b; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
   }
-  .proof-ref { font-family: var(--font-head); font-weight: 700; font-size: 22px; color: #cbd5e1; }
-  .proof-google {
-    background: #fff; border-radius: 10px; padding: 8px 14px; display: inline-flex; align-items: center;
+  .proof-logo {
+    background: #fff; border-radius: 12px; padding: 12px 18px;
+    display: inline-flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.6);
+    transition: transform 0.25s var(--ease-spring);
   }
-  .proof-google img { height: 34px; width: auto; display: block; }
-  .proof-hs {
-    border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 10px; padding: 10px 16px;
-    color: #e2e8f0; font-weight: 600; font-size: 14px;
-  }
+  .proof-logo:hover { transform: translateY(-3px); }
+  .proof-logo img { width: auto; display: block; }
 
   @media (max-width: 900px) {
     .proof-main { grid-template-columns: 1fr; gap: 32px; }

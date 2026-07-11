@@ -53,12 +53,13 @@ const dots = roas
           {gridLines.map((gy) => (
             <line x1={pad} x2={W - pad} y1={gy} y2={gy} stroke="rgba(255,255,255,.06)" stroke-width="1"></line>
           ))}
-          <path d={areaPath} fill="url(#fcArea)"></path>
-          <polyline points={linePts} fill="none" stroke="#F97316" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"></polyline>
-          {dots.map((d) => (
-            <circle cx={x(d.i)} cy={y(d.v)} r="5" fill="#0B1B33" stroke="#F97316" stroke-width="3"></circle>
+          <path class="tl-area" d={areaPath} fill="url(#fcArea)"></path>
+          <polyline class="tl-line" pathLength="1" points={linePts} fill="none" stroke="#F97316" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"></polyline>
+          {dots.map((d, di) => (
+            <circle class="tl-dot" style={`--di:${di}`} cx={x(d.i)} cy={y(d.v)} r="5" fill="#0B1B33" stroke="#F97316" stroke-width="3"></circle>
           ))}
-          <circle cx={x(n - 1)} cy={y(roas[n - 1])} r="7" fill="#22C55E"></circle>
+          <circle class="tl-end" cx={x(n - 1)} cy={y(roas[n - 1])} r="7" fill="#22C55E"></circle>
+          <circle class="tl-end-pulse" cx={x(n - 1)} cy={y(roas[n - 1])} r="7" fill="none" stroke="#22C55E" stroke-width="2"></circle>
         </svg>
       </div>
     </div>
@@ -104,7 +105,30 @@ const dots = roas
   .lg-line { width: 14px; height: 3px; background: #f97316; border-radius: 2px; }
   .lg-sq { width: 10px; height: 10px; background: rgba(34, 197, 94, 0.4); border-radius: 2px; }
   .tl-chart-svg { margin-top: 20px; }
-  .tl-chart-svg svg { display: block; }
+  .tl-chart-svg svg { display: block; overflow: visible; }
+
+  /* Draw-on-scroll: line draws, area fades, dots pop, endpoint pulses */
+  .tl-line { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .tl-area { opacity: 0; }
+  .tl-dot, .tl-end { opacity: 0; transform: scale(0); transform-box: fill-box; transform-origin: center; }
+  .tl-end-pulse { opacity: 0; }
+
+  .tl-chartcard.fc-in .tl-line { animation: tl-draw 1.7s cubic-bezier(.4, .1, .2, 1) forwards; }
+  .tl-chartcard.fc-in .tl-area { animation: tl-fade 1.2s ease-out .5s forwards; }
+  .tl-chartcard.fc-in .tl-dot { animation: tl-pop .4s cubic-bezier(.3, 1.5, .5, 1) forwards; animation-delay: calc(.6s + var(--di) * .28s); }
+  .tl-chartcard.fc-in .tl-end { animation: tl-pop .5s cubic-bezier(.3, 1.5, .5, 1) 1.7s forwards; }
+  .tl-chartcard.fc-in .tl-end-pulse { animation: tl-ring 2s ease-out 2s infinite; }
+
+  @keyframes tl-draw { to { stroke-dashoffset: 0; } }
+  @keyframes tl-fade { to { opacity: 1; } }
+  @keyframes tl-pop { to { opacity: 1; transform: scale(1); } }
+  @keyframes tl-ring { 0% { opacity: .7; transform: scale(1); transform-box: fill-box; transform-origin: center; } 100% { opacity: 0; transform: scale(3); transform-box: fill-box; transform-origin: center; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tl-line { stroke-dashoffset: 0; }
+    .tl-area, .tl-dot, .tl-end { opacity: 1; transform: none; }
+    .tl-end-pulse { display: none; }
+  }
 
   .tl-milestones {
     display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-top: 22px;

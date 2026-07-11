@@ -183,7 +183,7 @@ export const en: LandingContent = {
       { count: 88, prefix: '+', suffix: '%', label: 'organic US traffic in 4 months', color: '#22C55E' },
       { count: 20, suffix: '+', label: 'certifications (Google, HubSpot)', color: '#F97316' },
     ],
-    refsLabel: 'References &amp; badges',
+    refsLabel: 'References & badges',
     refs: ['stp.one', 'Matrix42', 'CIXON'],
     hubspotBadge: 'HubSpot Solutions Partner',
   },
