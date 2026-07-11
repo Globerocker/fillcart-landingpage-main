@@ -100,6 +100,8 @@ Für B2B mit mehreren Stakeholdern und langen Zyklen empfiehlt sich dafür ein W
 
 Die entscheidende Kontrollfrage lautet nicht "Ist unser ROAS gestiegen?", sondern "Ist unser ROAS auf echte Pipeline gestiegen, oder haben wir nur gelernt, teurere Formulare zu kaufen?" Nur die Revenue-Attribution in HubSpot beantwortet das zuverlässig.
 
+Ein Reporting-Rhythmus, der sich in der Praxis bewährt: monatlich ROAS auf gewichtete Pipeline und ROAS auf abgerechneten Umsatz nebeneinanderstellen, dazu die Zahl der Deals, die seit der letzten Prüfung von "Opportunity" auf "Closed Won" oder "Closed Lost" gewechselt haben. Klaffen beide ROAS-Werte über mehrere Monate spürbar auseinander, ist das kein Grund, das Bidding sofort zu zerlegen — aber ein sehr guter Grund, die Deal-Wert-Gewichtung noch einmal mit dem Vertrieb durchzusprechen. Oft liegt die Differenz nicht am Algorithmus, sondern daran, dass sich die Definition eines "guten" Deals seit dem letzten Update der Scoring-Kriterien verändert hat.
+
 <div class="a-key"><div class="a-key-title">📌 Das Wichtigste</div><ul>
 <li>Maximize Conversions optimiert auf billige Leads — value-based Bidding optimiert auf das, was du ihm fütterst.</li>
 <li>Ohne echten CRM-Deal-Wert bleibt "value-based" nur ein Name, keine Funktion.</li>

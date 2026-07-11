@@ -42,6 +42,8 @@ Der kritische Übergang ist MQL → SQL. Hier entscheidet sich, ob Sales der Lis
 
 Ein häufiger Denkfehler: Lifecycle Stage sei ein technisches Feld, das ein Workflow setzt. Tatsächlich ist es eine Vereinbarung zwischen Teams. Ohne dokumentierte Kriterien wird "MQL" zur Deponie für alles, was Marketing nicht mehr sehen will.
 
+Die Stage "Other" wird dabei gerne unterschätzt. Bewerbungen, Partneranfragen, Presseanfragen – all das landet in echten Portalen im Lead-Funnel, wenn niemand einen sauberen Ausschluss definiert hat. Das Ergebnis: Dein MQL-Zähler wächst, aber die Qualität sinkt, weil er Datensätze enthält, die nie hätten scoren dürfen. Ein sauberes Setup filtert diese Fälle vor dem Scoring heraus, nicht danach.
+
 ## Das neue Lead-Scoring-Modell (ab 2025)
 
 HubSpot hat mit dem neuen Lead-Scoring-Tool die alte, eindimensionale Punktzahl durch drei getrennte Scores ersetzt: **Fit Score** (ICP-Merkmale wie Jobtitel, Firmengröße, Umsatz), **Engagement Score** (Verhalten wie Seitenaufrufe, E-Mail-Öffnungen, CTA-Klicks, Formular-Fills) und einen daraus abgeleiteten **Combined Score** (Quelle: HubSpot Knowledge Base, "Understand the lead scoring tool", 2026).
@@ -94,6 +96,8 @@ Zusätzlich zu Fit und Engagement bietet HubSpot **Predictive Lead Scoring** ("L
 <div class="a-stat"><div class="a-stat-num">90 Tage</div><p class="a-stat-txt">Zeitfenster, für das HubSpots Predictive Lead Scoring die Abschlusswahrscheinlichkeit eines Kontakts berechnet (Quelle: HubSpot Knowledge Base, 2026).</p></div>
 
 Predictive Scoring ist kein Ersatz für Fit/Engagement – es ist eine dritte, algorithmische Perspektive obendrauf. Nützlich als Tiebreaker, wenn zwei Kontakte ähnlich hoch scoren, aber unterschiedlich wahrscheinlich in den nächsten drei Monaten kaufen.
+
+**Beispielrechnung (illustrativ, kein Benchmark):** Zwei Kontakte landen mit identischem Combined Score bei "High Priority" in deiner Liste. Kontakt A ist Head of Marketing bei einem 200-Personen-Unternehmen, hat gestern die Preisseite besucht und vor drei Wochen ein Demo-Formular abgebrochen – "Likelihood to close" liegt bei 61 % für die nächsten 90 Tage. Kontakt B ist Junior-Marketer bei einem Zwei-Personen-Start-up, hat vor zwei Monaten ein Whitepaper geladen und sich seither nicht mehr gerührt – "Likelihood to close" liegt bei 8 %. Ohne Predictive Scoring bearbeitet Sales beide gleich priorisiert. Mit Predictive Scoring als Tiebreaker landet Kontakt A zuerst auf dem Tisch – dort, wo die 90-Tage-Wahrscheinlichkeit tatsächlich etwas hergibt.
 
 ## Scoring an Lifecycle-Stages koppeln
 
