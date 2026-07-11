@@ -36,16 +36,28 @@ const schema = {
       <div class="cs-hero-glow"></div>
       <div class="cs-hero-inner">
         <nav class="cs-crumbs"><a href="/referenzen/">Referenzen</a><span>›</span><span>{data.industry}</span></nav>
-        <span class="cs-badge" style={`--accent:${accentHex}`}>{data.industry}</span>
+        <div class="cs-badges">
+          <span class="cs-badge" style={`--accent:${accentHex}`}>{data.industry}</span>
+          <span class="cs-market">{data.market}</span>
+        </div>
         <h1 class="cs-title">{data.title}</h1>
-        <p class="cs-client">{data.client}</p>
-        {data.metrics.length > 0 && (
+        <p class="cs-client">
+          {data.client}
+          {data.website && (
+            <> · <a href={`https://${data.website.replace(/^https?:\/\//, '')}`} target="_blank" rel="noopener nofollow">{data.website.replace(/^https?:\/\//, '')}</a></>
+          )}
+        </p>
+        {data.metrics.length > 0 ? (
           <div class="cs-metrics">
             {data.metrics.map((m) => (
               <div class="cs-metric"><b style={`color:${accentHex}`}>{m.value}</b><span>{m.label}</span></div>
             ))}
           </div>
-        )}
+        ) : data.focusChips.length > 0 ? (
+          <div class="cs-chips">
+            {data.focusChips.map((chip) => <span class="cs-chip">{chip}</span>)}
+          </div>
+        ) : null}
       </div>
     </section>
 
@@ -74,9 +86,15 @@ const schema = {
   .cs-crumbs { display: flex; gap: 8px; align-items: center; color: #64748b; font-size: 13px; margin-bottom: 16px; }
   .cs-crumbs a { color: #94a3b8; }
   .cs-crumbs a:hover { color: #fff; }
+  .cs-badges { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .cs-badge { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); padding: 5px 12px; border-radius: 999px; }
+  .cs-market { font-size: 11px; font-weight: 700; color: #cbd5e1; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); padding: 4px 11px; border-radius: 999px; letter-spacing: .04em; }
   .cs-title { font-family: var(--font-head); font-weight: 700; color: #fff; font-size: 40px; line-height: 1.1; letter-spacing: -0.02em; margin: 14px 0 0; }
   .cs-client { color: #94a3b8; font-size: 16px; margin: 12px 0 0; }
+  .cs-client a { color: #cbd5e1; }
+  .cs-client a:hover { color: #fff; }
+  .cs-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; }
+  .cs-chip { font-size: 13px; font-weight: 500; color: #cbd5e1; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); padding: 8px 14px; border-radius: 999px; }
   .cs-metrics { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
   .cs-metric { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: 14px; padding: 16px 20px; display: flex; flex-direction: column; }
   .cs-metric b { font-family: var(--font-head); font-size: 30px; line-height: 1; }

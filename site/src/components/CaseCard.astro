@@ -6,36 +6,47 @@ const { entry } = Astro.props;
 const { data } = entry;
 const accentHex = { orange: '#F97316', green: '#22C55E', sky: '#38BDF8' }[data.accent];
 const href = `/referenzen/${entry.id.replace(/^.*\//, '')}/`;
+const hasMetrics = data.metrics.length > 0;
 ---
 
 <a href={href} class="ccard fc-lift" style={`--accent:${accentHex}`}>
   <div class="ccard-top">
     <span class="ccard-industry">{data.industry}</span>
-    {data.illustrative && <span class="ccard-ill">illustrativ</span>}
+    <span class="ccard-market">{data.market}</span>
   </div>
-  <h3 class="ccard-title">{data.title}</h3>
+  <h3 class="ccard-client">{data.client}</h3>
+  <p class="ccard-title">{data.title}</p>
   <p class="ccard-desc">{data.description}</p>
-  {data.metrics.length > 0 && (
+
+  {hasMetrics ? (
     <div class="ccard-metrics">
       {data.metrics.slice(0, 3).map((m) => (
         <div class="ccard-metric"><b>{m.value}</b><span>{m.label}</span></div>
       ))}
     </div>
+  ) : (
+    <div class="ccard-chips">
+      {data.focusChips.map((chip) => <span class="ccard-chip">{chip}</span>)}
+    </div>
   )}
+
   <span class="ccard-cta">Case ansehen →</span>
 </a>
 
 <style>
-  .ccard { display: flex; flex-direction: column; gap: 14px; background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 28px 26px; height: 100%; border-top: 3px solid var(--accent); }
+  .ccard { display: flex; flex-direction: column; gap: 11px; background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 26px 24px; height: 100%; border-top: 3px solid var(--accent); }
   .ccard:hover { transform: translateY(-5px); box-shadow: 0 28px 50px -24px rgba(11,27,51,.28); border-color: var(--accent); color: inherit; }
   .ccard-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .ccard-industry { font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
-  .ccard-ill { font-size: 10.5px; font-weight: 700; color: var(--slate-500); background: var(--bg-alt); padding: 3px 9px; border-radius: 999px; text-transform: uppercase; letter-spacing: .04em; }
-  .ccard-title { font-family: var(--font-head); font-weight: 700; font-size: 21px; line-height: 1.22; color: var(--navy); margin: 0; }
-  .ccard-desc { color: var(--slate-600); font-size: 14.5px; line-height: 1.55; margin: 0; flex: 1; }
+  .ccard-market { font-size: 10.5px; font-weight: 700; color: var(--slate-500); background: var(--bg-alt); border: 1px solid var(--border); padding: 3px 9px; border-radius: 999px; letter-spacing: .04em; }
+  .ccard-client { font-family: var(--font-head); font-weight: 700; font-size: 21px; line-height: 1.15; color: var(--navy); margin: 4px 0 0; }
+  .ccard-title { font-size: 14.5px; font-weight: 600; color: var(--slate-700); margin: 0; }
+  .ccard-desc { color: var(--slate-600); font-size: 14px; line-height: 1.55; margin: 0; flex: 1; }
   .ccard-metrics { display: flex; flex-wrap: wrap; gap: 8px; }
   .ccard-metric { background: var(--bg-alt); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; display: flex; flex-direction: column; }
   .ccard-metric b { font-family: var(--font-head); font-size: 18px; color: var(--accent); line-height: 1; }
   .ccard-metric span { font-size: 11.5px; color: var(--slate-500); margin-top: 3px; max-width: 120px; }
-  .ccard-cta { color: var(--accent); font-weight: 600; font-size: 15px; }
+  .ccard-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .ccard-chip { font-size: 12px; font-weight: 500; color: var(--slate-700); background: var(--bg-alt); border: 1px solid var(--border); padding: 5px 11px; border-radius: 999px; }
+  .ccard-cta { color: var(--accent); font-weight: 600; font-size: 15px; margin-top: 4px; }
 </style>

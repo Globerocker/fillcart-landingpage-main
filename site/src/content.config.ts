@@ -36,18 +36,26 @@ const resources = defineCollection({
   }),
 });
 
-/** Case studies / references. Metrics are illustrative unless marked real. */
+/** Case studies / references for real, named clients. */
 const cases = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/cases' }),
   schema: z.object({
     title: z.string(),
     client: z.string(),
+    /** Public website of the client (shown, not fabricated). */
+    website: z.string().optional(),
+    /** Market code(s), e.g. "DE", "US", "NL · DE". */
+    market: z.string(),
     industry: z.string(),
     description: z.string(),
     publishDate: z.coerce.date(),
-    /** Whether the figures are real client data or an illustrative model. */
-    illustrative: z.boolean().default(true),
     accent: z.enum(['orange', 'green', 'sky']).default('orange'),
+    /** Honest, factual descriptors (market, model, deal-value angle) — NOT results. */
+    focusChips: z.array(z.string()).max(4).default([]),
+    /**
+     * Real, approved KPIs only. Leave empty until you drop in real account /
+     * Search Console numbers — the UI shows a "Kennzahlen nach Freigabe" note instead.
+     */
     metrics: z
       .array(z.object({ value: z.string(), label: z.string() }))
       .max(4)
