@@ -4,12 +4,15 @@ interface Props { content: LandingContent; }
 const { content } = Astro.props;
 const p = content.proof;
 
+// Real PNGs live in /assets/logos/*.png. Until they're uploaded, we fall back
+// to the placeholder SVG so nothing breaks. Drop the official PNGs in with these
+// exact names and they replace the placeholders automatically.
 const logos = [
-  { src: '/assets/logos/septeo.svg', alt: 'Septeo', h: 22 },
-  { src: '/assets/logos/matrix42.svg', alt: 'Matrix42', h: 20 },
-  { src: '/assets/logos/cixon.svg', alt: 'CIXON', h: 22 },
-  { src: '/assets/google-partner.png', alt: 'Google Partner', h: 30 },
-  { src: '/assets/logos/hubspot-partner.svg', alt: 'HubSpot Solutions Partner', h: 40 },
+  { png: '/assets/logos/septeo.png', svg: '/assets/logos/septeo.svg', alt: 'Septeo', h: 26 },
+  { png: '/assets/logos/matrix42.png', svg: '/assets/logos/matrix42.svg', alt: 'Matrix42', h: 22 },
+  { png: '/assets/logos/cixon.png', svg: '/assets/logos/cixon.svg', alt: 'CIXON', h: 24 },
+  { png: '/assets/google-partner.png', svg: '/assets/google-partner.png', alt: 'Google Partner', h: 30 },
+  { png: '/assets/logos/hubspot-partner.png', svg: '/assets/logos/hubspot-partner.svg', alt: 'HubSpot Solutions Partner', h: 40 },
 ];
 ---
 
@@ -50,7 +53,7 @@ const logos = [
     <div class="proof-refs" data-reveal>
       <span class="proof-refs-label">{p.refsLabel}</span>
       {logos.map((l) => (
-        <span class="proof-logo"><img src={l.src} alt={l.alt} style={`height:${l.h}px`} loading="lazy" /></span>
+        <span class="proof-logo"><img src={l.png} onerror={`this.onerror=null;this.src='${l.svg}'`} alt={l.alt} style={`height:${l.h}px`} loading="lazy" /></span>
       ))}
     </div>
   </div>

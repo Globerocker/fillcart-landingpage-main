@@ -96,18 +96,22 @@ const funnelRows = [
           </div>
 
           <div class="roi-funnel">
-            {funnelRows.map((f) => (
+            {funnelRows.map((f, i) => (
               <div class="roi-funnel-row" data-funnel={f.key}>
                 <div class="roi-funnel-top">
                   <span>{f.label}</span>
                   <b data-funnel-val></b>
                 </div>
                 <div class="roi-funnel-track">
-                  <div class="roi-funnel-bar" style={`background:${f.color}`}></div>
+                  <div class="roi-funnel-bar" style={`--c:${f.color}`}></div>
                 </div>
+                {i < funnelRows.length - 1 && (
+                  <div class="roi-funnel-conv"><span data-conv={f.key}></span></div>
+                )}
               </div>
             ))}
           </div>
+          <p class="roi-funnel-note">Von links nach rechts fällt jede Stufe – das ist normal. Entscheidend ist, was unten als Deal ankommt.</p>
 
           <p class="roi-disclaimer">{r.disclaimer}</p>
         </div>
@@ -185,11 +189,15 @@ const funnelRows = [
   .roi-stat-val.green { color: #22c55e; }
   .roi-stat-label { color: #94a3b8; font-size: 12.5px; margin-top: 6px; }
 
-  .roi-funnel { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
-  .roi-funnel-top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; color: #cbd5e1; }
-  .roi-funnel-top b { color: #fff; font-family: var(--font-head); }
-  .roi-funnel-track { height: 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.07); overflow: hidden; }
-  .roi-funnel-bar { height: 100%; border-radius: 999px; width: 6px; transition: width 0.4s ease-out; }
+  .roi-funnel { display: flex; flex-direction: column; gap: 0; margin-top: 6px; }
+  .roi-funnel-row { display: flex; flex-direction: column; }
+  .roi-funnel-top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; color: #cbd5e1; }
+  .roi-funnel-top b { color: #fff; font-family: var(--font-head); font-size: 15px; }
+  .roi-funnel-track { height: 16px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); display: flex; justify-content: center; }
+  .roi-funnel-bar { height: 100%; border-radius: 999px; width: 20%; min-width: 20px; background: var(--c); box-shadow: 0 0 16px -2px var(--c); transition: width 0.55s cubic-bezier(0.3, 0.9, 0.3, 1); }
+  .roi-funnel-conv { text-align: center; padding: 5px 0; line-height: 1; }
+  .roi-funnel-conv span { font-size: 11px; font-weight: 600; color: #64748b; letter-spacing: 0.02em; }
+  .roi-funnel-note { color: #64748b; font-size: 11.5px; line-height: 1.5; margin: 12px 0 0; }
   .roi-disclaimer { color: #64748b; font-size: 12px; line-height: 1.5; margin: 20px 0 0; }
 
   @media (max-width: 900px) {
@@ -272,7 +280,21 @@ const funnelRows = [
       const maxV = vals.clicks || 1;
       funnelEls.forEach((f) => {
         f.val.textContent = nf.format(vals[f.key]);
-        f.bar.style.width = Math.max(6, (vals[f.key] / maxV) * 100) + '%';
+        // gentle power scale so the small stages stay visible instead of slivers
+        const ratio = maxV > 0 ? vals[f.key] / maxV : 0;
+        f.bar.style.width = Math.max(7, Math.pow(ratio, 0.42) * 100).toFixed(1) + '%';
+      });
+      // conversion-rate chips between stages
+      const d2 = cfg.locale === 'de-DE' ? ',' : '.';
+      const pct = (a: number, b: number) => (b > 0 ? (a / b) * 100 : 0);
+      const conv: Record<string, number> = {
+        clicks: pct(leads, clicks),
+        leads: pct(sqls, leads),
+        sqls: pct(dealsW, sqls),
+      };
+      (['clicks', 'leads', 'sqls'] as const).forEach((k) => {
+        const c = panel.querySelector(`[data-conv="${k}"]`);
+        if (c) c.textContent = '↓ ' + conv[k].toFixed(conv[k] < 10 ? 1 : 0).replace('.', d2) + ' %';
       });
     };
 
