@@ -12,6 +12,7 @@ const stageData = {
   total: content.pipelineTotal,
   label: h.cartLabel,
   locale: content.lang === 'en' ? 'en-US' : 'de-DE',
+  currency: content.lang === 'en' ? '$' : '€',
 };
 ---
 
@@ -54,7 +55,7 @@ const stageData = {
         <div class="cart-stage-fallback">
           <div class="fb-counter">
             <div class="fb-label">{h.cartLabel}</div>
-            <div class="fb-value">€ 0</div>
+            <div class="fb-value">{content.lang === 'en' ? '$0' : '€ 0'}</div>
             <div class="fb-bar"><span style="width:0"></span></div>
           </div>
         </div>
@@ -254,10 +255,12 @@ const stageData = {
     const total = data.total || 1;
     const label = data.label || '';
     const locale = data.locale || 'de-DE';
+    const currency = data.currency || '€';
+    const sym = currency === '$' ? '$' : '€ ';
     const nf = new Intl.NumberFormat(locale);
     const dec = locale === 'de-DE' ? ',' : '.';
-    const eur = (v) => '€ ' + nf.format(Math.round(v));
-    const kchip = (v) => '+€' + (v >= 1000 ? (Math.round(v / 100) / 10).toString().replace('.', dec) + 'k' : v);
+    const eur = (v) => sym + nf.format(Math.round(v));
+    const kchip = (v) => '+' + currency + (v >= 1000 ? (Math.round(v / 100) / 10).toString().replace('.', dec) + 'k' : v);
     const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const CARDW = 190, SLOTX = 154, LANDTOP = 286;
@@ -307,7 +310,7 @@ const stageData = {
         <span class="cs-card-bar"></span>
         <span class="cs-card-body">
           <span class="cs-card-tag">${d.tag}</span>
-          <span class="cs-card-val">+ €${nf.format(d.value)}</span>
+          <span class="cs-card-val">+ ${currency}${nf.format(d.value)}</span>
         </span>
         <span class="cs-card-dot" style="background:${d.dot};box-shadow:0 0 0 4px ${d.dot}22"></span>
       </div>`);

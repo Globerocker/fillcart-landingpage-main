@@ -30,7 +30,7 @@ export function professionalService(lang: 'de' | 'en') {
     url: SITE.baseUrl + (lang === 'en' ? '/en/' : '/'),
     email: c.email,
     telephone: ct.phone,
-    priceRange: '€€€',
+    priceRange: lang === 'en' ? '$$$' : '€€€',
     address: postalAddress,
     areaServed: ['DE', 'AT', 'CH', 'US'],
     foundingDate: c.founded,

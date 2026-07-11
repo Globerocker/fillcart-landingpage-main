@@ -8,7 +8,7 @@ export const en: LandingContent = {
   meta: {
     title: 'Google Ads Management that fills your pipeline — not just lead lists | Fillcart',
     description:
-      'Free Google Ads audit + free setup of your first search campaign. We optimize for pipeline value, not cost-per-lead. HubSpot Solutions Partner. From €5,000 ad spend/month.',
+      'Free Google Ads audit + free setup of your first search campaign. We optimize for pipeline value, not cost-per-lead. HubSpot Solutions Partner. From $5,000 ad spend/month.',
   },
 
   nav: {
@@ -25,7 +25,7 @@ export const en: LandingContent = {
   langSwitch: { current: 'EN', other: 'DE', otherHref: '/' },
 
   hero: {
-    badge: 'GOOGLE ADS MANAGEMENT FOR B2B · DACH &amp; USA',
+    badge: 'GOOGLE ADS MANAGEMENT FOR B2B · USA &amp; DACH',
     headline:
       'Others deliver leads.<br><span class="muted">We fill your cart with </span><span class="accent">deals.</span>',
     sub: 'Google Ads campaigns optimized for <span class="hl">pipeline value in your CRM</span> — not for the cheapest click.',
@@ -50,7 +50,7 @@ export const en: LandingContent = {
     stats: [
       { num: '80%', text: 'of inquiries your sales team discards as unusable — despite a falling CPL.' },
       { num: '1 KPI', text: 'is what most agencies optimize: cost-per-lead. The wrong one.' },
-      { num: '€0', text: 'revenue visibility: the monthly report ends at the click, not the deal.' },
+      { num: '$0', text: 'revenue visibility: the monthly report ends at the click, not the deal.' },
     ],
     quote:
       'Optimize for leads, you get leads. <span class="accent">Optimize for pipeline, you get deals.</span>',
@@ -85,16 +85,16 @@ export const en: LandingContent = {
     ],
     callouts: {
       test: {
-        big: '€50',
+        big: '$50',
         unit: '/ day min.',
         title: 'Test-campaign budget',
-        text: 'For the free test campaign we need <b>≈ €1,500/month</b> in ad budget. Below that, Google delivers too little data to learn on pipeline seriously.',
+        text: 'For the free test campaign we need <b>≈ $1,500/month</b> in ad budget. Below that, Google delivers too little data to learn on pipeline seriously.',
       },
       retainer: {
-        big: '€5k',
+        big: '$5k',
         unit: '/ month from',
         title: 'Ongoing engagement',
-        text: 'For the monthly retainer we work from <b>€5,000 ad spend</b> — only then is pipeline optimization statistically sound.',
+        text: 'For the monthly retainer we work from <b>$5,000 ad spend</b> — only then is pipeline optimization statistically sound.',
       },
     },
   },
@@ -109,7 +109,7 @@ export const en: LandingContent = {
     legendPipeline: 'Pipeline value',
     milestones: [
       { period: 'WEEK 1', title: 'Audit &amp; setup', text: 'Account analysis, clean tracking, HubSpot connected.' },
-      { period: 'WEEK 2', title: 'Test campaign live', text: 'First search campaign, from €50/day ad spend.' },
+      { period: 'WEEK 2', title: 'Test campaign live', text: 'First search campaign, from $50/day ad spend.' },
       { period: 'MONTH 1–2', title: 'First signals', text: 'Search-term mining, negative lists, first SQLs in the CRM.' },
       { period: 'MONTH 3–6', title: 'Pipeline optimization', text: 'tROAS/tCPA on real CRM data. ROAS climbs noticeably.' },
       { period: 'MONTH 6–12', title: 'Scaling', text: 'Budget expansion, new campaign types, predictable pipeline.', highlight: true },
@@ -121,21 +121,21 @@ export const en: LandingContent = {
     headline: 'Run your own case',
     sub: 'Industry-typical conversion rates, your budget, your deal size and closing rate. The numbers are benchmarks — in the audit we replace them with your real ones.',
     industries: [
-      { key: 'saas', label: 'SaaS / Software', cpc: 4.5, cvr: 0.032, l2s: 0.45 },
-      { key: 'legal', label: 'Law / Legal Tech', cpc: 6.8, cvr: 0.045, l2s: 0.4 },
-      { key: 'finance', label: 'Finance / FinTech', cpc: 5.2, cvr: 0.04, l2s: 0.42 },
-      { key: 'itservices', label: 'IT & Managed Services', cpc: 3.8, cvr: 0.03, l2s: 0.48 },
-      { key: 'industrial', label: 'Industrial & Manufacturing', cpc: 3.2, cvr: 0.026, l2s: 0.5 },
-      { key: 'consulting', label: 'Consulting / Professional Services', cpc: 4.0, cvr: 0.035, l2s: 0.44 },
-      { key: 'hr', label: 'HR / Recruiting Software', cpc: 3.5, cvr: 0.033, l2s: 0.46 },
-      { key: 'health', label: 'Health / MedTech', cpc: 4.2, cvr: 0.034, l2s: 0.43 },
+      { key: 'saas', label: 'SaaS / Software', cpc: 6.5, cvr: 0.032, l2s: 0.45 },
+      { key: 'legal', label: 'Law / Legal Tech', cpc: 9.5, cvr: 0.045, l2s: 0.4 },
+      { key: 'finance', label: 'Finance / FinTech', cpc: 7.5, cvr: 0.04, l2s: 0.42 },
+      { key: 'itservices', label: 'IT & Managed Services', cpc: 5.5, cvr: 0.03, l2s: 0.48 },
+      { key: 'industrial', label: 'Industrial & Manufacturing', cpc: 4.8, cvr: 0.026, l2s: 0.5 },
+      { key: 'consulting', label: 'Consulting / Professional Services', cpc: 6.0, cvr: 0.035, l2s: 0.44 },
+      { key: 'hr', label: 'HR / Recruiting Software', cpc: 5.2, cvr: 0.033, l2s: 0.46 },
+      { key: 'health', label: 'Health / MedTech', cpc: 6.2, cvr: 0.034, l2s: 0.43 },
     ],
     assumptionsTitle: 'Your assumptions',
     labelIndustry: 'Industry',
     labelBudget: 'Monthly ad budget',
     labelDeal: 'Avg. deal size (ACV)',
     labelClose: 'Closing rate per SQL',
-    cvrCpcTpl: 'CVR {cvr}% · CPC €{cpc}',
+    cvrCpcTpl: 'CVR {cvr}% · CPC ${cpc}',
     revenueLabel: 'Expected revenue / month',
     roasLabel: 'ROAS',
     sqlLabel: 'qualified SQLs / month',
@@ -193,11 +193,11 @@ export const en: LandingContent = {
     headline: 'Honest answers',
     items: [
       { q: 'Why do you make the audit and first campaign free?', a: 'Because it’s the most honest sales argument we know. If our work delivers nothing, you shouldn’t pay. If it builds pipeline, you’ll want more of it — and for that we don’t need salespeople.' },
-      { q: 'Where’s the catch?', a: 'There are two honest limitations: you pay your advertising budget to Google yourself (it was always your money). And we work from €5,000 monthly ad spend, because below that, pipeline optimization doesn’t work cleanly on a statistical level.' },
-      { q: 'How much budget do I need for the test campaign?', a: 'For the free test campaign we plan for at least €50 daily budget — around €1,500 a month. Below that, Google collects too little conversion data to learn on pipeline seriously.' },
+      { q: 'Where’s the catch?', a: 'There are two honest limitations: you pay your advertising budget to Google yourself (it was always your money). And we work from $5,000 monthly ad spend, because below that, pipeline optimization doesn’t work cleanly on a statistical level.' },
+      { q: 'How much budget do I need for the test campaign?', a: 'For the free test campaign we plan for at least $50 daily budget — around $1,500 a month. Below that, Google collects too little conversion data to learn on pipeline seriously.' },
       { q: 'What happens if the free campaign delivers nothing?', a: 'Then we part ways with no invoice. The audit, campaign structure and all learnings are yours. Our risk, not yours.' },
       { q: 'Is HubSpot strictly required?', a: 'No. HubSpot is our home turf and the fastest route to pipeline optimization. With other CRMs we work via offline-conversion imports — a bit more manual work, same principle.' },
-      { q: 'Who is this not for?', a: 'E-commerce with a pure ROAS focus under €5,000 budget, local service providers with €500 budgets, and anyone who wants a “leads at any cost” approach. There are cheaper providers for that.' },
+      { q: 'Who is this not for?', a: 'E-commerce with a pure ROAS focus under $5,000 budget, local service providers with $500 budgets, and anyone who wants a “leads at any cost” approach. There are cheaper providers for that.' },
     ],
   },
 
@@ -216,13 +216,13 @@ export const en: LandingContent = {
       budget: 'Monthly Google Ads budget',
       budgetPlaceholder: 'Please choose…',
       budgetOptions: [
-        { value: 'u5', label: 'under €5,000' },
-        { value: '5-10', label: '€5,000 – €10,000' },
-        { value: '10-25', label: '€10,000 – €25,000' },
-        { value: 'o25', label: 'over €25,000' },
+        { value: 'u5', label: 'under $5,000' },
+        { value: '5-10', label: '$5,000 – $10,000' },
+        { value: '10-25', label: '$10,000 – $25,000' },
+        { value: 'o25', label: 'over $25,000' },
       ],
       lowBudgetNotice:
-        'Honestly: under €5,000 monthly budget the data volume isn’t enough to optimize cleanly on pipeline. Come back any time once the budget fits.',
+        'Honestly: under $5,000 monthly budget the data volume isn’t enough to optimize cleanly on pipeline. Come back any time once the budget fits.',
       message: 'Where do you feel it should be doing better?',
       messagePh: 'Optional',
       submit: 'Request your free audit',

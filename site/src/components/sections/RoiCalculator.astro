@@ -15,6 +15,7 @@ const cfg = {
     roi: r.roiLabel,
   },
   locale: content.lang === 'en' ? 'en-US' : 'de-DE',
+  currency: content.lang === 'en' ? '$' : '€',
   defaults,
 };
 const funnelRows = [
@@ -211,6 +212,7 @@ const funnelRows = [
     industries: Industry[];
     labels: { cvrCpcTpl: string; revenue: string; roas: string; sql: string; roi: string };
     locale: string;
+    currency: string;
     defaults: { industry: string; budget: number; deal: number; close: number };
   }
 
@@ -218,7 +220,9 @@ const funnelRows = [
   if (panel) {
     const cfg = JSON.parse(panel.dataset.cfg || '{}') as Cfg;
     const nf = new Intl.NumberFormat(cfg.locale);
-    const eur = (v: number) => '€ ' + nf.format(Math.round(v));
+    // '$' → "$5,000" (no space, US style); '€' → "€ 5.000".
+    const sym = cfg.currency === '$' ? '$' : '€ ';
+    const eur = (v: number) => sym + nf.format(Math.round(v));
     const industries = Object.fromEntries(cfg.industries.map((i) => [i.key, i]));
 
     const $ = (sel: string) => panel.querySelector(sel) as HTMLElement;

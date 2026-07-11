@@ -25,7 +25,7 @@ export const de: LandingContent = {
   langSwitch: { current: 'DE', other: 'EN', otherHref: '/en/' },
 
   hero: {
-    badge: 'GOOGLE ADS MANAGEMENT FÜR B2B · DACH &amp; USA',
+    badge: 'GOOGLE ADS MANAGEMENT FÜR B2B · DACH',
     headline:
       'Andere liefern dir Leads.<br><span class="muted">Wir füllen deinen Cart mit </span><span class="accent">Deals.</span>',
     sub: 'Google-Ads-Kampagnen, optimiert auf <span class="hl">Pipeline-Value in deinem CRM</span> – nicht auf den billigsten Klick.',
@@ -41,7 +41,7 @@ export const de: LandingContent = {
 
   trust: {
     label: 'Belegbar, nicht behauptet',
-    items: ['Google Partner', 'HubSpot Solutions Partner', '20+ Zertifizierungen', 'Budgets bis 80.000 $/Monat betreut'],
+    items: ['Google Partner', 'HubSpot Solutions Partner', '20+ Zertifizierungen', 'Budgets bis 80.000 €/Monat betreut'],
   },
 
   problem: {
@@ -178,9 +178,9 @@ export const de: LandingContent = {
     body: 'Fillcart ist die Agentur von <span class="hl">Andre Schüler</span>. Kein Junior lernt an deinem Budget – wer den Audit macht, baut auch deine Kampagnen und sitzt in jedem Call.',
     chips: ['Head of Marketing · Legal-Tech-SaaS', 'Head of SEO · Matrix42', 'HubSpot Consultant · B2B-Enterprise'],
     stats: [
-      { count: 80000, suffix: ' $/Mo.', label: 'Ads-Budget über 3 Länder gemanagt', color: '#F97316' },
+      { count: 80000, suffix: ' €/Mo.', label: 'Ads-Budget über 3 Länder gemanagt', color: '#F97316' },
       { count: 23, prefix: '+', suffix: ' %', label: 'mehr SQLs in 6 Monaten', color: '#22C55E' },
-      { count: 88, prefix: '+', suffix: ' %', label: 'organischer US-Traffic in 4 Monaten', color: '#22C55E' },
+      { count: 88, prefix: '+', suffix: ' %', label: 'organischer Traffic in 4 Monaten', color: '#22C55E' },
       { count: 20, suffix: '+', label: 'Zertifizierungen (Google, HubSpot)', color: '#F97316' },
     ],
     refsLabel: 'Referenzen & Badges',
