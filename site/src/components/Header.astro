@@ -9,8 +9,13 @@ const base = content.homePath.replace(/\/$/, ''); // "" for DE, "/en" for EN
 
 const navLinks = [
   { label: content.nav.deal, href: `${base}/#deal` },
-  { label: content.nav.timeline, href: `${base}/#timeline` },
   { label: content.nav.roi, href: `${base}/#rechner` },
+  ...(content.lang === 'de'
+    ? [
+        { label: content.nav.referenzen, href: '/referenzen/' },
+        { label: content.nav.wissen, href: '/wissen/' },
+      ]
+    : []),
   { label: content.nav.services, href: `${base}/#leistungen` },
   { label: content.nav.faq, href: `${base}/#faq` },
 ];

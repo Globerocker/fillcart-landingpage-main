@@ -8,6 +8,8 @@ export interface NavStrings {
   services: string;
   faq: string;
   cta: string;
+  wissen: string;
+  referenzen: string;
 }
 
 export interface Industry {

@@ -18,6 +18,8 @@ export const en: LandingContent = {
     services: 'Services',
     faq: 'FAQ',
     cta: 'Get your audit',
+    wissen: 'Knowledge',
+    referenzen: 'References',
   },
   navCta: 'Get your audit',
   langSwitch: { current: 'EN', other: 'DE', otherHref: '/' },
@@ -252,9 +254,9 @@ export const en: LandingContent = {
     colCompanyTitle: 'Fillcart',
     colCompany: [
       { label: 'About Fillcart', href: '/en/about' },
-      { label: 'The Deal', href: '#deal' },
-      { label: 'ROI Calculator', href: '#rechner' },
-      { label: 'Services', href: '#leistungen' },
+      { label: 'The Deal', href: '/en/#deal' },
+      { label: 'ROI Calculator', href: '/en/#rechner' },
+      { label: 'Services', href: '/en/#leistungen' },
     ],
     colLegalTitle: 'Legal',
     colLegal: [
