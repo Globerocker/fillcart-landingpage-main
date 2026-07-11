@@ -7,6 +7,7 @@ import '@fontsource/inter/700.css';
 import '../styles/global.css';
 import { SITE, INTEGRATIONS, GTM_READY } from '../config/site.ts';
 import Behaviors from '../components/Behaviors.astro';
+import WhatsAppFloat from '../components/WhatsAppFloat.astro';
 import type { Lang } from '../i18n/types.ts';
 
 interface Props {
@@ -93,6 +94,7 @@ const consent = INTEGRATIONS.consent;
       <noscript set:html={`<iframe src="https://www.googletagmanager.com/ns.html?id=${gtmId}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`} />
     )}
     <slot />
+    <WhatsAppFloat lang={lang} />
     <Behaviors />
   </body>
 </html>

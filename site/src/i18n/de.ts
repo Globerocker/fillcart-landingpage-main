@@ -231,7 +231,7 @@ export const de: LandingContent = {
     calendar: {
       title: 'Lieber direkt sprechen?',
       sub: '30-Min-Slot, unverbindlich',
-      badge: 'HubSpot Meetings',
+      badge: 'Google Kalender',
       placeholderNote:
         'Platzhalter · hier wird der eingebettete HubSpot-Meetings-Kalender geladen, sobald der Meeting-Link hinterlegt ist.',
     },

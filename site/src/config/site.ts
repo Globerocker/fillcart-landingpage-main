@@ -25,6 +25,19 @@ export const SITE = {
     founded: '2023',
     managingMember: 'Andre Schüler',
   },
+
+  contact: {
+    /** Human-readable phone, shown on the page. */
+    phone: '+49 15678 471378',
+    /** tel: href (no spaces). */
+    phoneHref: 'tel:+4915678471378',
+    /** wa.me link (country code + number, no + or spaces). */
+    whatsapp: '4915678471378',
+    whatsappHref: 'https://wa.me/4915678471378',
+    /** Pre-filled WhatsApp message (URL-encoded at use site). */
+    whatsappText: 'Hi Andre, ich hätte gern den kostenlosen Google-Ads-Audit.',
+    whatsappTextEn: 'Hi Andre, I’d like the free Google Ads audit.',
+  },
 } as const;
 
 /**
@@ -50,6 +63,15 @@ export const INTEGRATIONS = {
      * "https://meetings-eu1.hubspot.com/andre-schueler/audit?embed=true".
      */
     meetingUrl: '', // TODO: real meeting embed url
+  },
+  /**
+   * Google Calendar Appointment Scheduling. This is live — the booking
+   * embed + share link the client provided.
+   */
+  googleCalendar: {
+    embedUrl:
+      'https://calendar.google.com/calendar/appointments/schedules/AcZssZ3MYDE5zpevF55HcKg6DGHyVR_DeBMGu2AhxVIOEHjIRP_hCk2BfMM0BoggfDdy0TQlRa8iIQzP?gv=true',
+    bookingUrl: 'https://calendar.app.google/Uyj8ffN6re5qJJYs6',
   },
   gtm: {
     /** Google Tag Manager container id, e.g. "GTM-XXXXXXX". */
@@ -77,4 +99,5 @@ export const INTEGRATIONS = {
 export const HUBSPOT_FORM_READY =
   !!INTEGRATIONS.hubspot.portalId && !!INTEGRATIONS.hubspot.formId;
 export const HUBSPOT_MEETING_READY = !!INTEGRATIONS.hubspot.meetingUrl;
+export const GOOGLE_CALENDAR_READY = !!INTEGRATIONS.googleCalendar.embedUrl;
 export const GTM_READY = !!INTEGRATIONS.gtm.containerId;
