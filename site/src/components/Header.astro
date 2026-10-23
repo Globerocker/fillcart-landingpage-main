@@ -1,198 +1,91 @@
 ---
-import type { LandingContent } from '../i18n/types.ts';
+import { SITE, type Locale } from '../config/site.ts';
+import { getDict } from '../lib/i18n.ts';
+import { homePath } from '../i18n/routes.ts';
+import Logo from './Logo.astro';
 
 interface Props {
-  content: LandingContent;
+  lang: Locale;
+  path: string;
+  alt?: string;
 }
-const { content } = Astro.props;
-const base = content.homePath.replace(/\/$/, ''); // "" for DE, "/en" for EN
-
-const navLinks = [
-  { label: content.nav.deal, href: `${base}/#deal` },
-  { label: content.nav.roi, href: `${base}/#rechner` },
-  ...(content.lang === 'de'
-    ? [
-        { label: content.nav.referenzen, href: '/referenzen/' },
-        { label: content.nav.wissen, href: '/wissen/' },
-      ]
-    : []),
-  { label: content.nav.services, href: `${base}/#leistungen` },
-  { label: content.nav.faq, href: `${base}/#faq` },
-];
-const ctaHref = `${base}/#audit`;
-const { current, other, otherHref } = content.langSwitch;
+const { lang, path, alt } = Astro.props;
+const d = getDict(lang);
+const other: Locale = lang === 'en' ? 'de' : 'en';
+const switchHref = alt ?? homePath(other);
+const isActive = (href: string) => (href === '/' || href === '/de' ? path === href : path === href || path.startsWith(href + '/'));
 ---
 
-<header class="hdr">
-  <div class="hdr-inner">
-    <a href={content.homePath} class="hdr-logo" aria-label="Fillcart">
-      <img src="/assets/brand/logo-white.png" alt="Fillcart" width="120" height="30" />
+<header class="hdr" data-header>
+  <div class="wrap hdr-in">
+    <a href={homePath(lang)} class="hdr-brand" aria-label={SITE.brand.siteName}>
+      <Logo size={34} />
+      <span class="hdr-word">FILLCART</span>
     </a>
 
-    <nav class="hdr-nav" aria-label="Hauptnavigation">
-      {navLinks.map((l) => <a href={l.href}>{l.label}</a>)}
+    <nav class="hdr-nav" aria-label="Main">
+      {d.nav.items.map((it) => (
+        <a href={it.href} class:list={['hdr-link', { active: isActive(it.href) }]} aria-current={isActive(it.href) ? 'page' : undefined}>
+          {it.label}
+          {it.foreign && <sup class="hdr-sup">{d.nav.foreign}</sup>}
+        </a>
+      ))}
     </nav>
 
     <div class="hdr-right">
-      <div class="langswitch" role="group" aria-label="Sprache / Language">
-        <span class="cur">{current}</span>
-        <span class="sep">·</span>
-        <a href={otherHref}>{other}</a>
-      </div>
-      <a href={ctaHref} class="hdr-cta fc-lift">{content.navCta}</a>
-
-      <button class="hdr-burger" aria-label="Menü" aria-expanded="false" data-burger>
-        <span></span><span></span><span></span>
+      <a href={switchHref} class="hdr-lang" lang={other} hreflang={other} aria-label={d.nav.switchLabel} data-track="lang_switch" data-lang={other}>{d.nav.switchShort}</a>
+      <a href={SITE.booking} class="btn btn-primary btn-sm hdr-cta" target="_blank" rel="noopener" data-track="cta_book_click" data-location="header">{d.nav.cta}</a>
+      <button type="button" class="hdr-burger" aria-expanded="false" aria-controls="mobile-nav" data-nav-toggle>
+        <span class="sr-only">{d.nav.menu}</span>
+        <span class="hdr-burger-bar"></span><span class="hdr-burger-bar"></span><span class="hdr-burger-bar"></span>
       </button>
     </div>
   </div>
 
-  <nav class="hdr-mobile" data-mobile-nav hidden aria-label="Mobile Navigation">
-    {navLinks.map((l) => <a href={l.href} data-mobile-link>{l.label}</a>)}
-    <a href={ctaHref} class="hdr-mobile-cta" data-mobile-link>{content.navCta}</a>
-  </nav>
+  <div id="mobile-nav" class="hdr-mobile" hidden data-nav-panel>
+    <div class="wrap hdr-mobile-in">
+      {d.nav.items.map((it) => (
+        <a href={it.href} class:list={['hdr-mlink', { active: isActive(it.href) }]}>
+          {it.label}{it.foreign && <sup class="hdr-sup">{d.nav.foreign}</sup>}
+        </a>
+      ))}
+      <a href={lang === 'en' ? '/contact' : '/de/kontakt'} class="hdr-mlink">{d.nav.contact}</a>
+      <div class="hdr-mobile-actions">
+        <a href={SITE.booking} class="btn btn-primary" target="_blank" rel="noopener" data-track="cta_book_click" data-location="mobile-nav">{d.nav.cta}</a>
+        <a href={switchHref} class="btn btn-secondary" lang={other} hreflang={other} data-track="lang_switch" data-lang={other}>{d.nav.switchLabel}</a>
+      </div>
+    </div>
+  </div>
 </header>
 
 <style>
-  .hdr {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    background: rgba(11, 27, 51, 0.82);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  }
-  .hdr-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 32px;
-    height: 74px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-  }
-  .hdr-logo { display: flex; align-items: center; }
-  .hdr-logo img { height: 30px; width: auto; display: block; }
-
-  .hdr-nav { display: flex; align-items: center; gap: 30px; }
-  .hdr-nav a {
-    color: #cbd5e1;
-    font-size: 15px;
-    font-weight: 500;
-    transition: color 0.2s;
-  }
-  .hdr-nav a:hover { color: #fff; }
-
-  .hdr-right { display: flex; align-items: center; gap: 16px; }
-
-  .langswitch {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    font-size: 13px;
-    font-weight: 600;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 999px;
-    padding: 5px 10px;
-  }
-  .langswitch .cur { color: #fff; }
-  .langswitch .sep { color: #475569; }
-  .langswitch a { color: #64748b; }
-  .langswitch a:hover { color: #cbd5e1; }
-
-  .hdr-cta {
-    background: #f97316;
-    color: #fff;
-    font-size: 15px;
-    font-weight: 600;
-    padding: 11px 20px;
-    border-radius: 999px;
-    white-space: nowrap;
-    box-shadow: 0 10px 24px -8px rgba(249, 115, 22, 0.6);
-  }
-  .hdr-cta:hover {
-    color: #fff;
-    transform: translateY(-2px);
-    box-shadow: 0 16px 30px -8px rgba(249, 115, 22, 0.7);
-  }
-
-  /* Burger — hidden on desktop */
-  .hdr-burger {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-  }
-  .hdr-burger span {
-    width: 22px;
-    height: 2px;
-    background: #fff;
-    border-radius: 2px;
-    transition: transform 0.3s, opacity 0.3s;
-  }
-  .hdr-burger[aria-expanded='true'] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-  .hdr-burger[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
-  .hdr-burger[aria-expanded='true'] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-  .hdr-mobile {
-    display: none;
-    flex-direction: column;
-    padding: 12px 22px 22px;
-    gap: 4px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(11, 27, 51, 0.96);
-  }
-  .hdr-mobile a {
-    color: #cbd5e1;
-    font-size: 16px;
-    font-weight: 500;
-    padding: 12px 4px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  }
-  .hdr-mobile a:hover { color: #fff; }
-  .hdr-mobile-cta {
-    margin-top: 12px;
-    background: #f97316;
-    color: #fff !important;
-    text-align: center;
-    border-radius: 12px;
-    font-weight: 600;
-    border-bottom: none !important;
-  }
-
-  @media (max-width: 900px) {
-    .hdr-nav { display: none; }
-    .hdr-cta { display: none; }
-    .hdr-burger { display: flex; }
-    .hdr-inner { padding: 0 22px; }
-    .hdr-mobile[data-open] { display: flex; }
+  .hdr-in { display: flex; align-items: center; justify-content: space-between; gap: 24px; height: 72px; }
+  .hdr-brand { display: inline-flex; align-items: center; gap: 12px; color: var(--color-ink); }
+  .hdr-word { font-family: var(--font-head); font-weight: 700; font-size: 17px; letter-spacing: 0.06em; }
+  .hdr-nav { display: none; align-items: center; gap: 4px; }
+  .hdr-link { position: relative; font-size: 15px; font-weight: 500; color: var(--color-ink); padding: 8px 12px; border-radius: 4px; transition: color .15s, background .15s; }
+  .hdr-link:hover { background: var(--color-light); }
+  .hdr-link.active { color: var(--color-green); font-weight: 600; }
+  .hdr-sup { font-family: var(--font-mono); font-size: 9px; letter-spacing: .06em; color: var(--color-gray); margin-left: 3px; vertical-align: top; }
+  .hdr-right { display: flex; align-items: center; gap: 10px; }
+  .hdr-lang { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; color: var(--color-gray); padding: 8px 10px; border: 1px solid var(--color-line); border-radius: 4px; }
+  .hdr-lang:hover { color: var(--color-ink); border-color: var(--color-ink); }
+  .hdr-cta { display: none; }
+  .hdr-burger { display: inline-flex; flex-direction: column; justify-content: center; gap: 5px; width: 42px; height: 42px; padding: 10px; background: transparent; border: 1px solid var(--color-line); border-radius: 4px; cursor: pointer; }
+  .hdr-burger-bar { display: block; height: 2px; width: 100%; background: var(--color-ink); transition: transform .2s, opacity .2s; }
+  .hdr-burger[aria-expanded="true"] .hdr-burger-bar:nth-child(2) { transform: translateY(7px) rotate(45deg); }
+  .hdr-burger[aria-expanded="true"] .hdr-burger-bar:nth-child(3) { opacity: 0; }
+  .hdr-burger[aria-expanded="true"] .hdr-burger-bar:nth-child(4) { transform: translateY(-7px) rotate(-45deg); }
+  .hdr-mobile { border-top: 1px solid var(--color-line); background: #fff; }
+  .hdr-mobile-in { display: grid; padding-top: 8px; padding-bottom: 20px; }
+  .hdr-mlink { font-family: var(--font-head); font-weight: 600; font-size: 22px; padding: 12px 0; border-bottom: 1px solid var(--color-line); color: var(--color-ink); }
+  .hdr-mlink.active { color: var(--color-green); }
+  .hdr-mobile-actions { display: grid; gap: 10px; margin-top: 18px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  @media (min-width: 1024px) {
+    .hdr-nav { display: flex; }
+    .hdr-cta { display: inline-flex; }
+    .hdr-burger { display: none; }
+    .hdr-mobile { display: none !important; }
   }
 </style>
-
-<script>
-  const burger = document.querySelector<HTMLButtonElement>('[data-burger]');
-  const menu = document.querySelector<HTMLElement>('[data-mobile-nav]');
-  if (burger && menu) {
-    const toggle = (open: boolean) => {
-      burger.setAttribute('aria-expanded', String(open));
-      if (open) {
-        menu.hidden = false;
-        menu.setAttribute('data-open', '');
-      } else {
-        menu.removeAttribute('data-open');
-        menu.hidden = true;
-      }
-    };
-    burger.addEventListener('click', () =>
-      toggle(burger.getAttribute('aria-expanded') !== 'true')
-    );
-    menu.querySelectorAll('[data-mobile-link]').forEach((a) =>
-      a.addEventListener('click', () => toggle(false))
-    );
-  }
-</script>

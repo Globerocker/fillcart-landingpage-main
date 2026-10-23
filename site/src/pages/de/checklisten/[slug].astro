@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import InteractiveChecklist from '../../../components/InteractiveChecklist.astro';
+import CtaBand from '../../../components/CtaBand.astro';
+import { de } from '../../../i18n/de.ts';
+import { RESOURCES } from '../../../data/resources.ts';
+import { CHECKLISTS } from '../../../data/checklists.ts';
+import { breadcrumbSchema } from '../../../lib/seo.ts';
+
+export async function getStaticPaths() {
+  return RESOURCES.map((r) => ({ params: { slug: r.slug }, props: { resource: r } }));
+}
+const { resource } = Astro.props;
+const checklist = resource.checklistId ? CHECKLISTS[resource.checklistId] : undefined;
+const path = `/de/checklisten/${resource.slug}`;
+---
+<BaseLayout lang="de" title={resource.title} description={resource.description} path={path} alt={null} ogImage={`/og/checkliste-${resource.slug}.png`} schema={[breadcrumbSchema([{ name: de.checklists.hero.eyebrow, path: '/de/checklisten' }, { name: resource.title, path }])]}>
+  <PageHero eyebrow={resource.kicker} title={resource.title} sub={resource.intro} />
+  <section class="section-sm">
+    <div class="wrap ckl-wrap">
+      {checklist && <InteractiveChecklist id={checklist.id} sections={checklist.sections} />}
+    </div>
+  </section>
+  <CtaBand lang="de" title={de.insights.cta.h2} text={de.insights.cta.text} primary={{ label: de.insights.cta.primary, href: '/de/leistungen/audit' }} secondary={{ label: de.insights.cta.secondary, href: undefined }} location="checkliste" />
+</BaseLayout>
+<style>
+  .ckl-wrap { max-width: 860px; }
+</style>

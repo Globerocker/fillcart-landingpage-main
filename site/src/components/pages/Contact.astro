@@ -1,0 +1,60 @@
+---
+import { SITE, type Locale } from '../../config/site.ts';
+import { getDict } from '../../lib/i18n.ts';
+import PageHero from '../PageHero.astro';
+import ContactForm from '../ContactForm.astro';
+import Todo from '../Todo.astro';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const d = getDict(lang);
+const c = d.contact;
+const phone = lang === 'de' ? SITE.contact.phoneDe : SITE.contact.phoneUs;
+---
+
+<PageHero eyebrow={c.hero.eyebrow} title={c.hero.h1} sub={c.hero.sub} />
+
+<section class="section bg-dots">
+  <div class="wrap ct-grid">
+    <div class="ct-left">
+      <div class="card-dark bg-lines book" data-reveal>
+        <div class="eyebrow">{c.book.eyebrow}</div>
+        <h2 class="h2">{c.book.title}</h2>
+        <p class="text-muted">{c.book.text}</p>
+        <a href={SITE.booking} class="btn btn-light btn-lg" target="_blank" rel="noopener" data-track="cta_book_click" data-location="contact">{c.book.cta}</a>
+        <span class="small text-muted">{d.common.bookingNote}</span>
+      </div>
+      <div class="direct" data-reveal style="--d:80ms">
+        <div class="eyebrow">{c.direct.eyebrow}</div>
+        <dl class="direct-list">
+          <dt class="mono">{c.direct.email}</dt><dd><a href={`mailto:${SITE.contact.email}`} class="link">{SITE.contact.email}</a></dd>
+          {SITE.flags.showPhone && (<><dt class="mono">{c.direct.phone}</dt><dd><a href={phone.href} class="link">{phone.label}</a></dd></>)}
+          <dt class="mono">{c.direct.linkedin}</dt><dd><a href={SITE.person.linkedin} class="link" target="_blank" rel="noopener me">{SITE.person.nameAscii}</a></dd>
+        </dl>
+        <p class="small text-muted">{c.direct.remote} {c.direct.hours}</p>
+        <Todo>Contact email (info@fillcart.de vs info@andreschuler.com) and whether to show phone/WhatsApp are open decisions. Phone shown per language: DE number on German pages, US number on English pages.</Todo>
+      </div>
+    </div>
+    <div class="ct-form card" data-reveal style="--d:120ms">
+      <div class="eyebrow">{c.form.eyebrow}</div>
+      <h2 class="h3 ct-form-title">{c.form.title}</h2>
+      <ContactForm lang={lang} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .ct-grid { display: grid; gap: 24px; align-items: start; }
+  @media (min-width: 1024px) { .ct-grid { grid-template-columns: .9fr 1.1fr; gap: 40px; } }
+  .ct-left { display: grid; gap: 24px; }
+  .book { display: grid; gap: 14px; }
+  .book h2 { margin: 0; }
+  .book p { margin: 0; }
+  .book .btn { width: fit-content; margin-top: 6px; }
+  .direct { display: grid; gap: 12px; }
+  .direct-list { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 10px 18px; align-items: baseline; }
+  .direct-list dt { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--color-gray); }
+  .direct-list dd { margin: 0; }
+  .direct p { margin: 0; }
+  .ct-form { display: grid; gap: 12px; }
+  .ct-form-title { margin: 0 0 8px; }
+</style>

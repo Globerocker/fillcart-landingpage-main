@@ -1,0 +1,33 @@
+---
+import { Image } from 'astro:assets';
+import portrait from '../assets/andre.png';
+import Logo from './Logo.astro';
+interface Props { alt: string; name?: string; role?: string; variant?: 'hero' | 'side'; animate?: boolean }
+const { alt, name, role, variant = 'hero', animate = false } = Astro.props;
+---
+
+<figure class:list={['pt', `pt-${variant}`]}>
+  <div class="pt-frame bg-dots bg-dots-full">
+    <Image src={portrait} alt={alt} widths={[320, 480, 640]} sizes="(min-width: 1024px) 420px, 70vw" class="pt-img" loading={variant === 'hero' ? 'eager' : 'lazy'} fetchpriority={variant === 'hero' ? 'high' : undefined} />
+  </div>
+  <div class="pt-badge"><Logo size={56} animate={animate} /></div>
+  {(name || role) && (
+    <figcaption class="pt-cap">
+      {name && <span class="pt-name">{name}</span>}
+      {role && <span class="pt-role mono">{role}</span>}
+    </figcaption>
+  )}
+</figure>
+
+<style>
+  .pt { position: relative; margin: 0; width: 100%; max-width: 440px; }
+  .pt-frame { position: relative; border-radius: var(--radius-xl); overflow: hidden; aspect-ratio: 4 / 5; display: flex; align-items: flex-end; justify-content: center; }
+  .pt-frame::after { content: ''; position: absolute; inset: auto 0 0 0; height: 45%; background: linear-gradient(180deg, transparent, rgba(30,91,60,.18)); pointer-events: none; }
+  .pt-img { position: relative; z-index: 1; width: 78%; height: auto; max-height: 100%; object-fit: contain; object-position: bottom center; }
+  .pt-badge { position: absolute; left: -12px; bottom: 54px; z-index: 2; filter: drop-shadow(0 10px 20px rgba(0,0,0,.25)); }
+  .pt-cap { display: grid; gap: 2px; margin-top: 14px; }
+  .pt-name { font-family: var(--font-head); font-weight: 600; font-size: 16px; }
+  .pt-role { font-size: 12px; letter-spacing: .04em; color: var(--color-gray-2); }
+  .pt-side { max-width: 360px; }
+  .pt-side .pt-badge { left: -10px; bottom: 44px; transform: scale(.8); transform-origin: left bottom; }
+</style>

@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Services from '../../../components/pages/Services.astro';
+import { de } from '../../../i18n/de.ts';
+import { breadcrumbSchema, serviceSchema } from '../../../lib/seo.ts';
+const schema = [
+  breadcrumbSchema([{ name: 'Leistungen', path: '/de/leistungen' }]),
+  serviceSchema({ name: de.audit.hero.h1, description: de.audit.meta.description, path: '/de/leistungen/audit', price: '500', currency: 'EUR' }),
+];
+---
+<BaseLayout lang="de" title={de.services.meta.title} description={de.services.meta.description} path="/de/leistungen" ogImage="/og/services-de.png" schema={schema}>
+  <Services lang="de" />
+</BaseLayout>

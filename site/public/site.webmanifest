@@ -1,0 +1,11 @@
+{
+  "name": "Andre Schüler · FILLCART",
+  "short_name": "FILLCART",
+  "icons": [
+    { "src": "/brand/A-icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/brand/A-apple-touch-180.png", "sizes": "180x180", "type": "image/png" }
+  ],
+  "theme_color": "#1e5b3c",
+  "background_color": "#ffffff",
+  "display": "browser"
+}

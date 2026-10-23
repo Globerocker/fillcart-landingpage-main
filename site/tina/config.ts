@@ -1,105 +1,106 @@
 import { defineConfig } from 'tinacms';
 
 // Branch Tina reads/writes. On Vercel this is the deploy branch; locally "main".
-const branch =
-  process.env.TINA_BRANCH ||
-  process.env.VERCEL_GIT_COMMIT_REF ||
-  process.env.HEAD ||
-  'main';
+const branch = process.env.TINA_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || process.env.HEAD || 'main';
+
+const topicOptions = [
+  { value: 'crm', label: 'CRM' },
+  { value: 'paid', label: 'Paid' },
+  { value: 'seo', label: 'SEO & GEO' },
+  { value: 'revops', label: 'RevOps' },
+  { value: 'automation', label: 'Automation' },
+  { value: 'story', label: 'Story' },
+];
+
+const metricFields = [
+  { type: 'string' as const, name: 'value', label: 'Value (e.g. "3 → 1")' },
+  { type: 'string' as const, name: 'label', label: 'Label' },
+  { type: 'string' as const, name: 'definition', label: 'Definition (what exactly was measured)' },
+];
 
 export default defineConfig({
   branch,
-  // From app.tina.io (free tier). Set as env vars — see CMS-SETUP.md.
   clientId: process.env.PUBLIC_TINA_CLIENT_ID || '',
   token: process.env.TINA_TOKEN || '',
-
-  build: {
-    outputFolder: 'admin', // admin SPA served at /admin
-    publicFolder: 'public',
-  },
-  media: {
-    tina: {
-      mediaRoot: 'assets', // uploads land in public/assets
-      publicFolder: 'public',
-    },
-  },
-
+  build: { outputFolder: 'admin', publicFolder: 'public' },
+  media: { tina: { mediaRoot: 'assets', publicFolder: 'public' } },
   schema: {
     collections: [
-      // ---------------- BLOG / WISSEN ----------------
       {
-        name: 'blog',
-        label: 'Wissen (Artikel)',
-        path: 'src/content/blog',
+        name: 'insights',
+        label: 'Insights (articles)',
+        path: 'src/content/insights',
         format: 'md',
-        ui: {
-          // slug/filename lives in a category subfolder; keep the filename as slug
-          filename: { readonly: false },
-        },
         fields: [
-          { type: 'string', name: 'title', label: 'Titel', isTitle: true, required: true },
-          { type: 'string', name: 'description', label: 'Meta-Beschreibung', required: true, ui: { component: 'textarea' } },
-          {
-            type: 'string', name: 'category', label: 'Kategorie', required: true,
-            options: [
-              { value: 'google-ads', label: 'Google Ads' },
-              { value: 'seo-aeo', label: 'SEO & AEO' },
-              { value: 'hubspot', label: 'HubSpot' },
-            ],
-          },
-          { type: 'datetime', name: 'publishDate', label: 'Veröffentlicht am', required: true },
-          { type: 'datetime', name: 'updatedDate', label: 'Aktualisiert am' },
-          { type: 'string', name: 'author', label: 'Autor' },
-          { type: 'number', name: 'readingTime', label: 'Lesezeit (Min., optional)' },
+          { type: 'string', name: 'title', label: 'Title', isTitle: true, required: true },
+          { type: 'string', name: 'description', label: 'Meta description', required: true, ui: { component: 'textarea' } },
+          { type: 'string', name: 'lang', label: 'Language', required: true, options: [{ value: 'en', label: 'English' }, { value: 'de', label: 'Deutsch' }] },
+          { type: 'datetime', name: 'publishDate', label: 'Published', required: true },
+          { type: 'datetime', name: 'updatedDate', label: 'Updated' },
+          { type: 'string', name: 'author', label: 'Author' },
+          { type: 'string', name: 'topic', label: 'Topic', options: topicOptions },
           { type: 'string', name: 'tags', label: 'Tags', list: true },
-          { type: 'boolean', name: 'featured', label: 'Hervorgehoben (Pillar)' },
-          { type: 'boolean', name: 'draft', label: 'Entwurf (nicht veröffentlichen)' },
-          {
-            type: 'object', name: 'heroStat', label: 'Highlight-Statistik',
-            fields: [
-              { type: 'string', name: 'value', label: 'Wert (z. B. „58 %“)' },
-              { type: 'string', name: 'label', label: 'Beschriftung' },
-            ],
-          },
-          { type: 'rich-text', name: 'body', label: 'Inhalt', isBody: true },
+          { type: 'number', name: 'readingTime', label: 'Reading time (min, optional)' },
+          { type: 'object', name: 'heroStat', label: 'Hero stat', fields: [{ type: 'string', name: 'value', label: 'Value' }, { type: 'string', name: 'label', label: 'Label' }] },
+          { type: 'boolean', name: 'featured', label: 'Featured' },
+          { type: 'boolean', name: 'draft', label: 'Draft (not published)' },
+          { type: 'string', name: 'originalUrl', label: 'Original URL (migrated posts)' },
+          { type: 'rich-text', name: 'body', label: 'Body', isBody: true },
         ],
       },
-
-      // ---------------- REFERENZEN / CASES ----------------
       {
-        name: 'cases',
-        label: 'Referenzen (Cases)',
-        path: 'src/content/cases',
+        name: 'work',
+        label: 'Case studies',
+        path: 'src/content/work',
         format: 'md',
         fields: [
-          { type: 'string', name: 'title', label: 'Case-Titel', isTitle: true, required: true },
-          { type: 'string', name: 'client', label: 'Kunde', required: true },
-          { type: 'string', name: 'website', label: 'Website (ohne https)' },
-          { type: 'string', name: 'market', label: 'Markt (z. B. „DE“, „US“, „NL · DE“)', required: true },
-          { type: 'string', name: 'industry', label: 'Branche', required: true },
-          { type: 'string', name: 'description', label: 'Kurzbeschreibung', required: true, ui: { component: 'textarea' } },
-          { type: 'datetime', name: 'publishDate', label: 'Datum', required: true },
-          {
-            type: 'string', name: 'accent', label: 'Akzentfarbe',
-            options: [
-              { value: 'orange', label: 'Orange' },
-              { value: 'green', label: 'Grün' },
-              { value: 'sky', label: 'Blau' },
-            ],
-          },
-          { type: 'string', name: 'focusChips', label: 'Fokus-Chips (Markt/Modell/Angle)', list: true },
-          {
-            type: 'object', name: 'metrics', label: 'Kennzahlen (nur echte, freigegebene Zahlen)',
-            list: true,
-            ui: { itemProps: (item) => ({ label: item?.value || 'Kennzahl' }) },
-            fields: [
-              { type: 'string', name: 'value', label: 'Wert (z. B. „+34 %“)' },
-              { type: 'string', name: 'label', label: 'Beschriftung' },
-            ],
-          },
-          { type: 'string', name: 'tags', label: 'Tags', list: true },
-          { type: 'boolean', name: 'featured', label: 'Hervorgehoben' },
-          { type: 'rich-text', name: 'body', label: 'Story (Ausgangslage / Ansatz)', isBody: true },
+          { type: 'string', name: 'title', label: 'Title', isTitle: true, required: true },
+          { type: 'string', name: 'summary', label: 'Summary (card + meta)', required: true, ui: { component: 'textarea' } },
+          { type: 'string', name: 'client', label: 'Client (anonymised label)', required: true },
+          { type: 'string', name: 'industry', label: 'Industry', required: true },
+          { type: 'string', name: 'services', label: 'Services', list: true },
+          { type: 'string', name: 'stack', label: 'Stack', list: true },
+          { type: 'string', name: 'role', label: 'Role', required: true },
+          { type: 'string', name: 'period', label: 'Period' },
+          { type: 'object', name: 'heroMetric', label: 'Hero metric', fields: metricFields },
+          { type: 'object', name: 'metrics', label: 'Metrics', list: true, ui: { itemProps: (item) => ({ label: item?.value || 'Metric' }) }, fields: metricFields },
+          { type: 'boolean', name: 'approved', label: 'Approved for publication' },
+          { type: 'boolean', name: 'featured', label: 'Featured on home' },
+          { type: 'number', name: 'order', label: 'Order' },
+          { type: 'string', name: 'source', label: 'Source (internal)' },
+          { type: 'rich-text', name: 'body', label: 'Body', isBody: true },
+        ],
+      },
+      {
+        name: 'projects',
+        label: 'Projects & ventures',
+        path: 'src/content/projects',
+        format: 'md',
+        fields: [
+          { type: 'string', name: 'name', label: 'Name', isTitle: true, required: true },
+          { type: 'string', name: 'role', label: 'Role', required: true },
+          { type: 'string', name: 'description', label: 'Description', required: true, ui: { component: 'textarea' } },
+          { type: 'object', name: 'links', label: 'Links', list: true, fields: [{ type: 'string', name: 'label', label: 'Label' }, { type: 'string', name: 'href', label: 'URL' }] },
+          { type: 'string', name: 'status', label: 'Status' },
+          { type: 'boolean', name: 'approved', label: 'Show on site' },
+          { type: 'number', name: 'order', label: 'Order' },
+          { type: 'rich-text', name: 'body', label: 'Body', isBody: true },
+        ],
+      },
+      {
+        name: 'partners',
+        label: 'Partners',
+        path: 'src/content/partners',
+        format: 'md',
+        fields: [
+          { type: 'string', name: 'name', label: 'Name', isTitle: true, required: true },
+          { type: 'string', name: 'person', label: 'Person' },
+          { type: 'string', name: 'url', label: 'URL' },
+          { type: 'string', name: 'kind', label: 'Kind', options: [{ value: 'agency', label: 'Agency' }, { value: 'venture', label: 'Venture' }, { value: 'person', label: 'Person' }] },
+          { type: 'string', name: 'description', label: 'Description', required: true, ui: { component: 'textarea' } },
+          { type: 'boolean', name: 'approved', label: 'Partner approved listing' },
+          { type: 'number', name: 'order', label: 'Order' },
+          { type: 'rich-text', name: 'body', label: 'Body', isBody: true },
         ],
       },
     ],

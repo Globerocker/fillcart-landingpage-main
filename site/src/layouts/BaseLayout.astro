@@ -1,119 +1,94 @@
 ---
-import '@fontsource-variable/space-grotesk';
-import '@fontsource/inter/400.css';
-import '@fontsource/inter/500.css';
-import '@fontsource/inter/600.css';
-import '@fontsource/inter/700.css';
+import '@fontsource-variable/space-grotesk/index.css';
+import '@fontsource-variable/manrope/index.css';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
 import '../styles/global.css';
-import { SITE, INTEGRATIONS, GTM_READY } from '../config/site.ts';
+import { SITE, type Locale } from '../config/site.ts';
+import { ENV, GTM_READY } from '../config/env.ts';
+import { getDict, pageTitle } from '../lib/i18n.ts';
+import { altPath as resolveAlt } from '../i18n/routes.ts';
+import { abs, graph, orgSchema, personSchema, websiteSchema } from '../lib/seo.ts';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
 import Behaviors from '../components/Behaviors.astro';
-import WhatsAppFloat from '../components/WhatsAppFloat.astro';
-import type { Lang } from '../i18n/types.ts';
+import CookieBanner from '../components/CookieBanner.astro';
 
 interface Props {
-  lang: Lang;
+  lang: Locale;
   title: string;
   description: string;
-  /** Path of this page (e.g. "/" or "/en/") for canonical + og:url. */
+  /** Path of this page, e.g. "/" or "/services/audit" (no trailing slash). */
   path: string;
-  /**
-   * Path to the equivalent page in the OTHER language, for hreflang.
-   * Omit for pages that have no counterpart (DE-only blog/cases/resources) —
-   * they then self-reference instead of falsely pointing at the EN homepage.
-   */
-  altPath?: string;
-  /** Optional social-share image path (defaults to the brand OG image). */
+  /** Path of the same page in the other language. Resolved from the route map when omitted; pass null to force none. */
+  alt?: string | null;
+  /** Social image path, e.g. "/og/home-en.png". */
   ogImage?: string;
-  /** Optional JSON-LD graph to inline (Organization / FAQPage / etc.). */
-  schema?: Record<string, unknown> | Record<string, unknown>[];
+  ogType?: 'website' | 'article';
+  /** Extra JSON-LD nodes (Person/Organization/WebSite are always included). */
+  schema?: Record<string, unknown>[];
+  noindex?: boolean;
+  /** Plain title without the site suffix (for the home page). */
+  rawTitle?: boolean;
 }
 
-const { lang, title, description, path, altPath, ogImage, schema } = Astro.props;
-
-const canonical = new URL(path, SITE.baseUrl).href;
-// Only build a hreflang cluster when a real counterpart exists.
-const hasAlt = !!altPath;
-const dePath = lang === 'de' ? path : altPath;
-const enPath = lang === 'en' ? path : altPath;
-const ogImageUrl = new URL(ogImage ?? '/assets/og/og-default.png', SITE.baseUrl).href;
-
-const gtmId = INTEGRATIONS.gtm.containerId;
-const consent = INTEGRATIONS.consent;
+const { lang, title, description, path, alt, ogImage, ogType = 'website', schema = [], noindex = false, rawTitle = false } = Astro.props;
+const dict = getDict(lang);
+const fullTitle = rawTitle ? title : pageTitle(dict, title);
+const canonical = abs(path);
+const altResolved = alt === undefined ? resolveAlt(path, lang) : alt ?? undefined;
+const enPath = lang === 'en' ? path : altResolved;
+const dePath = lang === 'de' ? path : altResolved;
+const ogImageUrl = abs(ogImage ?? '/og/default.png');
+const ld = graph(orgSchema(), personSchema(), websiteSchema(lang), ...schema);
+const gtmId = ENV.gtmId;
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang={lang} class="no-js">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
+    <script is:inline>document.documentElement.classList.remove('no-js');</script>
 
-    <title>{title}</title>
+    <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
 
-    {/* hreflang: only when a real counterpart exists (DE ↔ EN). DE-only pages
-        self-reference via the canonical above and emit no cluster. */}
-    {hasAlt && (
+    {altResolved && (
       <>
-        <link rel="alternate" hreflang="de" href={new URL(dePath!, SITE.baseUrl).href} />
-        <link rel="alternate" hreflang="en" href={new URL(enPath!, SITE.baseUrl).href} />
-        <link rel="alternate" hreflang="x-default" href={new URL(dePath!, SITE.baseUrl).href} />
+        <link rel="alternate" hreflang="en" href={abs(enPath!)} />
+        <link rel="alternate" hreflang="de" href={abs(dePath!)} />
+        <link rel="alternate" hreflang="x-default" href={abs(enPath!)} />
       </>
     )}
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Fillcart" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={SITE.brand.siteName} />
     <meta property="og:locale" content={lang === 'de' ? 'de_DE' : 'en_US'} />
-    <meta property="og:title" content={title} />
+    <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImageUrl} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-
-    <!-- Twitter card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
+    <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
 
-    <link rel="icon" type="image/png" href="/assets/brand/icon-white.png" />
-    <link rel="apple-touch-icon" href="/assets/brand/icon-black.png" />
-    <meta name="theme-color" content="#0B1B33" />
+    <link rel="icon" type="image/svg+xml" href="/brand/A-symbol.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/brand/A-favicon32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/brand/A-apple-touch-180.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#1e5b3c" />
 
-    {/* Failsafe: if JS is disabled or errors, reveal-on-scroll content must not
-        stay invisible. */}
-    <noscript>
-      <style>[data-reveal]{opacity:1 !important;transform:none !important}</style>
-    </noscript>
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
 
-    {schema && (
-      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
-    )}
-
-    {/* Cookie-consent CMP must load BEFORE GTM (DE market = mandatory). */}
-    {consent.provider === 'cookiebot' && consent.id && (
-      <script
-        id="Cookiebot"
-        src="https://consent.cookiebot.com/uc.js"
-        data-cbid={consent.id}
-        data-blockingmode="auto"
-        is:inline
-      />
-    )}
-    {consent.provider === 'usercentrics' && consent.id && (
-      <script
-        id="usercentrics-cmp"
-        src="https://web.cmp.usercentrics.eu/ui/loader.js"
-        data-settings-id={consent.id}
-        is:inline
-        async
-      />
-    )}
-
-    {/* Google Tag Manager — only emitted once a container id is configured. */}
+    {/* Consent Mode v2: everything denied until the visitor agrees. Stored choice restored early. */}
+    <script is:inline set:html={`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',functionality_storage:'granted',security_storage:'granted',wait_for_update:500});try{if(localStorage.getItem('fc-consent')==='granted'){gtag('consent','update',{ad_storage:'granted',ad_user_data:'granted',ad_personalization:'granted',analytics_storage:'granted'});}}catch(e){}window.fcTrack=function(n,p){try{window.dataLayer.push(Object.assign({event:n},p||{}));}catch(e){}};`} />
     {GTM_READY && (
       <script is:inline set:html={`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtmId}');`} />
     )}
@@ -122,8 +97,18 @@ const consent = INTEGRATIONS.consent;
     {GTM_READY && (
       <noscript set:html={`<iframe src="https://www.googletagmanager.com/ns.html?id=${gtmId}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`} />
     )}
-    <slot />
-    <WhatsAppFloat lang={lang} />
+    <a href="#main" class="skip">{dict.common.skipToContent}</a>
+    <Header lang={lang} path={path} alt={altResolved} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer lang={lang} path={path} alt={altResolved} />
+    {GTM_READY && <CookieBanner lang={lang} />}
     <Behaviors />
   </body>
 </html>
+
+<style is:global>
+  .skip { position: absolute; left: 16px; top: -60px; z-index: 100; background: var(--color-green); color: #fff; padding: 10px 14px; border-radius: 4px; font-weight: 600; }
+  .skip:focus { top: 12px; }
+</style>

@@ -1,40 +1,42 @@
 ---
-/**
- * Interactive, self-scoring checklist lead magnet.
- * State persists in localStorage per checklist id; a progress ring updates live.
- */
+/** Interactive, self-scoring checklist (German). State persists in localStorage per checklist id. */
 export interface ChecklistItem { text: string; hint?: string }
 export interface ChecklistSection { title: string; items: ChecklistItem[] }
-
-interface Props {
-  id: string;
-  sections: ChecklistSection[];
-}
+interface Props { id: string; sections: ChecklistSection[] }
 const { id, sections } = Astro.props;
 const total = sections.reduce((n, s) => n + s.items.length, 0);
 let idx = 0;
+const T = {
+  of: 'von',
+  done: 'erledigt',
+  intro: 'Hak ab, was bei dir schon sitzt. Dein Fortschritt wird lokal gespeichert.',
+  reset: 'Zurücksetzen',
+  completeTitle: 'Sauber. Alles abgehakt.',
+  completeText: 'Wenn du bei mehr als drei Punkten nein sagen musstest, liegt bei dir mit hoher Wahrscheinlichkeit Pipeline auf der Straße. Genau das findet das Audit, mit Zahlen.',
+  completeCta: 'Zum Audit',
+  openTpl: '{n} Punkte noch offen. Bei jedem offenen Punkt fragst du dich am besten: kostet mich das gerade Pipeline?',
+};
 ---
 
-<div class="ckl" data-checklist={id} data-total={total}>
-  <div class="ckl-bar">
+<div class="ckl" data-checklist={id} data-total={total} data-open-tpl={T.openTpl}>
+  <div class="ckl-bar card">
     <div class="ckl-ring">
-      <svg viewBox="0 0 48 48" width="48" height="48">
-        <circle cx="24" cy="24" r="20" fill="none" stroke="#E2E8F0" stroke-width="5"></circle>
-        <circle class="ckl-ring-fg" cx="24" cy="24" r="20" fill="none" stroke="#22C55E" stroke-width="5"
-          stroke-linecap="round" stroke-dasharray="125.6" stroke-dashoffset="125.6" transform="rotate(-90 24 24)"></circle>
+      <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true">
+        <circle cx="24" cy="24" r="20" fill="none" stroke="#dbe3de" stroke-width="5"></circle>
+        <circle class="ckl-ring-fg" cx="24" cy="24" r="20" fill="none" stroke="#1e5b3c" stroke-width="5" stroke-linecap="round" stroke-dasharray="125.6" stroke-dashoffset="125.6" transform="rotate(-90 24 24)"></circle>
       </svg>
-      <span class="ckl-ring-pct" data-ckl-pct>0%</span>
+      <span class="ckl-ring-pct mono" data-ckl-pct>0%</span>
     </div>
     <div class="ckl-bar-txt">
-      <div class="ckl-bar-title"><span data-ckl-done>0</span> von {total} erledigt</div>
-      <div class="ckl-bar-sub" data-ckl-msg>Hak ab, was bei dir schon sitzt. Dein Fortschritt wird lokal gespeichert.</div>
+      <div class="ckl-bar-title"><span class="green" data-ckl-done>0</span> {T.of} {total} {T.done}</div>
+      <div class="ckl-bar-sub" data-ckl-msg>{T.intro}</div>
     </div>
-    <button type="button" class="ckl-reset" data-ckl-reset>Zurücksetzen</button>
+    <button type="button" class="btn btn-secondary btn-sm" data-ckl-reset>{T.reset}</button>
   </div>
 
   {sections.map((section) => (
     <div class="ckl-section">
-      <h3 class="ckl-section-title">{section.title}</h3>
+      <h2 class="h3 ckl-section-title">{section.title}</h2>
       <ul class="ckl-list">
         {section.items.map((item) => {
           const itemId = `${id}-${idx++}`;
@@ -42,7 +44,7 @@ let idx = 0;
             <li class="ckl-item">
               <label>
                 <input type="checkbox" data-ckl-item value={itemId} />
-                <span class="ckl-check"></span>
+                <span class="ckl-check" aria-hidden="true"></span>
                 <span class="ckl-item-body">
                   <span class="ckl-item-text" set:html={item.text} />
                   {item.hint && <span class="ckl-item-hint" set:html={item.hint} />}
@@ -55,97 +57,49 @@ let idx = 0;
     </div>
   ))}
 
-  <div class="ckl-done" data-ckl-complete hidden>
-    <div class="ckl-done-icon">✓</div>
+  <div class="ckl-done bg-dark" data-ckl-complete hidden>
     <div>
-      <strong>Sauber. Alles abgehakt.</strong>
-      <p>Wenn du bei mehr als drei Punkten „nein" sagen musstest, liegt bei dir mit hoher Wahrscheinlichkeit Pipeline auf der Straße. Genau das findet unser kostenloser Audit — mit Zahlen.</p>
-      <a href="/#audit" class="ckl-done-cta">Kostenlosen Audit sichern →</a>
+      <strong>{T.completeTitle}</strong>
+      <p>{T.completeText}</p>
+      <a href="/de/leistungen/audit" class="btn btn-light">{T.completeCta}</a>
     </div>
   </div>
 </div>
 
 <style>
-  .ckl { margin: 8px 0 0; }
-  .ckl-bar {
-    position: sticky; top: 86px; z-index: 5;
-    display: flex; align-items: center; gap: 18px;
-    background: #fff; border: 1px solid var(--border); border-radius: 16px;
-    padding: 16px 20px; margin-bottom: 26px;
-    box-shadow: 0 16px 34px -22px rgba(11, 27, 51, 0.25);
-  }
-  .ckl-ring { position: relative; width: 48px; height: 48px; flex-shrink: 0; }
-  .ckl-ring-fg { transition: stroke-dashoffset 0.5s var(--ease-spring); }
-  .ckl-ring-pct {
-    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-head); font-weight: 700; font-size: 12px; color: var(--navy);
-  }
+  .ckl { display: grid; gap: 26px; }
+  .ckl-bar { position: sticky; top: 84px; z-index: 5; display: flex; align-items: center; gap: 16px; padding: 14px 18px; }
+  .ckl-ring { position: relative; width: 48px; height: 48px; flex: none; }
+  .ckl-ring-fg { transition: stroke-dashoffset .5s var(--ease-soft); }
+  .ckl-ring-pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; }
   .ckl-bar-txt { flex: 1; }
-  .ckl-bar-title { font-family: var(--font-head); font-weight: 700; font-size: 16px; color: var(--navy); }
-  .ckl-bar-title span { color: var(--green); }
-  .ckl-bar-sub { font-size: 13px; color: var(--slate-500); margin-top: 2px; }
-  .ckl-reset {
-    background: none; border: 1px solid var(--border); border-radius: 8px;
-    color: var(--slate-500); font-size: 12.5px; font-weight: 600; padding: 7px 12px; cursor: pointer;
-    font-family: var(--font-body);
-  }
-  .ckl-reset:hover { border-color: var(--slate-400); color: var(--slate-700); }
-
-  .ckl-section { margin-bottom: 26px; }
-  .ckl-section-title {
-    font-family: var(--font-head); font-weight: 600; font-size: 18px; color: var(--navy);
-    margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
-  }
-  .ckl-list { list-style: none; padding: 0; margin: 0; }
-  .ckl-item { margin: 0 0 8px; }
-  .ckl-item label {
-    display: flex; gap: 13px; align-items: flex-start; cursor: pointer;
-    background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px;
-    transition: border-color 0.2s, background 0.2s;
-  }
-  .ckl-item label:hover { border-color: var(--slate-400); }
+  .ckl-bar-title { font-family: var(--font-head); font-weight: 600; font-size: 16px; }
+  .ckl-bar-sub { font-size: 13px; color: var(--color-gray); margin-top: 2px; }
+  .ckl-section-title { margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--color-line); }
+  .ckl-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  .ckl-item label { display: flex; gap: 13px; align-items: flex-start; cursor: pointer; background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-xs); padding: 14px 16px; transition: border-color .2s; }
+  .ckl-item label:hover { border-color: var(--color-accent); }
   .ckl-item input { position: absolute; opacity: 0; width: 0; height: 0; }
-  .ckl-check {
-    flex-shrink: 0; width: 22px; height: 22px; border-radius: 7px;
-    border: 2px solid #CBD5E1; margin-top: 1px; position: relative; transition: all 0.2s;
-  }
-  .ckl-check::after {
-    content: '✓'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    color: #fff; font-size: 13px; font-weight: 700; opacity: 0; transform: scale(0.5); transition: all 0.2s;
-  }
-  .ckl-item input:checked + .ckl-check { background: var(--green); border-color: var(--green); }
-  .ckl-item input:checked + .ckl-check::after { opacity: 1; transform: scale(1); }
-  .ckl-item input:checked ~ .ckl-item-body .ckl-item-text { color: var(--slate-400); text-decoration: line-through; }
-  .ckl-item-body { display: flex; flex-direction: column; gap: 3px; }
-  .ckl-item-text { font-size: 15.5px; line-height: 1.45; color: var(--ink); }
-  .ckl-item-hint { font-size: 13px; line-height: 1.45; color: var(--slate-500); }
-
-  .ckl-done {
-    display: flex; gap: 18px; align-items: flex-start;
-    background: linear-gradient(135deg, #0B1B33, #12233f); color: #cbd5e1;
-    border-radius: 18px; padding: 26px 28px; margin-top: 20px;
-  }
-  .ckl-done-icon {
-    flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; background: var(--green); color: #052e16;
-    display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700;
-  }
-  .ckl-done strong { color: #fff; font-family: var(--font-head); font-size: 18px; }
-  .ckl-done p { margin: 8px 0 14px; font-size: 15px; line-height: 1.6; }
-  .ckl-done-cta {
-    display: inline-block; background: var(--orange); color: #fff !important; font-weight: 600;
-    padding: 12px 20px; border-radius: 12px; text-decoration: none;
-  }
-  .ckl-done-cta:hover { background: var(--orange-hover); }
-
-  @media (max-width: 560px) {
-    .ckl-bar { position: static; flex-wrap: wrap; }
-  }
+  .ckl-check { flex: none; width: 20px; height: 20px; border-radius: 3px; border: 1.5px solid var(--color-green); margin-top: 2px; position: relative; transition: all .2s; }
+  .ckl-check::after { content: ''; position: absolute; left: 6px; top: 2px; width: 5px; height: 10px; border-right: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(45deg) scale(0); transition: transform .2s; }
+  .ckl-item input:checked + .ckl-check { background: var(--color-green); }
+  .ckl-item input:checked + .ckl-check::after { transform: rotate(45deg) scale(1); }
+  .ckl-item input:focus-visible + .ckl-check { outline: 2px solid var(--color-green); outline-offset: 2px; }
+  .ckl-item input:checked ~ .ckl-item-body .ckl-item-text { color: var(--color-gray); text-decoration: line-through; }
+  .ckl-item-body { display: grid; gap: 3px; }
+  .ckl-item-text { font-size: 15.5px; line-height: 1.45; }
+  .ckl-item-hint { font-size: 13px; line-height: 1.45; color: var(--color-gray); }
+  .ckl-done { border-radius: var(--radius-md); padding: 26px 28px; }
+  .ckl-done strong { font-family: var(--font-head); font-size: 18px; }
+  .ckl-done p { margin: 8px 0 16px; color: var(--color-gray-2); font-size: 15px; }
+  @media (max-width: 560px) { .ckl-bar { position: static; flex-wrap: wrap; } }
 </style>
 
 <script>
   document.querySelectorAll<HTMLElement>('[data-checklist]').forEach((root) => {
     const id = root.dataset.checklist!;
     const total = Number(root.dataset.total || 0);
+    const tpl = root.dataset.openTpl || '';
     const key = `fc-ckl-${id}`;
     const boxes = Array.from(root.querySelectorAll<HTMLInputElement>('[data-ckl-item]'));
     const pctEl = root.querySelector<HTMLElement>('[data-ckl-pct]');
@@ -153,43 +107,23 @@ let idx = 0;
     const msgEl = root.querySelector<HTMLElement>('[data-ckl-msg]');
     const ring = root.querySelector<SVGCircleElement>('.ckl-ring-fg');
     const complete = root.querySelector<HTMLElement>('[data-ckl-complete]');
-    const circumference = 125.6;
-
-    const load = (): Record<string, boolean> => {
-      try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch { return {}; }
-    };
-    const save = (state: Record<string, boolean>) => {
-      try { localStorage.setItem(key, JSON.stringify(state)); } catch {}
-    };
-
+    const load = (): Record<string, boolean> => { try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch { return {}; } };
+    const save = (s: Record<string, boolean>) => { try { localStorage.setItem(key, JSON.stringify(s)); } catch {} };
     const render = () => {
       const done = boxes.filter((b) => b.checked).length;
       const pct = total ? Math.round((done / total) * 100) : 0;
       if (pctEl) pctEl.textContent = pct + '%';
       if (doneEl) doneEl.textContent = String(done);
-      if (ring) ring.style.strokeDashoffset = String(circumference * (1 - pct / 100));
+      if (ring) ring.style.strokeDashoffset = String(125.6 * (1 - pct / 100));
       if (complete) complete.hidden = done < total;
-      if (msgEl && done > 0 && done < total)
-        msgEl.textContent = `${total - done} Punkte noch offen — bei jedem offenen Punkt fragst du dich am besten: kostet mich das gerade Pipeline?`;
+      if (msgEl && done > 0 && done < total) msgEl.textContent = tpl.replace('{n}', String(total - done));
     };
-
     const state = load();
     boxes.forEach((b) => {
       if (state[b.value]) b.checked = true;
-      b.addEventListener('change', () => {
-        const s = load();
-        s[b.value] = b.checked;
-        save(s);
-        render();
-      });
+      b.addEventListener('change', () => { const s = load(); s[b.value] = b.checked; save(s); render(); });
     });
-
-    root.querySelector<HTMLButtonElement>('[data-ckl-reset]')?.addEventListener('click', () => {
-      boxes.forEach((b) => (b.checked = false));
-      save({});
-      render();
-    });
-
+    root.querySelector<HTMLButtonElement>('[data-ckl-reset]')?.addEventListener('click', () => { boxes.forEach((b) => (b.checked = false)); save({}); render(); });
     render();
   });
 </script>

@@ -1,0 +1,61 @@
+---
+import type { Locale } from '../../config/site.ts';
+import { getDict } from '../../lib/i18n.ts';
+import { localePath } from '../../i18n/routes.ts';
+import PageHero from '../PageHero.astro';
+import MenuGroup from '../MenuGroup.astro';
+import CtaBand from '../CtaBand.astro';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const d = getDict(lang);
+const s = d.sprint;
+const p = (en: string) => localePath(lang, en);
+---
+
+<PageHero eyebrow={s.hero.eyebrow} title={s.hero.h1} sub={s.hero.sub} />
+
+<section class="section bg-dots">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-reveal>{s.scope.eyebrow}</div>
+      <h2 class="h2" data-reveal style="--d:60ms">{s.scope.h2}</h2>
+    </div>
+    <div class="grid-5">
+      {s.scope.items.map((it, i) => (
+        <div class="card-light" data-reveal style={`--d:${i * 60}ms`}>
+          <h3 class="h3">{it.title}</h3>
+          <p class="text-muted">{it.text}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-reveal>{s.menuIntro.eyebrow}</div>
+      <h2 class="h2" data-reveal style="--d:60ms">{s.menuIntro.h2}</h2>
+      <p class="lead text-muted" data-reveal style="--d:120ms">{s.menuIntro.text}</p>
+      <p class="small text-muted mono" data-reveal>{d.common.priceNote}</p>
+    </div>
+    <MenuGroup lang={lang} group={d.services.groups.mains} id="mains" />
+    <div class="callout custom" data-reveal>
+      <div class="callout-title">{s.custom.title}</div>
+      <p>{s.custom.text} <a href={p('/services/audit')} class="link">{s.custom.cta} →</a></p>
+    </div>
+  </div>
+</section>
+
+<CtaBand lang={lang} title={s.cta.h2} text={s.cta.text} primary={{ label: s.cta.primary, href: p('/services/audit') }} secondary={{ label: s.cta.secondary, href: undefined }} location="sprint" />
+
+<style>
+  .sec-head { display: grid; gap: 14px; max-width: 760px; margin-bottom: clamp(24px, 4vw, 40px); }
+  .sec-head .lead, .sec-head .small { margin: 0; }
+  .grid-5 { display: grid; gap: 14px; }
+  @media (min-width: 640px) { .grid-5 { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .grid-5 { grid-template-columns: repeat(5, 1fr); } }
+  .card-light h3 { margin: 0 0 8px; font-size: 18px; }
+  .card-light p { margin: 0; font-size: 14.5px; }
+  .custom { margin-top: 32px; }
+</style>

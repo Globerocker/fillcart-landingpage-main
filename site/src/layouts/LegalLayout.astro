@@ -1,0 +1,30 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import type { Locale } from '../config/site.ts';
+import { getDict } from '../lib/i18n.ts';
+interface Props { lang: Locale; title: string; description: string; path: string; eyebrow: string; updated: string }
+const { lang, title, description, path, eyebrow, updated } = Astro.props;
+const d = getDict(lang);
+---
+
+<BaseLayout lang={lang} title={title} description={description} path={path}>
+  <section class="lg-hero bg-dots">
+    <div class="wrap">
+      <div class="eyebrow">{eyebrow}</div>
+      <h1 class="h1 lg-title">{title}</h1>
+      <p class="mono small text-muted">{updated}</p>
+    </div>
+  </section>
+  <section class="section-sm">
+    <div class="wrap">
+      <div class="callout lg-note"><p>{d.legal.draftNote}</p></div>
+      <article class="prose"><slot /></article>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .lg-hero { padding: clamp(40px, 6vw, 72px) 0 clamp(32px, 4vw, 48px); }
+  .lg-title { margin: 12px 0 8px; }
+  .lg-note { max-width: 760px; margin-bottom: 28px; }
+</style>

@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import CaseCard from '../../components/CaseCard.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Todo from '../../components/Todo.astro';
+import { en } from '../../i18n/en.ts';
+import { getWork } from '../../lib/content.ts';
+import { breadcrumbSchema } from '../../lib/seo.ts';
+const w = en.work;
+const work = await getWork();
+const services = Array.from(new Set(work.flatMap((x) => x.data.services)));
+const filters = w.filters.filter((f) => f.key === 'all' || services.includes(f.key));
+---
+<BaseLayout lang="en" title={w.meta.title} description={w.meta.description} path="/work" alt={null} ogImage="/og/work.png" schema={[breadcrumbSchema([{ name: w.hero.h1, path: '/work' }])]}>
+  <PageHero eyebrow={w.hero.eyebrow} title={w.hero.h1} sub={w.hero.sub} />
+  <section class="section bg-dots">
+    <div class="wrap">
+      <Todo>All case studies are drafts (approved: false). They are excluded from the production build until Andre approves each one; in dev and with PUBLIC_SHOW_DRAFTS=true they show with a TODO tag.</Todo>
+      {work.length ? (
+        <>
+          <h2 class="sr-only">{w.hero.h1}</h2>
+          <div class="chips" data-filter-root data-reveal>
+            {filters.map((f, i) => <button type="button" class:list={['tag', 'chip-btn', { 'tag-green': i === 0, active: i === 0 }]} data-filter={f.key}>{f.label}</button>)}
+          </div>
+          <div class="grid-3" data-filter-list>
+            {work.map((e, i) => <div class="contents" data-services={e.data.services.join('|')}><CaseCard entry={e} lang="en" style={`--d:${Math.min(i * 50, 200)}ms`} /></div>)}
+          </div>
+        </>
+      ) : (
+        <p class="callout">{w.empty}</p>
+      )}
+    </div>
+  </section>
+  <CtaBand lang="en" title={w.cta.h2} text={w.cta.text} primary={{ label: w.cta.primary }} secondary={{ label: w.cta.secondary }} location="work-index" />
+</BaseLayout>
+
+<style>
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+  .chip-btn { cursor: pointer; background: #fff; }
+  .chip-btn.active { background: var(--color-green); color: #fff; border-color: var(--color-green); }
+  .grid-3 { display: grid; gap: 16px; }
+  @media (min-width: 768px) { .grid-3 { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
+  .contents { display: contents; }
+</style>
+<script>
+  const root = document.querySelector<HTMLElement>('[data-filter-root]');
+  const list = document.querySelector<HTMLElement>('[data-filter-list]');
+  if (root && list) {
+    root.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-filter]');
+      if (!b) return;
+      root.querySelectorAll('.chip-btn').forEach((x) => { x.classList.toggle('active', x === b); x.classList.toggle('tag-green', x === b); });
+      const f = b.dataset.filter!;
+      list.querySelectorAll<HTMLElement>('[data-services]').forEach((el) => {
+        const has = (el.dataset.services || '').split('|').includes(f);
+        el.style.display = f === 'all' || has ? '' : 'none';
+      });
+    });
+  }
+</script>

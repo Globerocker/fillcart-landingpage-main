@@ -1,51 +1,38 @@
-# Audit form — how leads are delivered
+# Contact form: how requests are delivered
 
-The audit form (`#audit`, in `site/src/components/sections/FinalCta.astro`) is the site's primary
-conversion. Here's how it delivers, in order of preference. Configure it in
-`site/src/config/site.ts`.
+The contact form lives in `site/src/components/ContactForm.astro` and is shown on `/contact` and
+`/de/kontakt`. It never shows "success" unless the request was actually sent or handed to a mail
+client. Delivery mode is chosen at build time from environment variables (`site/src/config/env.ts`).
 
-> Before this was wired, the form showed "success" but **discarded** the lead. That's fixed — it now
-> never shows success unless the lead was actually sent or handed to a mail client.
+## Option A: HubSpot (target state)
 
-## Option A — Web3Forms (recommended, no backend, 60-second setup)
+Create a HubSpot form with these field internal names: `firstname`, `email`, `company`, `website`,
+`message`, `markets` (single-line text), `budget_range` (single-line text or dropdown), plus optional
+`utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`, `page_path`, `language`.
+Then set on Vercel (Production + Preview):
 
-Server-side email straight to `info@fillcart.de`, no server code, keeps the site fully static.
+```
+PUBLIC_HUBSPOT_PORTAL_ID=<portal id>
+PUBLIC_HUBSPOT_FORM_ID=<form guid>
+PUBLIC_HUBSPOT_REGION=eu1        # or na1
+```
 
-1. Go to <https://web3forms.com> → enter **info@fillcart.de** → confirm the email → copy the
-   **Access Key**.
-2. Put it in `site/src/config/site.ts`:
-   ```ts
-   leadForm: {
-     web3formsKey: 'YOUR-ACCESS-KEY',
-     deliverTo: 'info@fillcart.de',
-   },
-   ```
-   (Or, to keep it out of Git, read it from an env var and set `PUBLIC_WEB3FORMS_KEY` in Vercel —
-   ask and I'll wire that variant.)
-3. Deploy. Submissions now arrive in the inbox. The budget "< €5,000" option still blocks submit
-   with the friendly notice, as before.
+The form posts to the HubSpot Forms API from the browser (no server), including the `hutk` cookie
+so the contact is tied to its HubSpot tracking record once GTM/HubSpot tracking has consent.
 
-## Option B — no key set (current state): mailto fallback
+## Option B: Web3Forms (fallback, 60-second setup)
 
-If `web3formsKey` is empty, submitting opens the visitor's email client with a pre-filled message to
-`deliverTo`. Not pretty, but **the lead is never silently lost**. Fine as a stopgap; switch to A or C
-for a smooth experience.
+1. Go to <https://web3forms.com>, enter `info@fillcart.de`, confirm, copy the access key.
+2. Set `PUBLIC_WEB3FORMS_KEY=<key>` on Vercel and redeploy.
 
-## Option C — HubSpot form (best fit for the pipeline story)
+Submissions arrive by email. Used automatically while the HubSpot IDs are missing.
 
-When you have a HubSpot marketing form, fill in `INTEGRATIONS.hubspot` (`portalId`, `formId`,
-`region`) in `site/src/config/site.ts`. The component then renders the **real HubSpot embed** instead
-of the built-in form, and leads land directly in your CRM (matching the "we optimize on pipeline"
-positioning). This takes priority over A/B automatically.
+## Option C: nothing set (current state)
 
-## Option D — self-hosted (leads never touch a third party)
+Submitting opens the visitor's mail client with a pre-filled message to `info@fillcart.de`.
+Works, but is the weakest option. A TODO callout on the form says so in dev/preview.
 
-If you'd rather not use a form service, add a Vercel Serverless Function (Astro endpoint with the
-`@astrojs/vercel` adapter) that emails via Resend/SMTP. More setup (one API route + one provider
-key); ask and I'll implement it.
+## Tracking
 
----
-
-**Also live already:** the Google Calendar booking embed (visitors can book a call directly) and
-WhatsApp/phone — so there is always a working conversion path even while the form provider is being
-chosen.
+Every successful submission pushes `form_submit` (with `mode` and `page_path`) to the `dataLayer`.
+Booking clicks push `cta_book_click` with a `location`. See `site/src/components/Behaviors.astro`.

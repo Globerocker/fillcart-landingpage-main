@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Sprint from '../../components/pages/Sprint.astro';
+import { en } from '../../i18n/en.ts';
+import { breadcrumbSchema, serviceSchema } from '../../lib/seo.ts';
+const schema = [
+  breadcrumbSchema([{ name: 'Services', path: '/services' }, { name: en.sprint.meta.title, path: '/services/sprint' }]),
+  serviceSchema({ name: en.sprint.meta.title, description: en.sprint.meta.description, path: '/services/sprint' }),
+];
+---
+<BaseLayout lang="en" title={en.sprint.meta.title} description={en.sprint.meta.description} path="/services/sprint" ogImage="/og/sprint-en.png" schema={schema}>
+  <Sprint lang="en" />
+</BaseLayout>

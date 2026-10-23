@@ -1,0 +1,8 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Roi from '../../components/pages/Roi.astro';
+import { de } from '../../i18n/de.ts';
+---
+<BaseLayout lang="de" title={de.roi.meta.title} description={de.roi.meta.description} path="/de/roi" ogImage="/og/roi-de.png">
+  <Roi lang="de" />
+</BaseLayout>

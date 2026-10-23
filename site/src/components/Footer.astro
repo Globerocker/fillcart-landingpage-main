@@ -1,128 +1,76 @@
 ---
-import { SITE } from '../config/site.ts';
-import { brandLogo } from '../lib/asset.ts';
-import type { LandingContent } from '../i18n/types.ts';
+import { SITE, type Locale } from '../config/site.ts';
+import { getDict } from '../lib/i18n.ts';
+import { homePath } from '../i18n/routes.ts';
+import Logo from './Logo.astro';
 
-interface Props {
-  content: LandingContent;
-}
-const { content } = Astro.props;
-const f = content.footer;
+interface Props { lang: Locale; path: string; alt?: string }
+const { lang, alt } = Astro.props;
+const d = getDict(lang);
 const c = SITE.company;
+const other: Locale = lang === 'en' ? 'de' : 'en';
+const switchHref = alt ?? homePath(other);
+const phone = lang === 'de' ? SITE.contact.phoneDe : SITE.contact.phoneUs;
 ---
 
-<footer class="ft">
-  <div class="ft-topline"></div>
-  <div class="ft-inner">
+<footer class="bg-dark bg-lines ft">
+  <div class="wrap">
     <div class="ft-grid">
       <div class="ft-brand">
-        <img src="/assets/brand/logo-white.png" alt="Fillcart" width="112" height="28" />
-        <p>{f.tagline}</p>
+        <a href={homePath(lang)} class="ft-lockup" aria-label={SITE.brand.siteName}>
+          <Logo size={40} mono={true} tile={false} />
+          <span>FILLCART</span>
+        </a>
+        <p class="ft-tagline">{d.footer.tagline}</p>
         <div class="ft-badges">
-          <span class="ft-badge-google"><img src="/assets/partners/google-partner.png" alt="Google Partner" width="86" height="26" /></span>
-          <span class="ft-badge-hs"><img src={brandLogo('partners', 'hubspot-partner')} alt={f.hubspotBadge} height="30" /></span>
+          <span class="ft-badge"><img src="/assets/partners/google-partner.png" alt="Google Partner" width="86" height="26" loading="lazy" /></span>
+          <span class="ft-badge"><img src="/assets/partners/hubspot-partner.png" alt="HubSpot Solutions Partner" height="28" loading="lazy" /></span>
         </div>
       </div>
 
-      <div class="ft-col">
-        <div class="ft-col-title">{f.colCompanyTitle}</div>
-        {f.colCompany.map((l) => <a href={l.href}>{l.label}</a>)}
-      </div>
+      {d.footer.cols.map((col) => (
+        <div class="ft-col">
+          <div class="eyebrow">{col.title}</div>
+          {col.links.map((l) => <a href={l.href} class="ft-link">{l.label}</a>)}
+        </div>
+      ))}
 
       <div class="ft-col">
-        <div class="ft-col-title">{f.colLegalTitle}</div>
-        {f.colLegal.map((l) => <a href={l.href}>{l.label}</a>)}
-      </div>
-
-      <div class="ft-col">
-        <div class="ft-col-title">{f.colContactTitle}</div>
-        <a href={`mailto:${c.email}`}>{c.email}</a>
-        <a href={SITE.contact.phoneHref}>{SITE.contact.phone}</a>
-        <span class="ft-address">
-          {c.legalName}<br />
-          {c.street}<br />
-          {c.city}, {c.region} {c.postalCode}, {c.countryLabel}
-        </span>
+        <div class="eyebrow">{d.footer.contactTitle}</div>
+        <a href={`mailto:${SITE.contact.email}`} class="ft-link">{SITE.contact.email}</a>
+        {SITE.flags.showPhone && <a href={phone.href} class="ft-link">{phone.label}</a>}
+        <a href={SITE.person.linkedin} class="ft-link" target="_blank" rel="noopener me">{d.common.linkedin}</a>
+        <a href={SITE.booking} class="ft-link" target="_blank" rel="noopener" data-track="cta_book_click" data-location="footer">{d.common.bookCall}</a>
       </div>
     </div>
 
     <div class="ft-bottom">
-      <span>{f.copyright}</span>
-      <span>{f.registration}</span>
+      <div class="ft-legal mono">
+        <span>{d.footer.copyright}</span>
+        <span>{c.legalName} · {c.street} · {c.city}, {c.region} {c.postalCode}, {c.countryLabel}</span>
+        <span>{d.footer.registered}</span>
+      </div>
+      <a href={switchHref} class="ft-lang mono" lang={other} hreflang={other} data-track="lang_switch" data-lang={other}>{d.nav.switchLabel}</a>
     </div>
   </div>
 </footer>
 
 <style>
-  .ft {
-    background: #06111f;
-    padding: 64px 32px 40px;
-    position: relative;
-    overflow: hidden;
-  }
-  .ft-topline {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(249, 115, 22, 0.5), rgba(34, 197, 94, 0.4), transparent);
-  }
-  .ft-inner { max-width: 1120px; margin: 0 auto; }
-  .ft-grid {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr 1fr;
-    gap: 40px 32px;
-  }
-  .ft-brand { max-width: 380px; }
-  .ft-brand img { height: 28px; width: auto; display: block; }
-  .ft-brand p { color: #64748b; font-size: 14px; line-height: 1.7; margin: 18px 0 0; }
-  .ft-badges { display: flex; gap: 12px; margin-top: 20px; align-items: center; flex-wrap: wrap; }
-  .ft-badge-google {
-    background: #fff;
-    border-radius: 8px;
-    padding: 6px 12px;
-    display: inline-flex;
-  }
-  .ft-badge-google img { height: 26px; width: auto; }
-  .ft-badge-hs {
-    background: #fff;
-    border-radius: 8px;
-    padding: 6px 10px;
-    display: inline-flex;
-    align-items: center;
-  }
-  .ft-badge-hs img { height: 30px; width: auto; display: block; }
-
-  .ft-col { display: flex; flex-direction: column; gap: 10px; }
-  .ft-col-title {
-    color: #f97316;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-  .ft-col a { color: #94a3b8; font-size: 15px; }
-  .ft-col a:hover { color: #fff; }
-  .ft-address { color: #64748b; font-size: 14px; line-height: 1.6; }
-
-  .ft-bottom {
-    border-top: 1px solid rgba(255, 255, 255, 0.07);
-    margin-top: 44px;
-    padding-top: 24px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 12px;
-  }
-  .ft-bottom span { color: #475569; font-size: 13px; }
-
-  @media (max-width: 820px) {
-    .ft-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
-    .ft-brand { grid-column: 1 / -1; }
-  }
-  @media (max-width: 480px) {
-    .ft-grid { grid-template-columns: 1fr; }
-  }
+  .ft { padding: 64px 0 36px; }
+  .ft-grid { display: grid; grid-template-columns: 1fr; gap: 36px 28px; }
+  .ft-lockup { display: inline-flex; align-items: center; gap: 12px; color: #fff; font-family: var(--font-head); font-weight: 700; font-size: 17px; letter-spacing: .06em; }
+  .ft-tagline { color: var(--color-gray-2); font-size: 15px; line-height: 1.6; margin: 18px 0 0; max-width: 360px; }
+  .ft-badges { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+  .ft-badge { background: #fff; border-radius: 4px; padding: 6px 10px; display: inline-flex; align-items: center; }
+  .ft-badge img { height: 26px; width: auto; }
+  .ft-col { display: grid; gap: 8px; align-content: start; }
+  .ft-col .eyebrow { margin-bottom: 6px; }
+  .ft-link { color: #d5d9d6; font-size: 15px; width: fit-content; }
+  .ft-link:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+  .ft-bottom { border-top: 1px solid rgba(255,255,255,.12); margin-top: 48px; padding-top: 22px; display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; align-items: center; }
+  .ft-legal { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--color-gray-2); font-size: 12px; }
+  .ft-lang { color: var(--color-gray-2); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+  .ft-lang:hover { color: #fff; }
+  @media (min-width: 640px) { .ft-grid { grid-template-columns: 1fr 1fr; } .ft-brand { grid-column: 1 / -1; } }
+  @media (min-width: 1024px) { .ft-grid { grid-template-columns: 1.5fr 1fr 1fr 1fr 1.1fr; } .ft-brand { grid-column: auto; } }
 </style>

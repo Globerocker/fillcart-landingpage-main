@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Todo from '../components/Todo.astro';
+import { en } from '../i18n/en.ts';
+import { SITE } from '../config/site.ts';
+import { getPartners } from '../lib/content.ts';
+import { breadcrumbSchema } from '../lib/seo.ts';
+const pt = en.partners;
+const partners = await getPartners();
+---
+<BaseLayout lang="en" title={pt.meta.title} description={pt.meta.description} path="/partners" alt={null} ogImage="/og/partners.png" schema={[breadcrumbSchema([{ name: pt.hero.eyebrow, path: '/partners' }])]}>
+  <PageHero eyebrow={pt.hero.eyebrow} title={pt.hero.h1} sub={pt.hero.sub} />
+  <section class="section bg-dots">
+    <div class="wrap">
+      <Todo>Partner cards need the partner's OK before going live (approved: false hides them in production). Phil / Appart: approval, headshot, logo, preferred link. Sergio: confirm role line, photo, link.</Todo>
+      {partners.length ? (
+        <div class="grid-2">
+          {partners.map((p, i) => (
+            <article class="card card-hover pr" data-reveal style={`--d:${i * 70}ms`}>
+              <div class="pr-top">
+                <span class="tag tag-green">{p.data.kind}</span>
+                {!p.data.approved && <span class="tag tag-warn">{en.common.todo}</span>}
+              </div>
+              <h2 class="h3">{p.data.name}</h2>
+              {p.data.person && <div class="mono small text-muted">{p.data.person}</div>}
+              <p class="text-muted">{p.data.description}</p>
+              {p.data.url && <a href={p.data.url} class="link" target="_blank" rel="noopener">{p.data.url.replace(/^https?:\/\//, '').replace(/\/.*$/, '')} →</a>}
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p class="callout" data-reveal>{pt.pending}</p>
+      )}
+    </div>
+  </section>
+  <section class="section">
+    <div class="wrap">
+      <div class="become card-dark bg-lines" data-reveal>
+        <div>
+          <div class="eyebrow">{pt.become.eyebrow}</div>
+          <h2 class="h2">{pt.become.title}</h2>
+          <p class="text-muted">{pt.become.text}</p>
+        </div>
+        <a href={`mailto:${SITE.contact.email}`} class="btn btn-light btn-lg">{pt.become.cta}</a>
+      </div>
+    </div>
+  </section>
+  <CtaBand lang="en" title={en.home.finalCta.h2} text={en.home.finalCta.text} location="partners" />
+</BaseLayout>
+
+<style>
+  .grid-2 { display: grid; gap: 16px; }
+  @media (min-width: 768px) { .grid-2 { grid-template-columns: repeat(2, 1fr); } }
+  .pr { display: grid; gap: 10px; align-content: start; }
+  .pr h2 { margin: 0; }
+  .pr p { margin: 0; font-size: 15.5px; }
+  .pr-top { display: flex; gap: 6px; flex-wrap: wrap; }
+  .become { display: grid; gap: 20px; align-items: center; }
+  .become h2 { margin: 10px 0; }
+  .become p { margin: 0; max-width: 640px; }
+  @media (min-width: 900px) { .become { grid-template-columns: 1fr auto; gap: 40px; } }
+</style>

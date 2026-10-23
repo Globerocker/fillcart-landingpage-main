@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import InsightsIndex from '../../components/pages/InsightsIndex.astro';
+import { en } from '../../i18n/en.ts';
+import { breadcrumbSchema } from '../../lib/seo.ts';
+---
+<BaseLayout lang="en" title={en.insights.meta.title} description={en.insights.meta.description} path="/insights" ogImage="/og/insights-en.png" schema={[breadcrumbSchema([{ name: 'Insights', path: '/insights' }])]}>
+  <InsightsIndex lang="en" />
+</BaseLayout>

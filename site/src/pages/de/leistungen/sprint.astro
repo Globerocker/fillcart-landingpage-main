@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Sprint from '../../../components/pages/Sprint.astro';
+import { de } from '../../../i18n/de.ts';
+import { breadcrumbSchema } from '../../../lib/seo.ts';
+---
+<BaseLayout lang="de" title={de.sprint.meta.title} description={de.sprint.meta.description} path="/de/leistungen/sprint" ogImage="/og/sprint-de.png" schema={[breadcrumbSchema([{ name: 'Leistungen', path: '/de/leistungen' }, { name: de.sprint.meta.title, path: '/de/leistungen/sprint' }])]}>
+  <Sprint lang="de" />
+</BaseLayout>

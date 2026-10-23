@@ -1,0 +1,42 @@
+---
+import type { Locale } from '../config/site.ts';
+import { getDict } from '../lib/i18n.ts';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const d = getDict(lang);
+const privacy = lang === 'en' ? '/privacy' : '/de/datenschutz';
+---
+
+<div class="ck" data-cookie hidden role="dialog" aria-live="polite" aria-label="Cookies">
+  <p class="ck-text">{d.cookie.text} <a href={privacy} class="link">{d.cookie.more}</a></p>
+  <div class="ck-actions">
+    <button type="button" class="btn btn-secondary btn-sm" data-cookie-decline>{d.cookie.decline}</button>
+    <button type="button" class="btn btn-primary btn-sm" data-cookie-accept>{d.cookie.accept}</button>
+  </div>
+</div>
+
+<style>
+  .ck { position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 60; background: #fff; border: 1px solid var(--color-line); border-radius: 8px; padding: 16px 18px; box-shadow: 0 20px 40px -24px rgba(22,24,29,.4); display: grid; gap: 12px; }
+  .ck-text { margin: 0; font-size: 14px; color: var(--color-gray); }
+  .ck-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  @media (min-width: 720px) { .ck { left: auto; max-width: 460px; } }
+</style>
+
+<script>
+  const box = document.querySelector<HTMLElement>('[data-cookie]');
+  if (box) {
+    let stored: string | null = null;
+    try { stored = localStorage.getItem('fc-consent'); } catch {}
+    if (!stored) box.hidden = false;
+    const set = (v: 'granted' | 'denied') => {
+      try { localStorage.setItem('fc-consent', v); } catch {}
+      (window as any).gtag?.('consent', 'update', {
+        ad_storage: v, ad_user_data: v, ad_personalization: v, analytics_storage: v,
+      });
+      (window as any).fcTrack?.('consent_update', { consent: v });
+      box.hidden = true;
+    };
+    box.querySelector('[data-cookie-accept]')?.addEventListener('click', () => set('granted'));
+    box.querySelector('[data-cookie-decline]')?.addEventListener('click', () => set('denied'));
+  }
+</script>

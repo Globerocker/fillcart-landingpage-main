@@ -1,0 +1,72 @@
+---
+import type { Locale } from '../config/site.ts';
+import { SITE } from '../config/site.ts';
+import { getDict } from '../lib/i18n.ts';
+interface MenuItem { problem: string; name: string; price: string; unit?: string; priceNote?: string; text: string; bullets: string[] }
+interface Props {
+  lang: Locale;
+  group: { key: string; num: string; title: string; sub: string; items: MenuItem[] };
+  id?: string;
+}
+const { lang, group, id } = Astro.props;
+const d = getDict(lang);
+const showPrices = SITE.flags.showMenuPrices;
+---
+
+<div class="mg" id={id ?? group.key}>
+  <div class="mg-head" data-reveal>
+    <span class="mg-num">{group.num}</span>
+    <div>
+      <h3 class="h2 mg-title">{group.title}</h3>
+      <p class="mg-sub">{group.sub}</p>
+    </div>
+  </div>
+  <div class="mg-list">
+    {group.items.map((it, i) => (
+      <article class="mi" data-reveal style={`--d:${Math.min(i * 40, 160)}ms`}>
+        <div class="mi-body">
+          <h4 class="mi-problem">{it.problem}</h4>
+          <div class="eyebrow mi-name">{it.name}</div>
+          <p class="mi-text">{it.text}</p>
+          <ul class="bullets mi-bullets">
+            {it.bullets.map((b) => <li>{b}</li>)}
+            {it.priceNote && showPrices && <li>{it.priceNote}</li>}
+          </ul>
+        </div>
+        <div class="mi-price">
+          {showPrices ? (
+            <>
+              <span class="mi-amount tnum">{it.price}</span>
+              {it.unit && <span class="mi-unit">{it.unit}</span>}
+            </>
+          ) : (
+            <span class="mi-scoped">{d.common.scopedAfterAudit}</span>
+          )}
+        </div>
+      </article>
+    ))}
+  </div>
+</div>
+
+<style>
+  .mg { display: grid; gap: 24px; }
+  .mg-head { display: flex; gap: 16px; align-items: flex-start; padding-bottom: 14px; border-bottom: 1px solid var(--color-line); }
+  .mg-num { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--color-ink); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-head); font-weight: 700; font-size: 15px; margin-top: 4px; }
+  .mg-title { margin: 0; }
+  .mg-sub { margin: 6px 0 0; color: var(--color-gray); font-size: 15px; }
+  .mg-list { display: grid; }
+  .mi { display: grid; grid-template-columns: 1fr; gap: 10px 32px; padding: 26px 0; border-bottom: 1px solid var(--color-line); }
+  .mi-body { display: grid; gap: 8px; max-width: 760px; }
+  .mi-problem { font-family: var(--font-body); font-weight: 700; font-size: 18px; line-height: 1.35; margin: 0; letter-spacing: 0; }
+  .mi-name { font-size: 12px; }
+  .mi-text { margin: 2px 0 0; color: #2b2f36; font-size: 15.5px; line-height: 1.6; }
+  .mi-bullets { margin-top: 4px; font-size: 14.5px; color: var(--color-gray); gap: 5px; }
+  .mi-price { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+  .mi-amount { font-family: var(--font-head); font-weight: 700; font-size: 26px; color: var(--color-green); line-height: 1; letter-spacing: -0.01em; white-space: nowrap; }
+  .mi-unit { font-family: var(--font-mono); font-size: 12px; color: var(--color-gray); }
+  .mi-scoped { font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--color-green); }
+  @media (min-width: 768px) {
+    .mi { grid-template-columns: 1fr 180px; }
+    .mi-price { align-items: flex-end; text-align: right; }
+  }
+</style>

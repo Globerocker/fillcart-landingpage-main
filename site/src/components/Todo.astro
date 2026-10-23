@@ -1,0 +1,9 @@
+---
+/** Dev/preview-only callout for open inputs. Renders nothing in production unless PUBLIC_SHOW_TODOS=true. */
+import { ENV } from '../config/env.ts';
+interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+---
+{ENV.showTodos && (
+  <div class:list={['todo', cls]}><b>TODO</b> <slot /></div>
+)}

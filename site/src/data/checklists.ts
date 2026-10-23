@@ -10,10 +10,10 @@ export const googleAdsAudit: ChecklistSection[] = [
   {
     title: 'Conversion-Tracking & Datenqualität',
     items: [
-      { text: 'Es gibt <b>genau eine</b> primäre Conversion-Aktion, die zählt — nicht fünf halbe.', hint: 'Mehrere „primäre" Conversions verwässern das Gebots-Signal für Smart Bidding.' },
+      { text: 'Es gibt <b>genau eine</b> primäre Conversion-Aktion, die zählt, nicht fünf halbe.', hint: 'Mehrere „primäre" Conversions verwässern das Gebots-Signal für Smart Bidding.' },
       { text: 'Enhanced Conversions (Leads) ist aktiv und liefert Match-Raten &gt; 60 %.' },
       { text: 'Offline-Conversions aus dem CRM werden zurück an Google gespielt (SQL / Opportunity / Closed Won).', hint: 'Ohne diesen Rückkanal optimiert Google auf Formulare, nicht auf Umsatz.' },
-      { text: 'Conversion-Werte spiegeln echte Deal-Größen — nicht pauschal „1" pro Lead.' },
+      { text: 'Conversion-Werte spiegeln echte Deal-Größen, nicht pauschal „1" pro Lead.' },
       { text: 'Consent Mode v2 ist korrekt eingebunden, Tags feuern erst nach Einwilligung.' },
     ],
   },
@@ -24,7 +24,7 @@ export const googleAdsAudit: ChecklistSection[] = [
       { text: 'Der Suchbegriff-Bericht wird regelmäßig gepflegt, Negative-Listen sind aktuell.', hint: 'Broad Match + PMax ziehen ohne saubere Negatives schnell Müll-Traffic.' },
       { text: 'Marken- und Nicht-Marken-Traffic sind sauber getrennt (Reporting-Ehrlichkeit).' },
       { text: 'Keine „Zombie"-Keywords mit Ausgaben, aber null qualifizierten Leads seit 90 Tagen.' },
-      { text: 'Anzeigentexte adressieren den Pain, nicht nur das Keyword — und passen zur Landingpage.' },
+      { text: 'Anzeigentexte adressieren den Pain, nicht nur das Keyword, und passen zur Landingpage.' },
     ],
   },
   {
@@ -47,7 +47,7 @@ export const googleAdsAudit: ChecklistSection[] = [
     title: 'Reporting & Wahrheit',
     items: [
       { text: 'Das Reporting endet nicht beim Klick, sondern zeigt Pipeline-Value und ROI.' },
-      { text: 'Geschäftsführung würde den Report verstehen — ohne Marketing-Übersetzer.' },
+      { text: 'Geschäftsführung würde den Report verstehen, ohne Marketing-Übersetzer.' },
       { text: 'Es gibt eine ehrliche Antwort auf: „Welcher Euro hat welchen Deal gebracht?"' },
       { text: 'Ein fester Optimierungs-Rhythmus steht (wöchentlich Suchbegriffe, monatlich Struktur).' },
     ],
@@ -59,7 +59,7 @@ export const aeoReadiness: ChecklistSection[] = [
   {
     title: 'Zitierbarkeit (wirst du von KI zitiert?)',
     items: [
-      { text: 'Jede wichtige Seite beantwortet die Kernfrage in den ersten 40–75 Wörtern — eigenständig.', hint: 'LLMs zitieren selbst­ständige Passagen dieser Länge deutlich häufiger.' },
+      { text: 'Jede wichtige Seite beantwortet die Kernfrage in den ersten 40 bis 75 Wörtern, eigenständig.', hint: 'LLMs zitieren selbst­ständige Passagen dieser Länge deutlich häufiger.' },
       { text: 'Zahlen und Aussagen sind mit Quelle + Jahr belegt.', hint: 'Die Princeton-GEO-Studie zeigt: Quellen + Statistiken heben die Zitierhäufigkeit spürbar.' },
       { text: 'Vergleiche stehen in Tabellen, Aufzählungen in echten Listen.' },
       { text: 'Die Sprache ist klar und nicht werblich (Werbesprech senkt die Zitierrate).' },
@@ -76,7 +76,7 @@ export const aeoReadiness: ChecklistSection[] = [
   {
     title: 'Technik & Messung',
     items: [
-      { text: 'Inhalte sind server-gerendert (SSR/SSG) — die meisten KI-Crawler führen kein JavaScript aus.' },
+      { text: 'Inhalte sind server-gerendert (SSR/SSG). Die meisten KI-Crawler führen kein JavaScript aus.' },
       { text: 'Core Web Vitals sind grün (LCP ≤ 2,5 s, INP ≤ 200 ms, CLS ≤ 0,1).' },
       { text: 'AI-Referrals werden in GA4 über einen eigenen Channel getrackt.' },
       { text: 'Es gibt ein Prompt-Set, um Share of Voice in KI-Suchen zu messen.' },

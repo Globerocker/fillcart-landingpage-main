@@ -1,121 +1,84 @@
 /**
- * Central site configuration.
+ * Central site configuration: company facts, contact routes and feature flags.
+ * Copy lives in src/i18n/, integrations (env-driven) in src/config/env.ts.
  *
- * This is the ONE place to drop real integration credentials. Everything
- * (layout, tracking, forms, calendar embed) reads from here. Values that are
- * still placeholders are marked with `TODO` — replace them and rebuild.
+ * Every value here comes from the website briefing (23 Oct 2026), the audit
+ * proposal or the October 2026 price menus. Do not add facts that are not in
+ * one of those sources.
  */
 
 export const SITE = {
-  /** Canonical production origin (no trailing slash). Used for hreflang + sitemap. */
+  /** Canonical production origin, no trailing slash. */
   baseUrl: 'https://fillcart.de',
+
+  person: {
+    name: 'Andre Schüler',
+    /** ASCII variant used in URLs/handles. */
+    nameAscii: 'Andre Schuler',
+    jobTitleEn: 'Fractional Head of Marketing & RevOps',
+    jobTitleDe: 'Fractional Head of Marketing & RevOps',
+    linkedin: 'https://www.linkedin.com/in/andre-sch%C3%BCler-35b439209',
+    upwork: 'https://www.upwork.com/freelancers/~018b33dcc97c65f2d4',
+    fiverr: 'https://www.fiverr.com/andre_schueler',
+    hubspotCerts: [
+      'https://app.hubspot.com/academy/achievements/hh6rxfcy/en/1/andre-schuler/sales-enablement',
+      'https://app.hubspot.com/academy/achievements/gnsml5vh/de/1/andre-schuler/solutions-partner-zertifizierung',
+    ],
+  },
+
+  brand: {
+    /** Legal / billing entity and brand mark. */
+    name: 'FILLCART',
+    siteName: 'Andre Schüler · FILLCART',
+  },
 
   company: {
     legalName: 'FILLCART LLC',
-    email: 'info@fillcart.de',
     street: '254 Chapman Rd Ste 208',
     city: 'Newark',
     region: 'DE',
     postalCode: '19702',
     country: 'US',
     countryLabel: 'USA',
-    entityId: '2023-001346077',
     registeredIn: 'Wyoming, USA',
-    naics: '541810',
-    founded: '2023-10-16', // formation date (Wyoming) — matches the Ads API design doc
-    formationState: 'Wyoming',
+    /** Wyoming filing ID (public register number). This is NOT the EIN; the EIN is never published. */
+    entityId: '2023-001346077',
     managingMember: 'Andre Schüler',
   },
 
   contact: {
-    /** Human-readable phone, shown on the page. */
-    phone: '+49 15678 471378',
-    /** tel: href (no spaces). */
-    phoneHref: 'tel:+4915678471378',
-    /** wa.me link (country code + number, no + or spaces). */
-    whatsapp: '4915678471378',
-    whatsappHref: 'https://wa.me/4915678471378',
-    /** Pre-filled WhatsApp message (URL-encoded at use site). */
-    whatsappText: 'Hi Andre, ich hätte gern den kostenlosen Google-Ads-Audit.',
-    whatsappTextEn: 'Hi Andre, I’d like the free Google Ads audit.',
+    email: 'info@fillcart.de',
+    /** Shown on German pages (number from the DE price card and the current fillcart.de). */
+    phoneDe: { label: '+49 156 78471378', href: 'tel:+4915678471378' },
+    /** Shown on English pages (number from the EN price menu). */
+    phoneUs: { label: '+1 442 732 2693', href: 'tel:+14427322693' },
+    whatsapp: 'https://wa.me/4915678471378',
+  },
+
+  /** Google Calendar appointment page: the primary CTA everywhere. */
+  booking: 'https://calendar.app.google/8L4fmaoGieEE9HbdA',
+
+  /** External links used on the site (all from the briefing's link inventory). */
+  links: {
+    appart: 'https://appart.agency',
+    americurial: 'https://www.americurial.com/about',
+    capturepilot: 'https://www.capturepilot.com/',
+    lekjaw: 'https://lekjaw.com',
+  },
+
+  /**
+   * Feature flags. Flip here, rebuild, done.
+   */
+  flags: {
+    /** Show the fixed prices from the October 2026 price menu on the services pages. */
+    showMenuPrices: true,
+    /** Name past employers on the About timeline (Matrix42, CIXON, NX Digital, Bloom Rocket). Off until approved. */
+    nameEmployers: false,
+    /** Show phone numbers on the contact page and footer. */
+    showPhone: true,
+    /** Show the WhatsApp link on German pages. */
+    showWhatsApp: true,
   },
 } as const;
 
-/**
- * Third-party integration configuration.
- *
- * === Fill these in to go live ===
- *  - HubSpot form:     portalId + formId + region
- *  - HubSpot meetings: the /embed meeting URL
- *  - GTM:              container id (GTM-XXXXXXX)
- *  - Google Ads:       conversion id/label (fired after consent)
- *  - Consent:          which CMP loads before GTM
- */
-export const INTEGRATIONS = {
-  hubspot: {
-    /** HubSpot Hub / Portal ID, e.g. "26xxxxxx". */
-    portalId: '', // TODO: real portal id
-    /** Marketing form GUID. */
-    formId: '', // TODO: real form id
-    /** Data-center region: "eu1" | "na1" | "na2" ... */
-    region: 'eu1',
-    /**
-     * HubSpot Meetings embed link, e.g.
-     * "https://meetings-eu1.hubspot.com/andre-schueler/audit?embed=true".
-     */
-    meetingUrl: '', // TODO: real meeting embed url
-  },
-  /**
-   * Lead delivery for the built-in audit form (used until the HubSpot form
-   * above is wired). Order of preference at submit time:
-   *   1. Web3Forms  → server-side email to `deliverTo`, no backend needed.
-   *      Get a free access key in 60s at https://web3forms.com (enter
-   *      info@fillcart.de, confirm, paste the key here). Delivers straight to
-   *      the inbox; nothing is ever silently dropped.
-   *   2. mailto fallback → if no key is set, submit opens a pre-filled email to
-   *      `deliverTo`. Not pretty, but the lead always reaches you.
-   * See docs/LEADS.md for the self-hosted Vercel-function alternative.
-   */
-  leadForm: {
-    web3formsKey: '', // TODO: paste Web3Forms access key
-    deliverTo: 'info@fillcart.de',
-  },
-  /**
-   * Google Calendar Appointment Scheduling. This is live — the booking
-   * embed + share link the client provided.
-   */
-  googleCalendar: {
-    embedUrl:
-      'https://calendar.google.com/calendar/appointments/schedules/AcZssZ3MYDE5zpevF55HcKg6DGHyVR_DeBMGu2AhxVIOEHjIRP_hCk2BfMM0BoggfDdy0TQlRa8iIQzP?gv=true',
-    bookingUrl: 'https://calendar.app.google/Uyj8ffN6re5qJJYs6',
-  },
-  gtm: {
-    /** Google Tag Manager container id, e.g. "GTM-XXXXXXX". */
-    containerId: '', // TODO: real GTM container id
-  },
-  googleAds: {
-    /** Conversion id, e.g. "AW-123456789". Fired only after marketing consent. */
-    conversionId: '', // TODO
-    /** Conversion label for the "audit request" event. */
-    conversionLabel: '', // TODO
-  },
-  consent: {
-    /**
-     * Cookie-consent management platform. Must load BEFORE GTM (DE market =
-     * legally required). Options handled by BaseLayout: "cookiebot" |
-     * "usercentrics" | "none".
-     */
-    provider: 'none' as 'cookiebot' | 'usercentrics' | 'none',
-    /** Cookiebot CBID or Usercentrics settings id. */
-    id: '',
-  },
-} as const;
-
-/** True once all mandatory integration IDs are present. */
-export const HUBSPOT_FORM_READY =
-  !!INTEGRATIONS.hubspot.portalId && !!INTEGRATIONS.hubspot.formId;
-/** True once the built-in form can deliver server-side (Web3Forms key set). */
-export const LEAD_FORM_READY = !!INTEGRATIONS.leadForm.web3formsKey;
-export const HUBSPOT_MEETING_READY = !!INTEGRATIONS.hubspot.meetingUrl;
-export const GOOGLE_CALENDAR_READY = !!INTEGRATIONS.googleCalendar.embedUrl;
-export const GTM_READY = !!INTEGRATIONS.gtm.containerId;
+export type Locale = 'en' | 'de';

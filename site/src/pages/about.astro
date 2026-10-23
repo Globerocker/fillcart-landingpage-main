@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import About from '../components/pages/About.astro';
+import { en } from '../i18n/en.ts';
+import { breadcrumbSchema } from '../lib/seo.ts';
+---
+<BaseLayout lang="en" title={en.about.meta.title} description={en.about.meta.description} path="/about" ogImage="/og/about-en.png" schema={[breadcrumbSchema([{ name: en.about.hero.eyebrow, path: '/about' }])]}>
+  <About lang="en" />
+</BaseLayout>

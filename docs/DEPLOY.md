@@ -43,11 +43,12 @@ records Vercel shows (A / CNAME) at your registrar. Set `SITE.baseUrl` in
 
 ## 4. Turn on the marketing integrations (when ready)
 
-All in **`site/src/config/site.ts`** — one file, then redeploy:
-- HubSpot form: `portalId` + `formId` + `region`
-- GTM container id, Google Ads conversion id/label
-- Cookie-consent provider + id (loads before GTM — legally required for DE)
-- WhatsApp (`+49 15678 471378`) and the Google Calendar booking embed are **already live**.
+Environment variables on Vercel (Project → Settings → Environment Variables), then redeploy:
+- `PUBLIC_GTM_ID` loads Google Tag Manager with Consent Mode v2 (everything denied until the visitor accepts the built-in banner).
+- `PUBLIC_HUBSPOT_PORTAL_ID` + `PUBLIC_HUBSPOT_FORM_ID` (+ `PUBLIC_HUBSPOT_REGION`) switch the contact form to the HubSpot Forms API. `PUBLIC_WEB3FORMS_KEY` is the email fallback. See `docs/LEADS.md`.
+- `PUBLIC_SHOW_DRAFTS` / `PUBLIC_SHOW_TODOS` are set to `true` for the Preview environment only.
+- Company facts, booking link and feature flags live in `site/src/config/site.ts`.
+- Redirects from the old URLs (`/wissen`, `/referenzen`, `/en/...`, andreschuler.com post slugs) are in `site/vercel.json`.
 
 ## 5. Enable the visual editor (TinaCMS)
 

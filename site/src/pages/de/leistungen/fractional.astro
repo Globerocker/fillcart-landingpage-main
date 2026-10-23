@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Fractional from '../../../components/pages/Fractional.astro';
+import { de } from '../../../i18n/de.ts';
+import { breadcrumbSchema } from '../../../lib/seo.ts';
+---
+<BaseLayout lang="de" title={de.fractional.meta.title} description={de.fractional.meta.description} path="/de/leistungen/fractional" ogImage="/og/fractional-de.png" schema={[breadcrumbSchema([{ name: 'Leistungen', path: '/de/leistungen' }, { name: de.fractional.meta.title, path: '/de/leistungen/fractional' }])]}>
+  <Fractional lang="de" />
+</BaseLayout>

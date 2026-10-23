@@ -1,0 +1,31 @@
+---
+/** Page header. Dark with line texture by default; `tone="light"` for the dot-grid variant. */
+interface Props {
+  eyebrow?: string;
+  title: string;
+  sub?: string;
+  tone?: 'dark' | 'light';
+  size?: 'display' | 'h1';
+  class?: string;
+}
+const { eyebrow, title, sub, tone = 'dark', size = 'h1', class: cls = '' } = Astro.props;
+---
+
+<section class:list={['ph', cls, tone === 'dark' ? 'bg-dark bg-lines' : 'bg-dots']}>
+  <div class="wrap">
+    <div class="ph-in">
+      {eyebrow && <div class="eyebrow" data-reveal>{eyebrow}</div>}
+      <h1 class={size} data-reveal style="--d:60ms" set:html={title} />
+      {sub && <p class="lead ph-sub" data-reveal style="--d:120ms">{sub}</p>}
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .ph { padding: clamp(56px, 8vw, 96px) 0 clamp(48px, 6vw, 80px); }
+  .ph-in { max-width: 860px; display: grid; gap: 18px; }
+  .ph-sub { max-width: 680px; margin: 0; }
+  .bg-dark .ph-sub { color: var(--color-gray-2); }
+  .bg-dots .ph-sub { color: var(--color-gray); }
+</style>

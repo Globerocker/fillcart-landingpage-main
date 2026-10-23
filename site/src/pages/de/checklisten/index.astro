@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import CtaBand from '../../../components/CtaBand.astro';
+import { de } from '../../../i18n/de.ts';
+import { RESOURCES } from '../../../data/resources.ts';
+const c = de.checklists;
+---
+<BaseLayout lang="de" title={c.meta.title} description={c.meta.description} path="/de/checklisten" alt={null} ogImage="/og/checklisten.png">
+  <PageHero eyebrow={c.hero.eyebrow} title={c.hero.h1} sub={c.hero.sub} />
+  <section class="section bg-dots">
+    <div class="wrap grid-3">
+      {RESOURCES.map((r, i) => (
+        <a href={`/de/checklisten/${r.slug}`} class="card card-hover rc" data-reveal style={`--d:${i * 70}ms`}>
+          <span class="tag tag-green">{r.metaLabel}</span>
+          <h2 class="h3">{r.title}</h2>
+          <p class="text-muted">{r.description}</p>
+          <span class="link">{de.common.readMore} →</span>
+        </a>
+      ))}
+    </div>
+  </section>
+  <CtaBand lang="de" title={de.insights.cta.h2} text={de.insights.cta.text} primary={{ label: de.insights.cta.primary, href: '/de/leistungen/audit' }} secondary={{ label: de.insights.cta.secondary, href: undefined }} location="checklisten" />
+</BaseLayout>
+<style>
+  .grid-3 { display: grid; gap: 16px; }
+  @media (min-width: 768px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
+  .rc { display: grid; gap: 10px; align-content: start; color: var(--color-ink); }
+  .rc h2 { margin: 0; }
+  .rc p { margin: 0; font-size: 15px; }
+  .rc .tag { width: fit-content; }
+</style>

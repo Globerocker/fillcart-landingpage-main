@@ -1,0 +1,176 @@
+---
+import { SITE, type Locale } from '../config/site.ts';
+import { ENV, HUBSPOT_FORM_READY, WEB3FORMS_READY } from '../config/env.ts';
+import { getDict } from '../lib/i18n.ts';
+import Todo from './Todo.astro';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const d = getDict(lang);
+const f = d.contact.form;
+const privacy = lang === 'en' ? '/privacy' : '/de/datenschutz';
+const cfg = {
+  mode: HUBSPOT_FORM_READY ? 'hubspot' : WEB3FORMS_READY ? 'web3forms' : 'mailto',
+  hubspot: ENV.hubspot,
+  web3formsKey: ENV.web3formsKey,
+  to: SITE.contact.email,
+  lang,
+  messages: { success: f.success, error: f.error, sending: f.sending, submit: f.submit },
+};
+---
+
+<form class="cf" data-contact-form data-cfg={JSON.stringify(cfg)} novalidate>
+  {!HUBSPOT_FORM_READY && (
+    <Todo>HubSpot portal ID + form GUID not set. {WEB3FORMS_READY ? 'Delivering via Web3Forms for now.' : 'Delivering via mailto fallback for now (set PUBLIC_WEB3FORMS_KEY or the HubSpot IDs).'}</Todo>
+  )}
+  <div class="cf-grid">
+    <div class="field">
+      <label class="label" for="cf-name">{f.name}</label>
+      <input class="input" id="cf-name" name="firstname" type="text" autocomplete="name" required />
+    </div>
+    <div class="field">
+      <label class="label" for="cf-email">{f.email}</label>
+      <input class="input" id="cf-email" name="email" type="email" autocomplete="email" required />
+    </div>
+    <div class="field">
+      <label class="label" for="cf-company">{f.company}</label>
+      <input class="input" id="cf-company" name="company" type="text" autocomplete="organization" />
+    </div>
+    <div class="field">
+      <label class="label" for="cf-website">{f.website}</label>
+      <input class="input" id="cf-website" name="website" type="url" autocomplete="url" placeholder="https://" />
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="label" for="cf-message">{f.message}</label>
+    <textarea class="textarea" id="cf-message" name="message" required placeholder={f.messagePlaceholder}></textarea>
+  </div>
+
+  <fieldset class="cf-fs">
+    <legend class="label">{f.markets}</legend>
+    <div class="cf-chips">
+      {f.marketOptions.map((m) => (
+        <label class="cf-chip"><input type="checkbox" name="markets" value={m} /><span>{m}</span></label>
+      ))}
+    </div>
+  </fieldset>
+
+  <div class="field">
+    <label class="label" for="cf-budget">{f.budget}</label>
+    <select class="select" id="cf-budget" name="budget_range">
+      <option value="">{f.budgetPlaceholder}</option>
+      {f.budgetOptions.map((o) => <option value={o}>{o}</option>)}
+    </select>
+  </div>
+
+  <input type="hidden" name="utm_source" /><input type="hidden" name="utm_medium" /><input type="hidden" name="utm_campaign" /><input type="hidden" name="utm_term" /><input type="hidden" name="utm_content" /><input type="hidden" name="page_path" /><input type="hidden" name="language" value={lang} />
+  <input type="text" name="_honey" tabindex="-1" autocomplete="off" class="cf-honey" aria-hidden="true" />
+
+  <label class="check">
+    <input type="checkbox" name="consent" required />
+    <span>{f.consent} <a href={privacy} class="link">{d.cookie.more}</a></span>
+  </label>
+
+  <div class="cf-actions">
+    <button type="submit" class="btn btn-primary btn-lg" data-submit>{f.submit}</button>
+    <p class="cf-status small" data-status aria-live="polite"></p>
+  </div>
+</form>
+
+<style>
+  .cf { display: grid; gap: 18px; }
+  .cf-grid { display: grid; gap: 16px; }
+  .cf-fs { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
+  .cf-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .cf-chip { position: relative; }
+  .cf-chip input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .cf-chip span { display: inline-block; padding: 8px 12px; border: 1px solid #c9d2cc; border-radius: 4px; font-size: 14px; cursor: pointer; transition: all .15s; }
+  .cf-chip input:checked + span { background: var(--color-green); border-color: var(--color-green); color: #fff; }
+  .cf-chip input:focus-visible + span { outline: 2px solid var(--color-green); outline-offset: 2px; }
+  .cf-honey { position: absolute; left: -9999px; }
+  .cf-actions { display: grid; gap: 10px; }
+  .cf-status { margin: 0; color: var(--color-gray); }
+  .cf-status.ok { color: var(--color-green); font-weight: 600; }
+  .cf-status.err { color: #8a2d1a; }
+  @media (min-width: 640px) { .cf-grid { grid-template-columns: 1fr 1fr; } }
+</style>
+
+<script>
+  interface Cfg {
+    mode: 'hubspot' | 'web3forms' | 'mailto';
+    hubspot: { portalId: string; formId: string; region: string };
+    web3formsKey: string;
+    to: string;
+    lang: string;
+    messages: { success: string; error: string; sending: string; submit: string };
+  }
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  if (form) {
+    const cfg = JSON.parse(form.dataset.cfg || '{}') as Cfg;
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+    const btn = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+
+    // UTM + page context into hidden fields
+    const qs = new URLSearchParams(location.search);
+    ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].forEach((k) => {
+      const el = form.querySelector<HTMLInputElement>(`[name="${k}"]`);
+      if (el) el.value = qs.get(k) || sessionStorage.getItem('fc-' + k) || '';
+      if (el && el.value) try { sessionStorage.setItem('fc-' + k, el.value); } catch {}
+    });
+    const pp = form.querySelector<HTMLInputElement>('[name="page_path"]');
+    if (pp) pp.value = location.pathname;
+
+    const cookie = (n: string) => document.cookie.split('; ').find((c) => c.startsWith(n + '='))?.split('=')[1];
+
+    const collect = () => {
+      const fd = new FormData(form);
+      const markets = fd.getAll('markets').join(', ');
+      const o: Record<string, string> = {};
+      fd.forEach((v, k) => { if (k !== 'markets' && k !== '_honey' && k !== 'consent') o[k] = String(v); });
+      o.markets = markets;
+      return o;
+    };
+
+    const setStatus = (text: string, cls = '') => { status.textContent = text; status.className = 'cf-status small ' + cls; };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if ((form.querySelector<HTMLInputElement>('[name="_honey"]')?.value || '') !== '') return;
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      const data = collect();
+      btn.disabled = true;
+      setStatus(cfg.messages.sending);
+      try {
+        if (cfg.mode === 'hubspot') {
+          const url = `https://api.hsforms.com/submissions/v3/integration/submit/${cfg.hubspot.portalId}/${cfg.hubspot.formId}`;
+          const fields = Object.entries(data).map(([name, value]) => ({ objectTypeId: '0-1', name, value }));
+          const body = {
+            fields,
+            context: { hutk: cookie('hubspotutk'), pageUri: location.href, pageName: document.title },
+            legalConsentOptions: { consent: { consentToProcess: true, text: 'Consent to process', communications: [] } },
+          };
+          const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+          if (!r.ok) throw new Error('hubspot ' + r.status);
+        } else if (cfg.mode === 'web3forms') {
+          const r = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({ access_key: cfg.web3formsKey, subject: `Website request from ${data.firstname || data.email}`, from_name: data.firstname, ...data }),
+          });
+          const j = await r.json().catch(() => ({}));
+          if (!r.ok || (j && j.success === false)) throw new Error('web3forms');
+        } else {
+          const lines = Object.entries(data).filter(([, v]) => v).map(([k, v]) => `${k}: ${v}`).join('\n');
+          location.href = `mailto:${cfg.to}?subject=${encodeURIComponent('Website request')}&body=${encodeURIComponent(lines)}`;
+        }
+        (window as any).fcTrack?.('form_submit', { form: 'contact', mode: cfg.mode, page_path: location.pathname });
+        setStatus(cfg.messages.success, 'ok');
+        form.reset();
+      } catch (err) {
+        setStatus(`${cfg.messages.error} ${cfg.to}`, 'err');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  }
+</script>

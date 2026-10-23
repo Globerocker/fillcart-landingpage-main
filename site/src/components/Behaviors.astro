@@ -1,55 +1,77 @@
 ---
-// Shared client behaviors: reveal-on-scroll + count-up stats.
-// Emitted once per page via BaseLayout. Respects prefers-reduced-motion.
+// Shared client behaviours: reveal-on-scroll, count-up, header state, mobile nav, event tracking.
+// Respects prefers-reduced-motion. Emitted once per page via BaseLayout.
 ---
 
 <script>
-  type CountEl = HTMLElement & { dataset: DOMStringMap };
-
-  const locale = document.documentElement.lang === 'en' ? 'en-US' : 'de-DE';
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const locale = document.documentElement.lang === 'de' ? 'de-DE' : 'en-US';
   const nf = new Intl.NumberFormat(locale);
 
-  const paintCount = (el: CountEl, val: number) => {
-    el.textContent =
-      (el.dataset.prefix || '') + nf.format(val) + (el.dataset.suffix || '');
+  // --- Reveal + count-up -------------------------------------------------
+  type CountEl = HTMLElement & { dataset: DOMStringMap };
+  const paint = (el: CountEl, v: number) => {
+    el.textContent = (el.dataset.prefix || '') + nf.format(v) + (el.dataset.suffix || '');
   };
-
   const runCount = (el: CountEl) => {
     const target = Number(el.dataset.count);
-    const dur = 1400;
     const t0 = performance.now();
+    const dur = 1200;
     const step = (t: number) => {
       const p = Math.min(1, (t - t0) / dur);
-      paintCount(el, Math.round(target * (1 - Math.pow(1 - p, 3))));
+      paint(el, Math.round(target * (1 - Math.pow(1 - p, 3))));
       if (p < 1) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
   };
-
   const reveals = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
   const counters = Array.from(document.querySelectorAll<CountEl>('[data-count]'));
-  const reduced =
-    window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
   if (reduced || !('IntersectionObserver' in window)) {
-    reveals.forEach((e) => e.classList.add('fc-in'));
-    counters.forEach((e) => paintCount(e, Number(e.dataset.count)));
+    reveals.forEach((e) => e.classList.add('in'));
+    counters.forEach((e) => paint(e, Number(e.dataset.count)));
   } else {
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((en) => {
           if (!en.isIntersecting) return;
           const el = en.target as CountEl;
-          el.classList.add('fc-in');
-          if (el.dataset.count) runCount(el);
+          el.classList.add('in');
+          if (el.dataset.count !== undefined) runCount(el);
           io.unobserve(el);
         });
       },
-      { threshold: 0.16 }
+      { threshold: 0.15 }
     );
     reveals.forEach((e) => io.observe(e));
-    counters.forEach((e) => {
-      if (!e.hasAttribute('data-reveal')) io.observe(e);
-    });
+    counters.forEach((e) => { if (!e.hasAttribute('data-reveal')) io.observe(e); });
   }
+
+  // --- Header state ------------------------------------------------------
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const onScroll = () => header?.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // --- Mobile nav --------------------------------------------------------
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+  const panel = document.querySelector<HTMLElement>('[data-nav-panel]');
+  toggle?.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!open));
+    if (panel) panel.hidden = open;
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') toggle.click();
+  });
+
+  // --- Event tracking (dataLayer) ----------------------------------------
+  document.addEventListener('click', (e) => {
+    const a = (e.target as HTMLElement).closest<HTMLElement>('[data-track]');
+    if (!a) return;
+    const name = a.dataset.track!;
+    const params: Record<string, string> = { page_path: location.pathname };
+    if (a.dataset.location) params.location = a.dataset.location;
+    if (a.dataset.lang) params.to_lang = a.dataset.lang;
+    (window as any).fcTrack?.(name, params);
+  });
 </script>

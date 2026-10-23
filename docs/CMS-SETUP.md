@@ -6,12 +6,11 @@ redeploy. Nothing can silently break; every version is recoverable in Git histor
 
 ## What you can edit today
 
-Out of the box, Tina manages the two Markdown content types — the stuff that actually grows:
+Out of the box, Tina manages the four Markdown content types:
 
-- **Wissen (Artikel)** — all 18 blog articles: title, description, category, dates, tags,
-  the highlight stat, draft flag, and the full body text. **Create new articles** here too.
-- **Referenzen (Cases)** — all 10 case studies: client, market, industry, focus chips, the
-  real **KPI slots** (drop in your account/Search-Console numbers), and the story.
+- **Insights (articles)**: English and German articles (`src/content/insights/en/` and `de/`): title, description, language, topic, dates, tags, hero stat, draft flag, body.
+- **Case studies** (`src/content/work/`): anonymised client label, services, stack, role, period, metrics with definitions, and the `approved` switch that controls publication.
+- **Projects & ventures** and **Partners** (`src/content/projects/`, `src/content/partners/`), each with an `approved` switch.
 
 > The landing page's micro-copy (hero headline, section titles) currently lives in
 > `site/src/i18n/de.ts` / `en.ts`. If you want those editable in Tina too, say the word and I'll
@@ -55,9 +54,9 @@ npm run dev:cms      # Astro + Tina local server
 
 ## Adding a new article (example)
 
-`/admin` → **Wissen (Artikel)** → *Create New* → pick the category, fill title/description/date,
-set the highlight stat, write the body, Save. It lands in `site/src/content/blog/<category>/`,
-Vercel rebuilds, and it appears on `/wissen/` and its category page automatically.
+`/admin` → **Insights (articles)** → *Create New* → set the language, topic, title/description/date,
+write the body, Save. Put the file under `site/src/content/insights/en/` or `de/`; Vercel rebuilds and
+it appears on `/insights` or `/de/insights`. Case studies only go live once `approved` is switched on.
 
 ## Config
 

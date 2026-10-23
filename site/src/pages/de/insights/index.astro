@@ -1,0 +1,8 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import InsightsIndex from '../../../components/pages/InsightsIndex.astro';
+import { de } from '../../../i18n/de.ts';
+---
+<BaseLayout lang="de" title={de.insights.meta.title} description={de.insights.meta.description} path="/de/insights" ogImage="/og/insights-de.png">
+  <InsightsIndex lang="de" />
+</BaseLayout>

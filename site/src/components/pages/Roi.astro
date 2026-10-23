@@ -1,0 +1,19 @@
+---
+import type { Locale } from '../../config/site.ts';
+import { getDict } from '../../lib/i18n.ts';
+import { localePath } from '../../i18n/routes.ts';
+import PageHero from '../PageHero.astro';
+import RoiCalculator from '../RoiCalculator.astro';
+import CtaBand from '../CtaBand.astro';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const d = getDict(lang);
+const r = d.roi;
+const p = (en: string) => localePath(lang, en);
+---
+
+<PageHero eyebrow={r.hero.eyebrow} title={r.hero.h1} sub={r.hero.sub} />
+<section class="section bg-dots">
+  <div class="wrap"><RoiCalculator lang={lang} /></div>
+</section>
+<CtaBand lang={lang} title={r.cta.h2} text={r.cta.text} primary={{ label: r.cta.primary, href: p('/services/audit') }} secondary={{ label: r.cta.secondary, href: undefined }} location="roi" />

@@ -1,0 +1,56 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { SITE } from '../config/site.ts';
+const c = SITE.company;
+---
+<LegalLayout lang="en" title="Terms and conditions" description="Terms for audits, sprints, trainings and fractional engagements provided by FILLCART LLC." path="/terms" eyebrow="Legal" updated="Last updated: October 2026">
+  <h2>1. Provider</h2>
+  <div class="addr">{c.legalName}<br />{c.street}<br />{c.city}, {c.region} {c.postalCode}, {c.countryLabel}<br />Email: <a href={`mailto:${SITE.contact.email}`}>{SITE.contact.email}</a></div>
+
+  <h2>2. Services</h2>
+  <p>{c.legalName} provides marketing and revenue operations services to business clients: audits, implementation sprints, one-day trainings, paid media operations and fractional leadership (Head of Marketing &amp; RevOps). Each engagement is defined in a written offer or order confirmation; the published menu describes standard scopes and fixed prices. All prices exclude applicable taxes.</p>
+
+  <h2>3. Audit</h2>
+  <p>The Revenue &amp; Marketing Audit is a fixed-price, fixed-scope review as described on the audit page. The fee is due in full upfront; work starts once payment is received. The audit fee is credited in full toward a sprint booked within 30 days of the results call. Work outside the described scope is quoted separately and only after the client’s written approval. Delays in granting access or providing information extend the timeline by the same amount.</p>
+
+  <h2>4. Sprints and trainings</h2>
+  <p>Sprints and trainings are delivered at the fixed price and scope stated in the offer. Changes to scope are agreed in writing before work continues; the price does not change mid-sprint. Payment terms are stated in the offer.</p>
+
+  <h2>5. Ongoing engagements</h2>
+  <p>Fractional leadership and paid media operations are billed monthly in advance at the agreed monthly fee and can be ended by either party with notice to the end of the following month, unless the offer states otherwise. Media spend on advertising platforms is billed by the platform directly to the client and is never part of the fee.</p>
+
+  <h2>6. Client responsibilities</h2>
+  <ul>
+    <li>Grant and maintain the access needed for the engagement (ad accounts, CRM, analytics), as listed in the onboarding checklist.</li>
+    <li>Provide accurate information, brand assets and any legally required approvals for content and advertising.</li>
+    <li>Ensure that advertised offers, landing pages and data processing comply with applicable law and platform policies.</li>
+    <li>Name one main contact for questions during the engagement.</li>
+  </ul>
+
+  <h2>7. Access and data handling</h2>
+  <p>Access is used only for the agreed engagement. During an audit no changes are made to campaigns, settings or CRM data. The client can remove access as soon as the engagement ends. Account data is used solely for that client’s engagement and is never shared with other clients or resold. A non-disclosure agreement is available on request.</p>
+
+  <h2>8. Deliverables and intellectual property</h2>
+  <p>Documents, campaign structures, portal configurations and content created for the client within an engagement belong to the client once paid for. Internal tooling, methods and templates of {c.legalName} remain its property.</p>
+
+  <h2>9. Third-party platforms</h2>
+  <p>Services rely on third-party platforms (in particular Google Ads, LinkedIn Ads, Meta, HubSpot, Salesforce). Their availability, policies and pricing are outside the provider’s control, and the client’s use of those platforms is subject to the respective provider’s terms.</p>
+
+  <h2>10. No guarantee of results</h2>
+  <p>Marketing performance depends on factors outside the provider’s control (auction dynamics, market demand, the client’s offer and sales process). Work is delivered with professional care and industry best practice, but no specific result, ranking, lead volume, conversion volume or return is warranted. Figures on this website describe past work or benchmarks, not promises.</p>
+
+  <h2>11. Liability</h2>
+  <p>To the extent permitted by law, {c.legalName} is liable only for damage caused intentionally or by gross negligence. Liability for slight negligence is limited to the breach of essential contractual obligations and to the foreseeable, typical damage. The provider is not liable for media spend billed by platforms or for the acts of third-party platforms.</p>
+
+  <h2>12. Confidentiality</h2>
+  <p>Each party keeps the other’s confidential information secret during and after the engagement. Details on personal data are set out in the <a href="/privacy">privacy policy</a>.</p>
+
+  <h2>13. Changes</h2>
+  <p>These terms may be updated; the version in force is the one published here when an engagement is agreed. Material changes to an ongoing engagement are agreed in writing.</p>
+
+  <h2>14. Governing law</h2>
+  <p>These terms are governed by the laws of the State of Wyoming, USA, without prejudice to mandatory provisions applicable at the client’s place of business.</p>
+
+  <h2>15. Contact</h2>
+  <p>Questions about these terms: <a href={`mailto:${SITE.contact.email}`}>{SITE.contact.email}</a>.</p>
+</LegalLayout>

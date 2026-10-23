@@ -1,0 +1,43 @@
+---
+import { SITE, type Locale } from '../config/site.ts';
+import { getDict } from '../lib/i18n.ts';
+interface Props {
+  lang: Locale;
+  title: string;
+  text?: string;
+  primary?: { label: string; href?: string };
+  secondary?: { label: string; href?: string };
+  tone?: 'dark' | 'light';
+  location?: string;
+}
+const { lang, title, text, primary, secondary, tone = 'dark', location = 'cta-band' } = Astro.props;
+const d = getDict(lang);
+const p = primary ?? { label: d.common.bookCall };
+const s = secondary ?? { label: d.common.emailMe };
+const pHref = p.href ?? SITE.booking;
+const sHref = s.href ?? `mailto:${SITE.contact.email}`;
+const pExt = pHref.startsWith('http');
+const sExt = sHref.startsWith('http') || sHref.startsWith('mailto:');
+---
+
+<section class:list={['cta', tone === 'dark' ? 'bg-dark bg-lines' : 'bg-dots']}>
+  <div class="wrap">
+    <div class="cta-in">
+      <h2 class="h2" data-reveal set:html={title} />
+      {text && <p class="lead cta-text" data-reveal style="--d:60ms">{text}</p>}
+      <div class="cta-actions" data-reveal style="--d:120ms">
+        <a href={pHref} class:list={['btn', 'btn-lg', tone === 'dark' ? 'btn-light' : 'btn-primary']} target={pExt ? '_blank' : undefined} rel={pExt ? 'noopener' : undefined} data-track={pHref === SITE.booking ? 'cta_book_click' : undefined} data-location={location}>{p.label}</a>
+        <a href={sHref} class:list={['btn', 'btn-lg', tone === 'dark' ? 'btn-ghost' : 'btn-secondary']} target={sHref.startsWith('http') ? '_blank' : undefined} rel={sExt && sHref.startsWith('http') ? 'noopener' : undefined}>{s.label}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta { padding: clamp(64px, 9vw, 112px) 0; }
+  .cta-in { max-width: 760px; display: grid; gap: 18px; }
+  .cta-text { margin: 0; }
+  .bg-dark .cta-text { color: var(--color-gray-2); }
+  .bg-dots .cta-text { color: var(--color-gray); }
+  .cta-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+</style>

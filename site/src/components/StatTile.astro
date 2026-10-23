@@ -1,0 +1,26 @@
+---
+interface Props {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  label: string;
+  definition?: string;
+  href?: string;
+  locale?: string;
+}
+const { value, prefix = '', suffix = '', label, definition, href, locale = 'en-US' } = Astro.props;
+const display = `${prefix}${new Intl.NumberFormat(locale).format(value)}${suffix}`;
+---
+
+<div class="stat" data-reveal>
+  <div class="stat-num tnum" data-count={value} data-prefix={prefix} data-suffix={suffix}>{display}</div>
+  <div class="stat-label">
+    {href ? <a href={href} class="link" target="_blank" rel="noopener">{label}</a> : label}
+  </div>
+  {definition && <div class="stat-def">{definition}</div>}
+</div>
+
+<style>
+  .stat-def { margin-top: 6px; font-size: 12.5px; line-height: 1.45; color: var(--color-gray); opacity: .85; }
+  .bg-dark .stat-def { color: var(--color-gray-2); }
+</style>

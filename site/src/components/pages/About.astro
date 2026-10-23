@@ -1,0 +1,160 @@
+---
+import { SITE, type Locale } from '../../config/site.ts';
+import { ENV } from '../../config/env.ts';
+import { getDict } from '../../lib/i18n.ts';
+import { localePath } from '../../i18n/routes.ts';
+import Portrait from '../Portrait.astro';
+import CtaBand from '../CtaBand.astro';
+import Todo from '../Todo.astro';
+
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const d = getDict(lang);
+const a = d.about;
+const p = (en: string) => localePath(lang, en);
+const items = a.timeline.items.filter((it) => !(it as any).todo || ENV.showTodos);
+---
+
+<!-- 1. Intro (light) -->
+<section class="ab-hero bg-dots">
+  <div class="wrap ab-grid">
+    <div class="ab-copy">
+      <div class="eyebrow" data-reveal>{a.hero.eyebrow}</div>
+      <h1 class="display" data-reveal style="--d:60ms">{a.hero.h1}</h1>
+      <p class="lead text-muted" data-reveal style="--d:120ms">{a.hero.sub}</p>
+    </div>
+    <div class="ab-visual" data-reveal style="--d:120ms">
+      <Portrait alt={d.home.hero.portraitAlt} variant="side" />
+    </div>
+  </div>
+</section>
+
+<!-- 2. Story -->
+<section class="section">
+  <div class="wrap">
+    <div class="story">
+      <div class="eyebrow" data-reveal>{a.story.eyebrow}</div>
+      {a.story.paragraphs.map((t, i) => (
+        <p class:list={['story-p', { lead: i === 0 }]} data-reveal style={`--d:${i * 60}ms`}>{t}</p>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- 3. Path timeline (dark) -->
+<section class="section bg-dark bg-lines">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-reveal>{a.timeline.eyebrow}</div>
+      <h2 class="h2" data-reveal style="--d:60ms">{a.timeline.h2}</h2>
+    </div>
+    <ol class="tl">
+      {items.map((it, i) => {
+        const emp = (it as any).employer as string | undefined;
+        const anon = (it as any).anonymous as string | undefined;
+        const org = emp && SITE.flags.nameEmployers ? emp : anon;
+        return (
+          <li class="tl-item" data-reveal style={`--d:${Math.min(i * 40, 200)}ms`}>
+            <div class="tl-period mono">{it.period}</div>
+            <div class="tl-body">
+              <h3 class="tl-title">{it.title}{org && <span class="tl-org">, {org}</span>}</h3>
+              {it.text && <p class="tl-text">{it.text}</p>}
+              {(it as any).todo && <Todo>Confirm dates and wording for this entry.</Todo>}
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+    {!SITE.flags.nameEmployers && <p class="small text-muted tl-note">{a.timeline.employerNote}</p>}
+    <Todo>Employers named on LinkedIn (Matrix42, CIXON, NX Digital, Bloom Rocket) are described, not named, until Andre confirms. Flip SITE.flags.nameEmployers to show them.</Todo>
+  </div>
+</section>
+
+<!-- 4. How I work -->
+<section class="section bg-dots">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-reveal>{a.how.eyebrow}</div>
+      <h2 class="h2" data-reveal style="--d:60ms">{a.how.h2}</h2>
+      <p class="lead text-muted" data-reveal style="--d:120ms">{a.how.text}</p>
+    </div>
+    <div class="grid-2">
+      {a.how.principles.map((pr, i) => (
+        <div class="card-light" data-reveal style={`--d:${i * 70}ms`}>
+          <h3 class="h3">{pr.title}</h3>
+          <p class="text-muted">{pr.text}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- 5. Off the clock + 6. Certifications -->
+<section class="section">
+  <div class="wrap grid-2 gap-lg">
+    <div>
+      <div class="eyebrow" data-reveal>{a.off.eyebrow}</div>
+      <h2 class="h2 mt" data-reveal style="--d:60ms">{a.off.h2}</h2>
+      <ul class="bullets mt" data-reveal style="--d:120ms">
+        {a.off.items.map((it) => <li>{it}</li>)}
+      </ul>
+      <p class="text-muted mt" data-reveal style="--d:160ms">{a.off.languages}</p>
+      <p class="text-muted small" data-reveal style="--d:200ms">{d.common.remote} {d.common.hours}</p>
+    </div>
+    <div>
+      <div class="eyebrow" data-reveal>{a.certs.eyebrow}</div>
+      <h2 class="h2 mt" data-reveal style="--d:60ms">{a.certs.h2}</h2>
+      <div class="certs mt">
+        {a.certs.groups.map((g, i) => (
+          <div class="cert-group" data-reveal style={`--d:${i * 70}ms`}>
+            <div class="cert-name mono">{g.name}</div>
+            <div class="cert-items">
+              {g.items.map((it) => <span class="tag">{it}</span>)}
+            </div>
+            {g.links.length > 0 && (
+              <div class="cert-links">
+                {g.links.map((l) => <a href={l.href} class="link small" target="_blank" rel="noopener">{l.label} ({a.certs.verifiedLabel})</a>)}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      <Todo>{a.certs.linksNote} Add links for the Google Ads, Google Partner, LinkedIn and Shopify certificates.</Todo>
+    </div>
+  </div>
+</section>
+
+<CtaBand lang={lang} title={a.cta.h2} text={a.cta.text} primary={{ label: a.cta.primary }} secondary={{ label: a.cta.secondary, href: p('/services') }} location="about" />
+
+<style>
+  .ab-hero { padding: clamp(56px, 8vw, 96px) 0 clamp(40px, 6vw, 72px); }
+  .ab-grid { display: grid; gap: 36px; align-items: center; }
+  .ab-copy { display: grid; gap: 18px; max-width: 720px; }
+  .ab-copy .lead { margin: 0; }
+  .ab-visual { justify-self: center; }
+  @media (min-width: 1024px) { .ab-grid { grid-template-columns: 1.2fr .8fr; } .ab-visual { justify-self: end; } }
+  .story { max-width: 760px; display: grid; gap: 18px; }
+  .story-p { margin: 0; font-size: 18px; line-height: 1.65; color: #2b2f36; }
+  .story-p.lead { font-size: clamp(20px, 2vw, 24px); color: var(--color-ink); font-family: var(--font-head); font-weight: 500; line-height: 1.4; }
+  .sec-head { display: grid; gap: 14px; max-width: 760px; margin-bottom: clamp(28px, 4vw, 44px); }
+  .sec-head .lead { margin: 0; }
+  .tl { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid rgba(255,255,255,.14); }
+  .tl-item { display: grid; gap: 6px; padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,.14); }
+  .tl-period { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--color-accent-2); }
+  .tl-title { font-family: var(--font-head); font-weight: 600; font-size: 18px; margin: 0; }
+  .tl-org { color: var(--color-gray-2); font-weight: 500; }
+  .tl-text { margin: 4px 0 0; color: var(--color-gray-2); font-size: 15px; }
+  .tl-note { margin-top: 18px; }
+  @media (min-width: 768px) { .tl-item { grid-template-columns: 180px 1fr; gap: 24px; } }
+  .grid-2 { display: grid; gap: 18px; }
+  .gap-lg { gap: 48px; }
+  @media (min-width: 768px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+  .card-light h3 { margin: 0 0 10px; }
+  .card-light p { margin: 0; font-size: 15.5px; }
+  .mt { margin-top: 14px; }
+  .certs { display: grid; gap: 18px; }
+  .cert-group { display: grid; gap: 8px; padding-bottom: 16px; border-bottom: 1px solid var(--color-line); }
+  .cert-name { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-green); }
+  .cert-items { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cert-links { display: flex; flex-wrap: wrap; gap: 12px; }
+</style>

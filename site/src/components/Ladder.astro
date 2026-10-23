@@ -1,0 +1,39 @@
+---
+/** The three-step offer ladder (Audit → Sprint → Fractional). Dark section. */
+import type { Locale } from '../config/site.ts';
+import { localePath } from '../i18n/routes.ts';
+interface Step { num: string; title: string; meta: string; text: string; href: string; cta: string }
+interface Props { lang: Locale; steps: Step[] }
+const { lang, steps } = Astro.props;
+---
+
+<ol class="ld">
+  {steps.map((s, i) => (
+    <li class="ld-step" data-reveal style={`--d:${i * 90}ms`}>
+      <div class="ld-top">
+        <span class="ld-num">{s.num}</span>
+        <span class="ld-line" aria-hidden="true"></span>
+      </div>
+      <h3 class="h3 ld-title">{s.title}</h3>
+      <div class="ld-meta mono">{s.meta}</div>
+      <p class="ld-text">{s.text}</p>
+      <a href={localePath(lang, s.href)} class="link ld-link">{s.cta} →</a>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .ld { list-style: none; margin: 0; padding: 0; display: grid; gap: 28px; }
+  .ld-step { display: grid; gap: 10px; align-content: start; }
+  .ld-top { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+  .ld-num { font-family: var(--font-head); font-weight: 700; font-size: 15px; color: var(--color-ink); background: #fff; width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+  .ld-line { flex: 1; height: 1px; background: rgba(255,255,255,.2); }
+  .ld-title { margin: 0; color: #fff; }
+  .ld-meta { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--color-accent-2); }
+  .ld-text { margin: 0; color: var(--color-gray-2); font-size: 15.5px; line-height: 1.6; }
+  .ld-link { width: fit-content; }
+  @media (min-width: 768px) {
+    .ld { grid-template-columns: repeat(3, 1fr); gap: 32px; }
+    .ld-step:last-child .ld-line { background: transparent; }
+  }
+</style>

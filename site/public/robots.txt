@@ -1,7 +1,6 @@
 User-agent: *
 Allow: /
-
-# The TinaCMS admin app is not for search engines.
 Disallow: /admin
+Disallow: /styleguide
 
 Sitemap: https://fillcart.de/sitemap-index.xml

@@ -1,0 +1,40 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { SITE } from '../config/site.ts';
+const c = SITE.company;
+---
+<LegalLayout lang="en" title="Privacy policy" description="Privacy policy of FILLCART LLC: controller, hosting, booking, contact form, analytics with consent, your rights." path="/privacy" eyebrow="Legal" updated="Last updated: October 2026">
+  <h2>1. Controller</h2>
+  <div class="addr">{c.legalName}<br />{c.street}<br />{c.city}, {c.region} {c.postalCode}, {c.countryLabel}<br />Email: <a href={`mailto:${SITE.contact.email}`}>{SITE.contact.email}</a></div>
+
+  <h2>2. Hosting</h2>
+  <p>This website is hosted by Vercel Inc. (340 S Lemon Ave #4133, Walnut, CA 91789, USA). When the site is accessed, Vercel processes technically necessary server log data (including IP address, timestamp, requested file) to deliver the site securely and reliably. Legal basis: legitimate interest in secure operation (Art. 6(1)(f) GDPR). On transfers to the US see section 7.</p>
+
+  <h2>3. Appointment booking (Google Calendar)</h2>
+  <p>The booking links on this site open Google Calendar appointment scheduling (Google Ireland Limited, Ireland) in a new tab. The data you enter there (name, email, chosen slot) is processed by Google to confirm the appointment. Legal basis: Art. 6(1)(b) GDPR (pre-contractual measures).</p>
+
+  <h2>4. Contact form and direct contact</h2>
+  <p>When you use the contact form or write to me directly (email, phone, LinkedIn), I process the details you submit solely to answer your request (Art. 6(1)(b) and (f) GDPR). The form also records the page you sent it from and, if present, campaign parameters from the URL (UTM), so I know what you were reading.</p>
+  <p>Form submissions are delivered through one of the following, depending on the current setup: HubSpot (HubSpot, Inc., USA; EU data center) as my CRM, or Web3Forms (a form-to-email relay) which forwards the submission to my inbox and does not store it beyond delivery. Which provider is active is visible in the form's HTML.</p>
+
+  <h2>5. Analytics and tags (only with your consent)</h2>
+  <p>Google Tag Manager and Google Analytics 4 (Google Ireland Limited) load only after you agree in the cookie banner. Until then, Google Consent Mode v2 keeps all storage denied and no analytics cookies are set. You can withdraw consent at any time by clearing this site's data in your browser; the banner then appears again. Legal basis: Art. 6(1)(a) GDPR.</p>
+
+  <h2>6. Local storage</h2>
+  <p>This site stores your cookie choice and, on the interactive checklists, your tick marks in your browser's local storage. That data never leaves your device.</p>
+
+  <h2>7. Data transfer to the US</h2>
+  <p>Some providers named above process data in the US (Art. 44 ff. GDPR). Transfers rely on Standard Contractual Clauses and, where the provider is certified, the EU-US Data Privacy Framework. The controller itself is a US LLC and applies the same diligence to its own processing.</p>
+
+  <h2>8. Your rights</h2>
+  <ul>
+    <li>Access (Art. 15 GDPR)</li>
+    <li>Rectification (Art. 16 GDPR)</li>
+    <li>Erasure (Art. 17 GDPR)</li>
+    <li>Restriction of processing (Art. 18 GDPR)</li>
+    <li>Data portability (Art. 20 GDPR)</li>
+    <li>Objection (Art. 21 GDPR) and withdrawal of consent</li>
+    <li>Complaint to a supervisory authority (Art. 77 GDPR)</li>
+  </ul>
+  <p>Retention: data is deleted as soon as the purpose of processing no longer applies and no statutory retention periods prevent it.</p>
+</LegalLayout>

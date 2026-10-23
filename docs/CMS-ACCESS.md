@@ -48,9 +48,9 @@ Good news: the code is fully wired. Once the two secrets exist in Vercel, the ne
 
 ## What you can edit
 
-- **Wissen (Artikel)** — all blog articles (title, description, category, dates, tags, hero stat,
+- **Insights (articles)**: EN and DE articles (title, description, language, topic, dates, tags, hero stat,
   draft flag, body). You can also create new articles.
-- **Referenzen (Cases)** — all case studies (client, market, industry, focus chips, KPI slots, story).
+- **Case studies**, **Projects** and **Partners**: each with an `approved` switch that controls publication.
 - Media you upload in Tina lands in `site/public/assets/`.
 
 > The landing-page micro-copy (hero headline, section titles) lives in `site/src/i18n/de.ts` /

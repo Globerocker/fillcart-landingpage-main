@@ -1,0 +1,154 @@
+---
+import { SITE, type Locale } from '../../config/site.ts';
+import { getDict } from '../../lib/i18n.ts';
+import { localePath } from '../../i18n/routes.ts';
+import PageHero from '../PageHero.astro';
+import MenuGroup from '../MenuGroup.astro';
+import Todo from '../Todo.astro';
+
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const d = getDict(lang);
+const s = d.services;
+const p = (en: string) => localePath(lang, en);
+const groups = [s.groups.starters, s.groups.mains, s.groups.trainings, s.groups.season];
+---
+
+<PageHero eyebrow={s.hero.eyebrow} title={s.hero.h1} sub={s.hero.sub} />
+
+<!-- Four courses + how to read -->
+<section class="section bg-dots">
+  <div class="wrap sv-intro">
+    <div>
+      <div class="eyebrow" data-reveal>{d.home.disciplines.eyebrow}</div>
+      <ol class="courses">
+        {d.home.disciplines.items.map((c, i) => (
+          <li class="card-light course" data-reveal style={`--d:${i * 60}ms`}>
+            <span class="mono course-num">{c.num}</span>
+            <h2 class="h3">{c.title}</h2>
+            <p class="text-muted">{c.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+    <div class="card-dark bg-lines" data-reveal>
+      <div class="eyebrow">{s.howToRead.eyebrow}</div>
+      <ul class="bullets how-list">
+        {s.howToRead.items.map((it) => <li>{it}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Ladder comparison -->
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-reveal>{s.compare.eyebrow}</div>
+      <h2 class="h2" data-reveal style="--d:60ms">{s.compare.h2}</h2>
+      <p class="lead text-muted" data-reveal style="--d:120ms">{s.compare.intro}</p>
+    </div>
+    <div class="table-wrap" data-reveal>
+      <table class="table compare">
+        <thead><tr>{s.compare.cols.map((c) => <th>{c}</th>)}</tr></thead>
+        <tbody>
+          {s.compare.rows.map((r) => <tr>{r.map((c) => <td>{c}</td>)}</tr>)}
+        </tbody>
+      </table>
+    </div>
+    <div class="compare-links" data-reveal>
+      {s.compare.links.map((l) => <a href={p(l.href)} class="btn btn-secondary btn-sm">{l.label} <span class="arrow">→</span></a>)}
+    </div>
+  </div>
+</section>
+
+<!-- The menu -->
+<section class="section bg-dots" id="menu">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-reveal>{s.menuTitle.eyebrow}</div>
+      <h2 class="h2" data-reveal style="--d:60ms">{s.menuTitle.h2}</h2>
+      <p class="small text-muted mono" data-reveal style="--d:120ms">{d.common.priceNote}</p>
+    </div>
+    {!SITE.flags.showMenuPrices && <Todo>Menu prices hidden (SITE.flags.showMenuPrices = false).</Todo>}
+    <Todo>Prices come from the October 2026 price menus (EN in USD, DE in EUR). The briefing had flagged "scoped after the audit" until Andre provides numbers; set SITE.flags.showMenuPrices = false to hide them.</Todo>
+    <div class="menu">
+      {groups.map((g) => <MenuGroup lang={lang} group={g} />)}
+    </div>
+  </div>
+</section>
+
+<!-- Situations + included -->
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-reveal>{s.situations.eyebrow}</div>
+      <h2 class="h2" data-reveal style="--d:60ms">{s.situations.h2}</h2>
+    </div>
+    <div class="grid-3">
+      {s.situations.items.map((it, i) => (
+        <div class="card-light" data-reveal style={`--d:${i * 70}ms`}>
+          <h3 class="h3">{it.title}</h3>
+          <ol class="path mono">
+            {it.path.map((step) => <li>{step}</li>)}
+          </ol>
+        </div>
+      ))}
+    </div>
+    <div class="included" data-reveal>
+      <div class="eyebrow">{s.included.eyebrow}</div>
+      <ul class="bullets included-list">
+        {s.included.items.map((it) => <li>{it}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- How it starts -->
+<section class="section bg-dark bg-lines">
+  <div class="wrap starts">
+    <div>
+      <h2 class="display starts-title" data-reveal>{s.howItStarts.h2}</h2>
+    </div>
+    <div>
+      <div class="eyebrow" data-reveal>{s.howItStarts.eyebrow}</div>
+      <ol class="steps" data-reveal style="--d:60ms">
+        {s.howItStarts.steps.map((st) => <li>{st}</li>)}
+      </ol>
+      <div class="starts-actions" data-reveal style="--d:120ms">
+        <a href={SITE.booking} class="btn btn-light btn-lg" target="_blank" rel="noopener" data-track="cta_book_click" data-location="services-end">{s.howItStarts.primary}</a>
+        <a href={`mailto:${SITE.contact.email}`} class="btn btn-ghost btn-lg">{s.howItStarts.secondary}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sv-intro { display: grid; gap: 24px; align-items: start; }
+  @media (min-width: 1024px) { .sv-intro { grid-template-columns: 1.4fr .9fr; gap: 32px; } }
+  .courses { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 12px; }
+  @media (min-width: 640px) { .courses { grid-template-columns: repeat(2, 1fr); } }
+  .course-num { display: block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-green); margin-bottom: 8px; }
+  .card-light h3 { margin: 0 0 8px; }
+  .card-light p { margin: 0; font-size: 15px; }
+  .how-list { margin-top: 14px; font-size: 15.5px; color: #e6eae7; }
+  .sec-head { display: grid; gap: 14px; max-width: 760px; margin-bottom: clamp(24px, 4vw, 40px); }
+  .sec-head .lead, .sec-head .small { margin: 0; }
+  .compare td:not(:first-child) { min-width: 180px; }
+  .compare-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+  .menu { display: grid; gap: clamp(40px, 6vw, 72px); margin-top: 8px; }
+  .grid-3 { display: grid; gap: 16px; }
+  @media (min-width: 768px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
+  .path { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 6px; font-size: 13px; color: var(--color-green); counter-reset: s; }
+  .path li { counter-increment: s; }
+  .path li::before { content: counter(s) ' · '; color: var(--color-gray); }
+  .included { margin-top: 32px; background: var(--color-light); padding: 24px 28px; border-left: 3px solid var(--color-green); }
+  .included-list { margin-top: 12px; display: grid; gap: 8px; }
+  @media (min-width: 768px) { .included-list { grid-template-columns: 1fr 1fr; gap: 10px 32px; } }
+  .starts { display: grid; gap: 32px; align-items: start; }
+  @media (min-width: 900px) { .starts { grid-template-columns: 1fr 1fr; gap: 56px; } }
+  .starts-title { margin: 0; }
+  .steps { margin: 16px 0 0; padding-left: 1.3em; display: grid; gap: 10px; color: #e6eae7; font-size: 17px; }
+  .steps li::marker { color: var(--color-accent-2); font-family: var(--font-mono); }
+  .starts-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+</style>

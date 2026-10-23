@@ -27,9 +27,9 @@ export const RESOURCES: Resource[] = [
     title: 'Die Google-Ads-Audit-Checkliste',
     kicker: 'Checkliste · 20 Punkte',
     description:
-      'Die 20 Fragen, die wir uns bei jedem B2B-Konto stellen. Hak ab, was bei dir sitzt — der Rest ist deine To-do-Liste.',
+      'Die 20 Fragen, die ich mir bei jedem B2B-Konto stelle. Hak ab, was bei dir sitzt. Der Rest ist deine To-do-Liste.',
     intro:
-      'Wir haben unseren internen Audit-Ablauf zu einer Checkliste eingedampft, die du direkt hier durchklicken kannst. Kein PDF-Download-Gate, kein E-Mail-Zwang: hak ab, was bei dir schon läuft. Dein Fortschritt bleibt lokal in deinem Browser. Wenn am Ende zu viele Punkte offen bleiben, weißt du, wo Pipeline liegen bleibt.',
+      'Ich habe meinen internen Audit-Ablauf zu einer Checkliste eingedampft, die du direkt hier durchklicken kannst. Kein PDF-Download-Gate, kein E-Mail-Zwang: hak ab, was bei dir schon läuft. Dein Fortschritt bleibt lokal in deinem Browser. Wenn am Ende zu viele Punkte offen bleiben, weißt du, wo Pipeline liegen bleibt.',
     kind: 'checklist',
     accent: 'orange',
     metaLabel: '20 Prüfpunkte',
@@ -43,7 +43,7 @@ export const RESOURCES: Resource[] = [
     description:
       'Wirst du von ChatGPT, Perplexity und Google AI Overviews zitiert? Die 11 Punkte, die darüber entscheiden.',
     intro:
-      'Die Suche wird zur Antwort — und wer nicht zitiert wird, existiert für die KI nicht. Diese Checkliste prüft, ob deine Inhalte, deine Entität und deine Technik bereit für die KI-Suche sind. Basierend auf aktueller Forschung (u. a. der Princeton-GEO-Studie) und den Daten aus unseren Wissens-Artikeln.',
+      'Die Suche wird zur Antwort, und wer nicht zitiert wird, existiert für die KI nicht. Diese Checkliste prüft, ob deine Inhalte, deine Entität und deine Technik bereit für die KI-Suche sind. Basierend auf aktueller Forschung (u. a. der Princeton-GEO-Studie) und den Daten aus meinen Insights-Artikeln.',
     kind: 'checklist',
     accent: 'sky',
     metaLabel: '11 Prüfpunkte',
@@ -56,7 +56,7 @@ export const RESOURCES: Resource[] = [
     description:
       'Der Datenfluss, der aus Klicks Pipeline macht: Offline-Conversions, Lifecycle, Attribution und DSGVO.',
     intro:
-      'Die USP von CRM-verbundenen Kampagnen steht und fällt mit dem Setup. Diese Checkliste geht den Datenfluss zwischen Google Ads und HubSpot durch — von der gclid bis zur Offline-Conversion, plus Lifecycle, Attribution und DSGVO. Wenn hier Punkte offen sind, optimiert Google auf Formulare statt auf Umsatz.',
+      'Die USP von CRM-verbundenen Kampagnen steht und fällt mit dem Setup. Diese Checkliste geht den Datenfluss zwischen Google Ads und HubSpot durch: von der gclid bis zur Offline-Conversion, plus Lifecycle, Attribution und DSGVO. Wenn hier Punkte offen sind, optimiert Google auf Formulare statt auf Umsatz.',
     kind: 'checklist',
     accent: 'green',
     metaLabel: '9 Prüfpunkte',

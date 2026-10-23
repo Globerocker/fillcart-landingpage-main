@@ -1,0 +1,15 @@
+---
+import { render } from 'astro:content';
+import ArticleLayout from '../../../layouts/ArticleLayout.astro';
+import { getInsights, slugOf } from '../../../lib/content.ts';
+
+export async function getStaticPaths() {
+  const all = await getInsights('de');
+  return all.map((entry) => ({ params: { slug: slugOf(entry.id) }, props: { entry, all } }));
+}
+const { entry, all } = Astro.props;
+const { Content, headings } = await render(entry);
+---
+<ArticleLayout entry={entry} headings={headings} all={all} lang="de">
+  <Content />
+</ArticleLayout>

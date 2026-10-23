@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { en } from '../i18n/en.ts';
+---
+<BaseLayout lang="en" title={en.notFound.title} description={en.notFound.text} path="/404" alt={null} noindex>
+  <section class="section bg-dots nf">
+    <div class="wrap">
+      <div class="eyebrow">404</div>
+      <h1 class="display">{en.notFound.title}</h1>
+      <p class="lead text-muted">{en.notFound.text}</p>
+      <div class="nf-actions">
+        <a href="/" class="btn btn-primary">{en.notFound.cta}</a>
+        <a href="/services" class="btn btn-secondary">{en.notFound.secondary}</a>
+        <a href="/de" class="btn btn-secondary" lang="de" hreflang="de">Deutsch</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .nf .wrap { display: grid; gap: 16px; max-width: 760px; min-height: 50vh; align-content: center; }
+  .nf .lead { margin: 0; }
+  .nf-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+</style>

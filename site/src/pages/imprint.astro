@@ -1,0 +1,19 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { SITE } from '../config/site.ts';
+const c = SITE.company;
+---
+<LegalLayout lang="en" title="Imprint" description="Legal notice and provider identification for FILLCART LLC." path="/imprint" eyebrow="Legal" updated="Last updated: October 2026">
+  <h2>Company information</h2>
+  <div class="addr">{c.legalName}<br />{c.street}<br />{c.city}, {c.region} {c.postalCode}, {c.countryLabel}</div>
+  <h3>Represented by</h3>
+  <p>{c.managingMember} (Managing Member)</p>
+  <h3>Contact</h3>
+  <p>Email: <a href={`mailto:${SITE.contact.email}`}>{SITE.contact.email}</a></p>
+  <h3>Registration</h3>
+  <p>Registered in {c.registeredIn}. Filing ID {c.entityId}.</p>
+  <h3>Responsible for content (§ 18 (2) MStV)</h3>
+  <p>{c.managingMember}, address as above.</p>
+  <h2>EU dispute resolution</h2>
+  <p>The European Commission provides a platform for online dispute resolution: <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener">ec.europa.eu/consumers/odr</a>. I am neither willing nor obliged to take part in dispute resolution proceedings before a consumer arbitration board.</p>
+</LegalLayout>

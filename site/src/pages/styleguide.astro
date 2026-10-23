@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Logo from '../components/Logo.astro';
+import Faq from '../components/Faq.astro';
+import StatTile from '../components/StatTile.astro';
+import { en } from '../i18n/en.ts';
+const tokens = [
+  ['ink', '#16181d'], ['gray', '#5c6168'], ['green', '#1e5b3c'], ['light', '#eef3f0'], ['accent', '#6c9480'], ['accent-2', '#9dbfae'], ['dot', '#afc5ba'], ['line', '#dbe3de'],
+];
+---
+<BaseLayout lang="en" title="Styleguide" description="Internal component reference." path="/styleguide" alt={null} noindex>
+  <section class="section bg-dots">
+    <div class="wrap sg">
+      <div class="eyebrow">Styleguide · internal</div>
+      <h1 class="display">Design system</h1>
+      <p class="lead text-muted">Tokens, type, textures and components from the website briefing §8.</p>
+
+      <h2 class="h2">Logo</h2>
+      <div class="row"><Logo size={64} /><Logo size={64} mono tile={false} /><span class="dark-chip"><Logo size={64} mono tile={false} /></span><Logo size={64} animate /></div>
+
+      <h2 class="h2">Colors</h2>
+      <div class="swatches">{tokens.map(([n, v]) => <div class="sw"><span class="sw-c" style={`background:${v}`}></span><span class="mono small">{n} {v}</span></div>)}</div>
+
+      <h2 class="h2">Type</h2>
+      <div class="display">Display 64 / 40</div>
+      <div class="h1">H1 48 / 34</div>
+      <div class="h2">H2 36 / 28</div>
+      <div class="h3">H3 24 / 20</div>
+      <p class="lead">Body L 20 / 18. Manrope. Short sentences, concrete nouns.</p>
+      <p>Body 17 / 16. Manrope 400.</p>
+      <p class="small">Small 14.</p>
+      <div class="eyebrow">Eyebrow 13 · mono · uppercase</div>
+
+      <h2 class="h2">Buttons</h2>
+      <div class="row"><a class="btn btn-primary">Primary</a><a class="btn btn-secondary">Secondary</a><span class="dark-chip pad"><a class="btn btn-ghost">Ghost</a><a class="btn btn-light">Light</a></span><a class="btn btn-primary btn-sm">Small</a><a class="btn btn-primary btn-lg">Large</a></div>
+
+      <h2 class="h2">Tags</h2>
+      <div class="row"><span class="tag">Tag</span><span class="tag tag-green">Green</span><span class="tag tag-warn">TODO</span></div>
+
+      <h2 class="h2">Stat tiles</h2>
+      <div class="grid-3">
+        <StatTile value={75} label="HubSpot implementations" definition="Definition line." />
+        <StatTile value={40} prefix="$" label="per LinkedIn lead" />
+        <StatTile value={133} prefix="+" suffix="%" label="more inbound contacts" />
+      </div>
+
+      <h2 class="h2">Cards</h2>
+      <div class="grid-3">
+        <div class="card"><h3 class="h3">Card</h3><p class="text-muted">White, 1px line.</p></div>
+        <div class="card-light"><h3 class="h3">Card light</h3><p class="text-muted">Light panel, green top rule.</p></div>
+        <div class="card-dark"><h3 class="h3">Card dark</h3><p class="text-muted">Ink surface.</p></div>
+      </div>
+
+      <h2 class="h2">Callout + table</h2>
+      <div class="callout"><div class="callout-title">Callout</div><p>Light panel with green left rule.</p></div>
+      <table class="table"><thead><tr><th>Item</th><th>Detail</th></tr></thead><tbody><tr><td>Fee</td><td>500 EUR flat</td></tr><tr><td>Payment</td><td>100% upfront</td></tr></tbody></table>
+
+      <h2 class="h2">FAQ</h2>
+      <Faq items={en.audit.faq.items.slice(0, 2)} />
+
+      <h2 class="h2">Form</h2>
+      <div class="grid-3">
+        <div class="field"><label class="label">Label</label><input class="input" placeholder="Input" /></div>
+        <div class="field"><label class="label">Select</label><select class="select"><option>Option</option></select></div>
+        <label class="check"><input type="checkbox" /><span>Checkbox</span></label>
+      </div>
+    </div>
+  </section>
+  <section class="section bg-dark bg-lines">
+    <div class="wrap sg">
+      <div class="eyebrow">Dark section</div>
+      <h2 class="h2">Line texture, ghost buttons, muted text</h2>
+      <p class="lead text-muted">Dark sections use the ink background with fine lines.</p>
+      <div class="grid-3">
+        <StatTile value={55000} label="contacts migrated" />
+        <div class="callout"><div class="callout-title">Callout on dark</div><p>Translucent panel.</p></div>
+        <ul class="bullets"><li>Square bullet</li><li>Second</li></ul>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .sg { display: grid; gap: 22px; }
+  .sg .h2 { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--color-line); }
+  .bg-dark .sg .h2 { border-top-color: rgba(255,255,255,.14); }
+  .row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  .dark-chip { display: inline-flex; gap: 10px; background: var(--color-ink); color: #fff; padding: 8px; border-radius: 8px; }
+  .pad { padding: 10px; }
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+  .sw { display: grid; gap: 6px; }
+  .sw-c { display: block; height: 56px; border-radius: 4px; border: 1px solid var(--color-line); }
+  .grid-3 { display: grid; gap: 16px; }
+  @media (min-width: 768px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
+</style>

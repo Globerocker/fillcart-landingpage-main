@@ -1,0 +1,19 @@
+---
+import LegalLayout from '../../layouts/LegalLayout.astro';
+import { SITE } from '../../config/site.ts';
+const c = SITE.company;
+---
+<LegalLayout lang="de" title="Impressum" description="Impressum und Anbieterkennzeichnung der FILLCART LLC gemäß § 5 DDG." path="/de/impressum" eyebrow="Rechtliches" updated="Stand: Oktober 2026">
+  <h2>Angaben gemäß § 5 DDG</h2>
+  <div class="addr">{c.legalName}<br />{c.street}<br />{c.city}, {c.region} {c.postalCode}, {c.countryLabel}</div>
+  <h3>Vertreten durch</h3>
+  <p>{c.managingMember} (Managing Member)</p>
+  <h3>Kontakt</h3>
+  <p>E-Mail: <a href={`mailto:${SITE.contact.email}`}>{SITE.contact.email}</a></p>
+  <h3>Registereintrag</h3>
+  <p>Registriert in {c.registeredIn}. Filing ID {c.entityId}.</p>
+  <h3>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h3>
+  <p>{c.managingMember}, Anschrift wie oben.</p>
+  <h2>EU-Streitschlichtung</h2>
+  <p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung bereit: <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener">ec.europa.eu/consumers/odr</a>. Ich bin nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+</LegalLayout>

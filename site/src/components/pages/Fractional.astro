@@ -1,0 +1,67 @@
+---
+import type { Locale } from '../../config/site.ts';
+import { getDict } from '../../lib/i18n.ts';
+import { localePath } from '../../i18n/routes.ts';
+import PageHero from '../PageHero.astro';
+import MenuGroup from '../MenuGroup.astro';
+import CtaBand from '../CtaBand.astro';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const d = getDict(lang);
+const f = d.fractional;
+const p = (en: string) => localePath(lang, en);
+---
+
+<PageHero eyebrow={f.hero.eyebrow} title={f.hero.h1} sub={f.hero.sub} />
+
+<section class="section bg-dots">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-reveal>{f.means.eyebrow}</div>
+      <h2 class="h2" data-reveal style="--d:60ms">{f.means.h2}</h2>
+    </div>
+    <div class="grid-4">
+      {f.means.items.map((it, i) => (
+        <div class="card-light" data-reveal style={`--d:${i * 60}ms`}>
+          <h3 class="h3">{it.title}</h3>
+          <p class="text-muted">{it.text}</p>
+        </div>
+      ))}
+    </div>
+    <div class="markets" data-reveal>
+      <div>
+        <div class="eyebrow">{f.markets.eyebrow}</div>
+        <h3 class="h3 mt">{f.markets.h2}</h3>
+        <p class="small text-muted">{f.markets.text}</p>
+      </div>
+      <div class="chips">{f.markets.items.map((m) => <span class="tag tag-green">{m}</span>)}</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-reveal>{f.menuIntro.eyebrow}</div>
+      <h2 class="h2" data-reveal style="--d:60ms">{f.menuIntro.h2}</h2>
+      <p class="small text-muted mono" data-reveal>{d.common.priceNote}</p>
+    </div>
+    <MenuGroup lang={lang} group={d.services.groups.season} id="season" />
+  </div>
+</section>
+
+<CtaBand lang={lang} title={f.cta.h2} text={f.cta.text} primary={{ label: f.cta.primary }} secondary={{ label: f.cta.secondary, href: p('/services/audit') }} location="fractional" />
+
+<style>
+  .sec-head { display: grid; gap: 14px; max-width: 760px; margin-bottom: clamp(24px, 4vw, 40px); }
+  .sec-head .small { margin: 0; }
+  .grid-4 { display: grid; gap: 14px; }
+  @media (min-width: 640px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .grid-4 { grid-template-columns: repeat(4, 1fr); } }
+  .card-light h3 { margin: 0 0 8px; font-size: 18px; }
+  .card-light p { margin: 0; font-size: 14.5px; }
+  .markets { margin-top: 32px; display: grid; gap: 16px; align-items: center; padding-top: 24px; border-top: 1px solid var(--color-line); }
+  @media (min-width: 768px) { .markets { grid-template-columns: 1fr 1fr; } }
+  .mt { margin-top: 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+</style>

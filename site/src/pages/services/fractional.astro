@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Fractional from '../../components/pages/Fractional.astro';
+import { en } from '../../i18n/en.ts';
+import { breadcrumbSchema, serviceSchema } from '../../lib/seo.ts';
+const schema = [
+  breadcrumbSchema([{ name: 'Services', path: '/services' }, { name: en.fractional.meta.title, path: '/services/fractional' }]),
+  serviceSchema({ name: en.fractional.meta.title, description: en.fractional.meta.description, path: '/services/fractional' }),
+];
+---
+<BaseLayout lang="en" title={en.fractional.meta.title} description={en.fractional.meta.description} path="/services/fractional" ogImage="/og/fractional-en.png" schema={schema}>
+  <Fractional lang="en" />
+</BaseLayout>

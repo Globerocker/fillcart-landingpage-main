@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Todo from '../components/Todo.astro';
+import { en } from '../i18n/en.ts';
+import { getProjects } from '../lib/content.ts';
+import { breadcrumbSchema } from '../lib/seo.ts';
+const pj = en.projects;
+const projects = await getProjects();
+---
+<BaseLayout lang="en" title={pj.meta.title} description={pj.meta.description} path="/projects" alt={null} ogImage="/og/projects.png" schema={[breadcrumbSchema([{ name: pj.hero.eyebrow, path: '/projects' }])]}>
+  <PageHero eyebrow={pj.hero.eyebrow} title={pj.hero.h1} sub={pj.hero.sub} />
+  <section class="section bg-dots">
+    <div class="wrap grid-2">
+      {projects.map((p, i) => (
+        <article class="card card-hover pj" data-reveal style={`--d:${i * 70}ms`}>
+          <div class="pj-top">
+            <span class="tag tag-green">{p.data.status ?? p.data.role}</span>
+            {!p.data.approved && <span class="tag tag-warn">{en.common.todo}</span>}
+          </div>
+          <h2 class="h3">{p.data.name}</h2>
+          <div class="mono small text-muted">{pj.roleLabel}: {p.data.role}</div>
+          <p class="text-muted">{p.data.description}</p>
+          {p.data.links.length > 0 && (
+            <div class="pj-links">
+              {p.data.links.map((l) => <a href={l.href} class="link" target={l.href.startsWith('http') ? '_blank' : undefined} rel={l.href.startsWith('http') ? 'noopener' : undefined}>{l.label} →</a>)}
+            </div>
+          )}
+          {!p.data.approved && <Todo>Role wording and whether to show this project are open.</Todo>}
+        </article>
+      ))}
+    </div>
+  </section>
+  <CtaBand lang="en" title={en.home.finalCta.h2} text={en.home.finalCta.text} location="projects" />
+</BaseLayout>
+
+<style>
+  .grid-2 { display: grid; gap: 16px; }
+  @media (min-width: 768px) { .grid-2 { grid-template-columns: repeat(2, 1fr); } }
+  .pj { display: grid; gap: 10px; align-content: start; }
+  .pj h2 { margin: 0; }
+  .pj p { margin: 0; font-size: 15.5px; }
+  .pj-top { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pj-links { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 6px; }
+</style>

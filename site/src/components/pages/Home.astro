@@ -1,0 +1,240 @@
+---
+import { SITE, type Locale } from '../../config/site.ts';
+import { getDict } from '../../lib/i18n.ts';
+import { localePath } from '../../i18n/routes.ts';
+import { getWork, getInsights, getPartners } from '../../lib/content.ts';
+import Portrait from '../Portrait.astro';
+import StatTile from '../StatTile.astro';
+import CaseCard from '../CaseCard.astro';
+import ArticleCard from '../ArticleCard.astro';
+import CtaBand from '../CtaBand.astro';
+import Ladder from '../Ladder.astro';
+import Todo from '../Todo.astro';
+
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const d = getDict(lang);
+const h = d.home;
+const p = (en: string) => localePath(lang, en);
+const work = (await getWork()).filter((w) => w.data.featured).slice(0, 3);
+const posts = (await getInsights(lang)).slice(0, 3);
+const partners = (await getPartners()).slice(0, 2);
+---
+
+<!-- 1. Hero -->
+<section class="hero bg-dark bg-lines">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <div class="eyebrow" data-reveal>{h.hero.eyebrow}</div>
+      <h1 class="display" data-reveal style="--d:60ms" set:html={h.hero.h1} />
+      <p class="lead hero-sub" data-reveal style="--d:120ms">{h.hero.sub}</p>
+      <div class="hero-actions" data-reveal style="--d:180ms">
+        <a href={SITE.booking} class="btn btn-light btn-lg" target="_blank" rel="noopener" data-track="cta_book_click" data-location="hero">{h.hero.ctaPrimary}</a>
+        <a href={p('/services/audit')} class="btn btn-ghost btn-lg">{h.hero.ctaSecondary} <span class="arrow">→</span></a>
+      </div>
+    </div>
+    <div class="hero-visual" data-reveal style="--d:120ms">
+      <Portrait alt={h.hero.portraitAlt} name={h.hero.name} role={h.hero.role} animate />
+      <Todo>Portrait: replace with the final photo from andre-os/02_PERSONAL_BRAND/photos (current file is the old site's cut-out).</Todo>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Proof bar -->
+<section class="section bg-dots">
+  <div class="wrap">
+    <div class="eyebrow" data-reveal>{h.proof.eyebrow}</div>
+    <div class="proof-grid">
+      {h.proof.stats.map((s) => (
+        <StatTile value={s.value} prefix={s.prefix} suffix={s.suffix} label={s.label} definition={s.definition} href={(s as any).href} locale={d.locale} />
+      ))}
+    </div>
+    <div class="proof-badges" data-reveal>
+      <span class="mono proof-badges-label">{h.proof.badgesLabel}</span>
+      {h.proof.badges.map((b) => <span class="proof-badge"><img src={b.src} alt={b.alt} height="30" loading="lazy" /></span>)}
+    </div>
+  </div>
+</section>
+
+<!-- 3. The problem -->
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-reveal>{h.problem.eyebrow}</div>
+      <h2 class="h2" data-reveal style="--d:60ms">{h.problem.h2}</h2>
+    </div>
+    <div class="grid-3">
+      {h.problem.cards.map((c, i) => (
+        <div class="card-light" data-reveal style={`--d:${i * 80}ms`}>
+          <h3 class="h3">{c.title}</h3>
+          <p class="text-muted">{c.text}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- 4. Ladder -->
+<section class="section bg-dark bg-lines">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-reveal>{h.ladder.eyebrow}</div>
+      <h2 class="h2" data-reveal style="--d:60ms">{h.ladder.h2}</h2>
+      <p class="lead text-muted" data-reveal style="--d:120ms">{h.ladder.intro}</p>
+    </div>
+    <Ladder lang={lang} steps={h.ladder.steps} />
+    <div class="sec-foot" data-reveal>
+      <a href={p('/services')} class="btn btn-light">{h.ladder.cta} <span class="arrow">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Four disciplines -->
+<section class="section bg-dots">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow" data-reveal>{h.disciplines.eyebrow}</div>
+      <h2 class="h2" data-reveal style="--d:60ms">{h.disciplines.h2}</h2>
+    </div>
+    <ol class="courses">
+      {h.disciplines.items.map((c, i) => (
+        <li class="card-light course" data-reveal style={`--d:${i * 70}ms`}>
+          <span class="mono course-num">{c.num}</span>
+          <h3 class="h3">{c.title}</h3>
+          <p class="text-muted">{c.text}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<!-- 6. Selected work -->
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head sec-head-row">
+      <div>
+        <div class="eyebrow" data-reveal>{h.work.eyebrow}</div>
+        <h2 class="h2" data-reveal style="--d:60ms">{h.work.h2}</h2>
+        <p class="lead text-muted" data-reveal style="--d:120ms">{h.work.intro}</p>
+      </div>
+      <a href="/work" class="btn btn-secondary" data-reveal>{h.work.cta} <span class="arrow">→</span></a>
+    </div>
+    {work.length ? (
+      <div class="grid-3">
+        {work.map((w, i) => <CaseCard entry={w} lang={lang} style={`--d:${i * 80}ms`} />)}
+      </div>
+    ) : (
+      <p class="callout" data-reveal>{h.work.empty}</p>
+    )}
+  </div>
+</section>
+
+<!-- 7. Who you work with -->
+<section class="section bg-dark bg-lines">
+  <div class="wrap">
+    <div class="who">
+      <div class="eyebrow" data-reveal>{h.who.eyebrow}</div>
+      <h2 class="h2" data-reveal style="--d:60ms">{h.who.h2}</h2>
+      <p class="lead text-muted" data-reveal style="--d:120ms">{h.who.text}</p>
+      <a href={p('/about')} class="btn btn-ghost" data-reveal style="--d:180ms">{h.who.cta} <span class="arrow">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- 8. Partners strip -->
+<section class="section bg-dots">
+  <div class="wrap">
+    <div class="partners-strip">
+      <div>
+        <div class="eyebrow" data-reveal>{h.partners.eyebrow}</div>
+        <h2 class="h2" data-reveal style="--d:60ms">{h.partners.h2}</h2>
+        <p class="lead text-muted" data-reveal style="--d:120ms">{h.partners.text}</p>
+        <a href="/partners" class="link" data-reveal style="--d:160ms">{h.partners.cta} →</a>
+      </div>
+      <div class="partners-cards">
+        {partners.map((pt, i) => (
+          <a href={pt.data.url ?? '/partners'} class="card card-hover partner-mini" target={pt.data.url ? '_blank' : undefined} rel={pt.data.url ? 'noopener' : undefined} data-reveal style={`--d:${i * 80}ms`}>
+            <div class="partner-mini-top">
+              <span class="tag tag-green">{pt.data.kind}</span>
+              {!pt.data.approved && <span class="tag tag-warn">{d.common.todo}</span>}
+            </div>
+            <h3 class="h3">{pt.data.name}</h3>
+            {pt.data.person && <div class="mono small text-muted">{pt.data.person}</div>}
+            <p class="small text-muted">{pt.data.description}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. Latest insights -->
+{posts.length > 0 && (
+  <section class="section">
+    <div class="wrap">
+      <div class="sec-head sec-head-row">
+        <div>
+          <div class="eyebrow" data-reveal>{h.insights.eyebrow}</div>
+          <h2 class="h2" data-reveal style="--d:60ms">{h.insights.h2}</h2>
+        </div>
+        <a href={p('/insights')} class="btn btn-secondary" data-reveal>{h.insights.cta} <span class="arrow">→</span></a>
+      </div>
+      <div class="grid-3">
+        {posts.map((a, i) => <ArticleCard entry={a} lang={lang} style={`--d:${i * 80}ms`} />)}
+      </div>
+    </div>
+  </section>
+)}
+
+<!-- 10. Final CTA -->
+<CtaBand lang={lang} title={h.finalCta.h2} text={h.finalCta.text} primary={{ label: h.finalCta.primary }} secondary={{ label: h.finalCta.secondary }} location="home-final" />
+
+<style>
+  .hero { padding: clamp(56px, 8vw, 104px) 0 clamp(48px, 7vw, 96px); overflow: hidden; }
+  .hero-grid { display: grid; gap: 40px; align-items: center; }
+  .hero-copy { display: grid; gap: 20px; max-width: 640px; }
+  .hero-sub { margin: 0; color: var(--color-gray-2); max-width: 560px; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+  .hero-visual { justify-self: center; width: 100%; max-width: 440px; }
+  @media (min-width: 1024px) { .hero-grid { grid-template-columns: 1.15fr .85fr; gap: 56px; } .hero-visual { justify-self: end; } }
+
+  .sec-head { display: grid; gap: 14px; max-width: 760px; margin-bottom: clamp(28px, 4vw, 44px); }
+  .sec-head .lead { margin: 0; }
+  .sec-head-row { max-width: none; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 20px; }
+  .sec-head-row > div { display: grid; gap: 14px; max-width: 720px; }
+  .sec-foot { margin-top: clamp(28px, 4vw, 44px); }
+  .grid-3 { display: grid; gap: 18px; }
+  @media (min-width: 768px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
+  .card-light h3 { margin: 0 0 10px; }
+  .card-light p { margin: 0; font-size: 15.5px; }
+
+  .proof-grid { display: grid; gap: 28px 24px; grid-template-columns: repeat(2, 1fr); margin-top: 24px; }
+  @media (min-width: 768px) { .proof-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 1100px) { .proof-grid { grid-template-columns: repeat(6, 1fr); gap: 24px 20px; } }
+  .proof-badges { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--color-line); }
+  .proof-badges-label { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-gray); margin-right: 8px; }
+  .proof-badge { background: #fff; border: 1px solid var(--color-line); border-radius: 4px; padding: 6px 12px; display: inline-flex; }
+  .proof-badge img { height: 28px; width: auto; }
+
+  .courses { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; counter-reset: course; }
+  @media (min-width: 768px) { .courses { grid-template-columns: repeat(4, 1fr); } }
+  .course { position: relative; }
+  .course-num { display: block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-green); margin-bottom: 10px; }
+  @media (min-width: 768px) {
+    .course:not(:last-child)::after { content: '→'; position: absolute; right: -14px; top: 50%; transform: translateY(-50%); color: var(--color-accent); font-size: 18px; }
+  }
+
+  .who { max-width: 760px; display: grid; gap: 18px; }
+  .who .lead { margin: 0; }
+  .who .btn { width: fit-content; margin-top: 6px; }
+
+  .partners-strip { display: grid; gap: 32px; align-items: start; }
+  .partners-strip > div:first-child { display: grid; gap: 14px; max-width: 520px; }
+  .partners-strip .lead { margin: 0; }
+  .partners-cards { display: grid; gap: 14px; }
+  .partner-mini { display: grid; gap: 8px; color: var(--color-ink); }
+  .partner-mini h3 { margin: 0; }
+  .partner-mini p { margin: 0; }
+  .partner-mini-top { display: flex; gap: 6px; flex-wrap: wrap; }
+  @media (min-width: 900px) { .partners-strip { grid-template-columns: 1fr 1fr; gap: 48px; } }
+</style>

@@ -1,0 +1,81 @@
+---
+import { SITE, type Locale } from '../../config/site.ts';
+import { getDict } from '../../lib/i18n.ts';
+import { localePath } from '../../i18n/routes.ts';
+import { getInsights } from '../../lib/content.ts';
+import PageHero from '../PageHero.astro';
+import ArticleCard from '../ArticleCard.astro';
+import CtaBand from '../CtaBand.astro';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const d = getDict(lang);
+const s = d.insights;
+const posts = await getInsights(lang);
+const p = (en: string) => localePath(lang, en);
+const topics = Array.from(new Set(posts.map((x) => x.data.topic)));
+---
+
+<PageHero eyebrow={s.hero.eyebrow} title={s.hero.h1} sub={s.hero.sub} />
+
+<section class="section bg-dots">
+  <div class="wrap">
+    <div class="ins-top" data-reveal>
+      <div class="chips" data-filter-root>
+        <button type="button" class="tag tag-green chip-btn active" data-filter="all">{d.work.filters[0].label}</button>
+        {topics.map((t) => <button type="button" class="tag chip-btn" data-filter={t}>{s.topics[t] ?? t}</button>)}
+      </div>
+      <a href={s.otherLang.href} class="link small" hreflang={lang === 'en' ? 'de' : 'en'}>{s.otherLang.text} →</a>
+    </div>
+    <h2 class="sr-only">{s.hero.h1}</h2>
+    {posts.length ? (
+      <div class="grid-3" data-filter-list>
+        {posts.map((a, i) => <div data-topic={a.data.topic} class="contents"><ArticleCard entry={a} lang={lang} style={`--d:${Math.min(i * 50, 200)}ms`} /></div>)}
+      </div>
+    ) : (
+      <p class="callout">{s.empty}</p>
+    )}
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap li">
+    <div>
+      <div class="eyebrow" data-reveal>{s.linkedin.eyebrow}</div>
+      <h2 class="h2" data-reveal style="--d:60ms">{s.linkedin.title}</h2>
+      <p class="lead text-muted" data-reveal style="--d:120ms">{s.linkedin.text}</p>
+    </div>
+    <a href={SITE.person.linkedin} class="btn btn-secondary btn-lg" target="_blank" rel="noopener me" data-reveal>{s.linkedin.cta} <span class="arrow">→</span></a>
+  </div>
+</section>
+
+<CtaBand lang={lang} title={s.cta.h2} text={s.cta.text} primary={{ label: s.cta.primary, href: p('/services/audit') }} secondary={{ label: s.cta.secondary, href: undefined }} location="insights" />
+
+<style>
+  .ins-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 24px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip-btn { cursor: pointer; background: #fff; }
+  .chip-btn.active { background: var(--color-green); color: #fff; border-color: var(--color-green); }
+  .grid-3 { display: grid; gap: 16px; }
+  @media (min-width: 768px) { .grid-3 { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
+  .contents { display: contents; }
+  .li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 24px; }
+  .li > div { display: grid; gap: 12px; max-width: 640px; }
+  .li .lead { margin: 0; }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-filter-root]');
+  const list = document.querySelector<HTMLElement>('[data-filter-list]');
+  if (root && list) {
+    root.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-filter]');
+      if (!b) return;
+      root.querySelectorAll('.chip-btn').forEach((x) => x.classList.toggle('active', x === b));
+      const f = b.dataset.filter;
+      list.querySelectorAll<HTMLElement>('[data-topic]').forEach((el) => {
+        el.style.display = f === 'all' || el.dataset.topic === f ? '' : 'none';
+      });
+    });
+  }
+</script>

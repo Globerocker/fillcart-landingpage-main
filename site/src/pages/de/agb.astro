@@ -1,0 +1,56 @@
+---
+import LegalLayout from '../../layouts/LegalLayout.astro';
+import { SITE } from '../../config/site.ts';
+const c = SITE.company;
+---
+<LegalLayout lang="de" title="Allgemeine Geschäftsbedingungen" description="AGB für Audits, Sprints, Schulungen und Fractional-Engagements der FILLCART LLC." path="/de/agb" eyebrow="Rechtliches" updated="Stand: Oktober 2026">
+  <h2>1. Anbieter</h2>
+  <div class="addr">{c.legalName}<br />{c.street}<br />{c.city}, {c.region} {c.postalCode}, {c.countryLabel}<br />E-Mail: <a href={`mailto:${SITE.contact.email}`}>{SITE.contact.email}</a></div>
+
+  <h2>2. Leistungen</h2>
+  <p>Die {c.legalName} erbringt Marketing- und Revenue-Operations-Leistungen für Unternehmenskunden: Audits, Umsetzungs-Sprints, Tagesschulungen, Paid-Media-Betrieb und Fractional-Führung (Head of Marketing &amp; RevOps). Jeder Auftrag wird in einem schriftlichen Angebot oder einer Auftragsbestätigung definiert; die veröffentlichte Karte beschreibt Standardumfänge und Festpreise. Alle Preise verstehen sich zuzüglich etwaiger Steuern.</p>
+
+  <h2>3. Audit</h2>
+  <p>Das Revenue &amp; Marketing Audit ist eine Prüfung mit festem Preis und festem Umfang, wie auf der Audit-Seite beschrieben. Die Gebühr ist vollständig im Voraus fällig; die Arbeit beginnt mit Zahlungseingang. Die Audit-Gebühr wird vollständig auf einen Sprint angerechnet, der innerhalb von 30 Tagen nach dem Ergebnisgespräch gebucht wird. Arbeiten außerhalb des beschriebenen Umfangs werden separat angeboten und nur nach schriftlicher Freigabe des Kunden ausgeführt. Verzögerungen bei Zugängen oder Informationen verschieben den Zeitplan um denselben Zeitraum.</p>
+
+  <h2>4. Sprints und Schulungen</h2>
+  <p>Sprints und Schulungen werden zum im Angebot genannten Festpreis und Umfang geliefert. Änderungen am Umfang werden schriftlich vereinbart, bevor die Arbeit fortgesetzt wird; der Preis ändert sich nicht während eines Sprints. Zahlungsbedingungen stehen im Angebot.</p>
+
+  <h2>5. Laufende Zusammenarbeit</h2>
+  <p>Fractional-Führung und Paid-Media-Betrieb werden monatlich im Voraus zur vereinbarten Monatsgebühr abgerechnet und können von beiden Seiten mit Frist zum Ende des Folgemonats beendet werden, sofern das Angebot nichts anderes vorsieht. Werbebudget auf den Plattformen rechnet die jeweilige Plattform direkt mit dem Kunden ab; es ist nie Teil der Gebühr.</p>
+
+  <h2>6. Mitwirkung des Kunden</h2>
+  <ul>
+    <li>Erteilung und Aufrechterhaltung der für den Auftrag nötigen Zugänge (Werbekonten, CRM, Analytics) gemäß Onboarding-Checkliste.</li>
+    <li>Bereitstellung korrekter Informationen, Marken-Assets und ggf. rechtlich erforderlicher Freigaben für Inhalte und Werbung.</li>
+    <li>Sicherstellung, dass beworbene Angebote, Landingpages und Datenverarbeitung geltendem Recht und den Plattformrichtlinien entsprechen.</li>
+    <li>Benennung eines Hauptansprechpartners für Rückfragen während des Auftrags.</li>
+  </ul>
+
+  <h2>7. Zugänge und Datenumgang</h2>
+  <p>Zugänge werden ausschließlich für den vereinbarten Auftrag genutzt. Während eines Audits werden keine Änderungen an Kampagnen, Einstellungen oder CRM-Daten vorgenommen. Der Kunde kann Zugänge entziehen, sobald der Auftrag beendet ist. Kontodaten werden nur für den Auftrag dieses Kunden verwendet und weder mit anderen Kunden geteilt noch weiterverkauft. Eine Vertraulichkeitsvereinbarung (NDA) ist auf Wunsch verfügbar.</p>
+
+  <h2>8. Arbeitsergebnisse und Rechte</h2>
+  <p>Dokumente, Kampagnenstrukturen, Portal-Konfigurationen und Inhalte, die im Rahmen eines Auftrags für den Kunden erstellt werden, gehören nach Bezahlung dem Kunden. Interne Werkzeuge, Methoden und Vorlagen der {c.legalName} bleiben deren Eigentum.</p>
+
+  <h2>9. Drittplattformen</h2>
+  <p>Die Leistungen beruhen auf Drittplattformen (insbesondere Google Ads, LinkedIn Ads, Meta, HubSpot, Salesforce). Deren Verfügbarkeit, Richtlinien und Preise liegen außerhalb des Einflusses des Anbieters; die Nutzung unterliegt den Bedingungen des jeweiligen Plattformbetreibers.</p>
+
+  <h2>10. Keine Erfolgsgarantie</h2>
+  <p>Marketingleistung hängt von Faktoren außerhalb des Einflusses des Anbieters ab (Auktionsdynamik, Marktnachfrage, Angebot und Vertriebsprozess des Kunden). Die Arbeit erfolgt mit fachlicher Sorgfalt nach Branchenstandard; ein bestimmtes Ergebnis, Ranking, Lead-Volumen, Conversion-Volumen oder ein bestimmter Return wird nicht geschuldet. Zahlen auf dieser Website beschreiben vergangene Arbeit oder Benchmarks, keine Zusagen.</p>
+
+  <h2>11. Haftung</h2>
+  <p>Soweit gesetzlich zulässig, haftet die {c.legalName} nur für Vorsatz und grobe Fahrlässigkeit. Bei einfacher Fahrlässigkeit ist die Haftung auf die Verletzung wesentlicher Vertragspflichten und auf den vorhersehbaren, vertragstypischen Schaden begrenzt. Für von Plattformen abgerechnetes Werbebudget und für das Handeln von Drittplattformen haftet der Anbieter nicht.</p>
+
+  <h2>12. Vertraulichkeit</h2>
+  <p>Beide Seiten behandeln vertrauliche Informationen der anderen Seite während und nach dem Auftrag geheim. Einzelheiten zu personenbezogenen Daten stehen in der <a href="/de/datenschutz">Datenschutzerklärung</a>.</p>
+
+  <h2>13. Änderungen</h2>
+  <p>Diese Bedingungen können angepasst werden; maßgeblich ist die bei Auftragserteilung veröffentlichte Fassung. Wesentliche Änderungen einer laufenden Zusammenarbeit werden schriftlich vereinbart.</p>
+
+  <h2>14. Anwendbares Recht</h2>
+  <p>Es gilt das Recht des US-Bundesstaates Wyoming, unbeschadet zwingender Vorschriften am Sitz des Kunden.</p>
+
+  <h2>15. Kontakt</h2>
+  <p>Fragen zu diesen Bedingungen: <a href={`mailto:${SITE.contact.email}`}>{SITE.contact.email}</a>.</p>
+</LegalLayout>

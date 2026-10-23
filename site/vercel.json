@@ -1,0 +1,45 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/en", "destination": "/", "permanent": true },
+    { "source": "/en/about", "destination": "/about", "permanent": true },
+    { "source": "/en/legal-notice", "destination": "/imprint", "permanent": true },
+    { "source": "/en/privacy", "destination": "/privacy", "permanent": true },
+    { "source": "/en/terms", "destination": "/terms", "permanent": true },
+    { "source": "/en/:path*", "destination": "/:path*", "permanent": true },
+    { "source": "/referenzen", "destination": "/work", "permanent": true },
+    { "source": "/referenzen/:path*", "destination": "/work", "permanent": true },
+    { "source": "/wissen", "destination": "/de/insights", "permanent": true },
+    { "source": "/wissen/:category", "destination": "/de/insights", "permanent": true },
+    { "source": "/wissen/:category/:slug", "destination": "/de/insights/:slug", "permanent": true },
+    { "source": "/ressourcen", "destination": "/de/checklisten", "permanent": true },
+    { "source": "/ressourcen/:slug", "destination": "/de/checklisten/:slug", "permanent": true },
+    { "source": "/ueber-fillcart", "destination": "/de/ueber-mich", "permanent": true },
+    { "source": "/impressum", "destination": "/de/impressum", "permanent": true },
+    { "source": "/datenschutz", "destination": "/de/datenschutz", "permanent": true },
+    { "source": "/agb", "destination": "/de/agb", "permanent": true },
+    { "source": "/the-hubspot-maturity-gap", "destination": "/insights/the-hubspot-maturity-gap", "permanent": true },
+    { "source": "/121-2", "destination": "/insights/youtube-to-hubspot-guide", "permanent": true },
+    { "source": "/elementor-105", "destination": "/insights/google-ads-account-structure", "permanent": true }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+      ]
+    },
+    {
+      "source": "/_astro/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/brand/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800" }]
+    }
+  ]
+}
